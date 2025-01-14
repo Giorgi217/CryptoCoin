@@ -12,6 +12,7 @@ struct TableViewCell: View {
     
     var body: some View {
         HStack {
+            
             HStack {
                 AsyncImage(url: URL(string: coin.image)) { image in
                     image
@@ -23,6 +24,7 @@ struct TableViewCell: View {
                     ProgressView()
                         .frame(width: 50, height: 50)
                 }
+                
                 VStack(alignment: .leading){
                     Text("\(coin.name)")
                         .foregroundStyle(Color.theme.text).bold()
@@ -33,18 +35,17 @@ struct TableViewCell: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             
             VStack(alignment: .trailing) {
-                // asCurrencyWith6Decimals()
-                Text("\(coin.currentPrice)").bold()
-                
+                Text("\(coin.currentPrice.asCurrencyWith6Decimals())").bold()
                     .foregroundStyle(Color.theme.text)
                     .padding(.bottom, 2)
+                
                 HStack(spacing: 2) {
                     Image(systemName: "triangle.fill")
                         .font(Font.system(size: 10))
                         .foregroundStyle(coin.priceChangePercentage24h >= 0 ? .green : .red)
                         .rotationEffect(Angle(degrees: coin.priceChangePercentage24h >= 0 ? 0 : 180))
-                    // asPercentString
-                    Text("\(coin.priceChangePercentage24h)")
+                    
+                    Text(coin.priceChangePercentage24h.asPercentString())
                         .foregroundStyle(coin.priceChangePercentage24h >= 0 ? .green : .red)
                 }
             }

@@ -8,7 +8,6 @@
 import UIKit
 
 class AllCoinsView: UIViewController {
-    
     let viewModel = AllCoinViewModel()
     let searchBar = UISearchBar()
     let coinsTableView: UITableView = {
@@ -18,11 +17,17 @@ class AllCoinsView: UIViewController {
         return tableView
     }()
     
-
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupUI()
+        setupNavigationBar()
 
-        // Do any additional setup after loading the view.
+        viewModel.onAlertDismissed = { [weak self] in
+            self?.navigationController?.popViewController(animated: true)
+        }
+        viewModel.onError = { [weak self] message in
+            self?.viewModel.showAlert(message: message)
+        }
     }
     
     private func setupUI() {
@@ -32,18 +37,7 @@ class AllCoinsView: UIViewController {
         setupSearchBarInNavigationBar()
     }
     
-    private func setupSearchBarInNavigationBar() {
-        searchBar.placeholder = "Search here..."
-        searchBar.delegate = self
-        searchBar.sizeToFit()
-        
-        searchBar.searchBarStyle = .minimal
-        navigationItem.titleView = searchBar
-    }
-    
-
     private func configureTableView() {
-        
         coinsTableView.dataSource = self
         coinsTableView.delegate = self
         coinsTableView.translatesAutoresizingMaskIntoConstraints = false
@@ -51,7 +45,6 @@ class AllCoinsView: UIViewController {
         coinsTableView.register(HoldingCoinsTableViewCell.self, forCellReuseIdentifier: "HoldingCoinsTableViewCell")
         coinsTableView.backgroundColor = .backgroundcolor
         
-
         NSLayoutConstraint.activate([
             coinsTableView.leftAnchor.constraint(equalTo: view.leftAnchor),
             coinsTableView.rightAnchor.constraint(equalTo: view.rightAnchor),
@@ -59,7 +52,38 @@ class AllCoinsView: UIViewController {
             coinsTableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor)
         ])
     }
-
-
-
+    
+    func fetchData() {
+        print("\(viewModel.isLoading)")
+        guard !viewModel.isLoading else { return }
+        
+        print("fetching stated.........")
+        viewModel.isLoading = true
+       Task {
+           await viewModel.loadCoins()
+           self.viewModel.isLoading = false
+           DispatchQueue.main.async {
+               self.coinsTableView.reloadData()
+           }
+       }
+   }
+    
+    private func setupSearchBarInNavigationBar() {
+        searchBar.placeholder = "Search here..."
+        searchBar.delegate = self
+        searchBar.sizeToFit()
+        searchBar.searchBarStyle = .minimal
+        navigationItem.titleView = searchBar
+    }
+    
+    private func setupNavigationBar() {
+        navigationItem.hidesBackButton = true
+        let cancelButton = UIBarButtonItem(title: "Cancel", style: .plain, target: self, action: #selector(cancelButtonTapped))
+        cancelButton.tintColor = UIColor.themeKit.secondaryText
+        navigationItem.rightBarButtonItem = cancelButton
+    }
+    
+    @objc private func cancelButtonTapped() {
+        navigationController?.popViewController(animated: false)
+    }
 }
