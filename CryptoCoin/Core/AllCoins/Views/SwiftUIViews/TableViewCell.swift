@@ -29,9 +29,9 @@ struct TableViewCell: View {
                 }
 
                 VStack(alignment: .leading) {
-                    Text(viewModel.coin.name)
+                    Text(viewModel.coin.name ?? "N/A")
                         .foregroundStyle(Color.theme.text).bold()
-                    Text(viewModel.coin.symbol)
+                    Text(viewModel.coin.symbol ?? "N/A")
                         .foregroundStyle(Color.theme.subtext)
                 }
             }

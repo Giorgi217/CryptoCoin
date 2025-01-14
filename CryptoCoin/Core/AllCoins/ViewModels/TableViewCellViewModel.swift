@@ -20,20 +20,21 @@ class TableViewCellViewModel: ObservableObject {
 
     init(coin: CoinModel) {
         self.coin = coin
-        self.coinPrice = coin.currentPrice.asCurrencyWith6Decimals()
-        self.priceChangePercentage = coin.priceChangePercentage24h.asPercentString()
-        self.priceChangeColor = coin.priceChangePercentage24h >= 0 ? .green : .red
-        self.triangleRotation = coin.priceChangePercentage24h >= 0 ? 0 : 180
+        self.coinPrice = coin.currentPrice?.asCurrencyWith6Decimals() ?? "N/A"
+        self.priceChangePercentage = coin.priceChangePercentage24h?.asPercentString() ?? "N/A"
+        self.priceChangeColor = coin.priceChangePercentage24h ?? 0 >= 0 ? .green : .red
+        self.triangleRotation = coin.priceChangePercentage24h ?? 0 >= 0 ? 0 : 180
         loadImage()
     }
 
     private func loadImage() {
-        let imageName = coin.id
+        guard let imageName = coin.id, !imageName.isEmpty else { return }
+       
         if let cachedImage = fileManager.getImage(imageName: imageName, folderName: folderName) {
             self.uiImage = cachedImage
             print("saved Image Used")
         } else {
-            guard let url = URL(string: coin.image) else { return }
+            guard let url = URL(string: coin.image ?? "N/A") else { return }
             Task {
                 if let data = try? Data(contentsOf: url), let image = UIImage(data: data) {
                     DispatchQueue.main.async {
