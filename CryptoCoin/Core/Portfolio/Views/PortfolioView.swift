@@ -165,7 +165,7 @@ class PortfolioView: UIViewController {
     }
     
     @objc func buttonTapped() {
-        print("Right button tapped")
+        navigationController?.pushViewController(AllCoinsView(), animated: true)
     }
     
 

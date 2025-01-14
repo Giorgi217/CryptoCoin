@@ -63,9 +63,7 @@ extension AllCoinsView: UITableViewDataSource, UITableViewDelegate {
         if bottomEdge >= scrollView.contentSize.height - 100 {
             print("აქ იძახება ახალი დატა")
             // MARK: მონაცემთა გადმოწერა
+            fetchData()
         }
     }
-    
-    // Helper function to navigate to coin detail
-    
 }
