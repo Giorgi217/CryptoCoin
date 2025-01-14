@@ -59,14 +59,14 @@ class AllCoinsView: UIViewController {
         
         print("fetching stated.........")
         viewModel.isLoading = true
-       Task {
-           await viewModel.loadCoins()
-           self.viewModel.isLoading = false
-           DispatchQueue.main.async {
-               self.coinsTableView.reloadData()
-           }
-       }
-   }
+        Task {
+            await viewModel.loadCoins()
+            self.viewModel.isLoading = false
+            DispatchQueue.main.async {
+                self.coinsTableView.reloadData()
+            }
+        }
+    }
     
     private func setupSearchBarInNavigationBar() {
         searchBar.placeholder = "Search here..."
