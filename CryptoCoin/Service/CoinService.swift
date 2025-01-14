@@ -10,7 +10,7 @@ import Foundation
 class CoinService {
     private let baseURL = "https://api.coingecko.com/api/v3/coins/markets"
     
-    func fetchCoins(page: Int, perPage: Int = 150) async throws -> [CoinModel] {
+    func fetchCoins(page: Int, perPage: Int = 25) async throws -> [CoinModel] {
         var components = URLComponents(string: baseURL)!
         components.queryItems = [
             URLQueryItem(name: "vs_currency", value: "usd"),
@@ -23,6 +23,7 @@ class CoinService {
         guard let url = components.url else {
             throw NetworkError.invalidURL
         }
+        print("\(url)")
         return try await NetworkManager.shared.fetch(url: url, responseType: [CoinModel].self)
     }
 }

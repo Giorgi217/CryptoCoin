@@ -24,7 +24,7 @@ class AllCoinTableViewCell: UITableViewCell {
         hostingController?.view.removeFromSuperview()
         
         // Create a new hosting controller
-        let coinCellView = TableViewCell(coin: coin)
+        let coinCellView = TableViewCell(viewModel: TableViewCellViewModel(coin: coin))
         hostingController = UIHostingController(rootView: coinCellView)
 
         // Add the hosting controller's view to the content view
@@ -41,4 +41,6 @@ class AllCoinTableViewCell: UITableViewCell {
             hostingView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
         ])
     }
+    
+    
 }

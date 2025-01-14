@@ -21,7 +21,7 @@ class AllCoinsView: UIViewController {
         super.viewDidLoad()
         setupUI()
         setupNavigationBar()
-
+        fetchData()
         viewModel.onAlertDismissed = { [weak self] in
             self?.navigationController?.popViewController(animated: true)
         }
