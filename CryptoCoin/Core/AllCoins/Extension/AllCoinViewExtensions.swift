@@ -57,12 +57,8 @@ extension AllCoinsView: UITableViewDataSource, UITableViewDelegate {
         : (section == 0 ? "Your Holdings" : "All Coins")
     }
     
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        
-        let bottomEdge = scrollView.contentOffset.y + scrollView.frame.size.height
-        if bottomEdge >= scrollView.contentSize.height - 100 {
-            print("აქ იძახება ახალი დატა")
-            // MARK: მონაცემთა გადმოწერა
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        if indexPath.row == viewModel.coins.allCoins.count - 1 {
             fetchData()
         }
     }

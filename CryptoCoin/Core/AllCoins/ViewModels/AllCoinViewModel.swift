@@ -16,12 +16,12 @@ class AllCoinViewModel {
     var isLoading: Bool = false
     
     func loadCoins() async {
-                do {
+        do {
             let newCoins = try await coinService.fetchCoins(page: page)
             print("fetched data \(newCoins.count)")
             coins.allCoins.append(contentsOf: newCoins)
             page += 1
-                }
+        }
         catch let error as NetworkError {
             print("Failed to fetch coins: \(error.localizedDescription)")
             handleCoinServiceError(error)
