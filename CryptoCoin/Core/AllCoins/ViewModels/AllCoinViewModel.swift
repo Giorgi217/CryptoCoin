@@ -8,16 +8,20 @@
 import UIKit
 
 class AllCoinViewModel {
-    private let coinService = CoinService()
+    private let coinService: CoinServiceProtocol
     var coins: AllCoinModel = AllCoinModel(allCoins: [], HoldingCoins: [])
     var page: Int = 1
     var onAlertDismissed: (() -> Void)?
     var onError: ((String) -> Void)?
     var isLoading: Bool = false
     
+    init(coinService: CoinServiceProtocol = CoinService()) {
+        self.coinService = coinService
+    }
+    
     func loadCoins() async {
         do {
-            let newCoins = try await coinService.fetchCoins(page: page)
+            let newCoins = try await coinService.fetchCoins(page: page, perPage: 25)
             print("fetched data \(newCoins.count)")
             coins.allCoins.append(contentsOf: newCoins)
             page += 1
@@ -42,8 +46,8 @@ class AllCoinViewModel {
         }
         onError?(message)
     }
-
-     func showAlert(message: String) {
+    
+    func showAlert(message: String) {
         DispatchQueue.main.async {
             if let viewController = UIApplication.shared.keyWindow?.rootViewController {
                 let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
@@ -55,5 +59,5 @@ class AllCoinViewModel {
                 viewController.present(alert, animated: true)
             }
         }
-    } 
+    }
 }
