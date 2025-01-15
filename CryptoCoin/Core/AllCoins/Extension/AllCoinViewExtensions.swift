@@ -47,10 +47,11 @@ extension AllCoinsView: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         print("Row selected at section: \(indexPath.section), row: \(indexPath.row)")
-        print("დაეჭირა")
+       
         let currentCoin = viewModel.coins.allCoins[indexPath.row]
-        
-        navigationController?.pushViewController(UIHostingController(rootView: CoinDetailsView(viewModel: CoinDetailsViewModel(coinId: currentCoin.id ?? "N/A"))), animated: true)
+        print(currentCoin.id!)
+        guard let coinId = currentCoin.id else { return}
+//        navigationController?.pushViewController(UIHostingController(rootView: CoinDetailsView(viewModel: CoinDetailsViewModel(coinId: coinId))), animated: true)
     }
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {

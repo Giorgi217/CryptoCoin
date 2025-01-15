@@ -27,6 +27,7 @@ class CoinDetailsService: CoinDetailsServiceProtocol {
         guard let url = components.url else {
             throw NetworkError.invalidURL
         }
+        print(url)
         return url
     }
 }

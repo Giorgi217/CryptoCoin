@@ -8,19 +8,21 @@
 import Foundation
 
 struct CoinDetailsModel: Decodable, Observable {
-    let id: String
-    let symbol: String
-    let name: String
-    let hashingAlgorithm: String
-    let categories: [String]
-    let description: Description
-    let links: Links
-    let image: Image
-    let genesisDate: String
-    let watchlistPortfolioUsers: Int
-    let marketCapRank: Int
-    let marketData: MarketData
-    let lastUpdated: String
+    let id: String?
+    let symbol: String?
+    let name: String?
+    let hashingAlgorithm: String?
+    let categories: [String]?
+    let description: Description?
+    let links: Links?
+    let image: Image?
+    let genesisDate: String?
+    let watchlistPortfolioUsers: Int?
+    let marketCapRank: Int?
+    let marketData: MarketData?
+    let lastUpdated: String?
+    var isFavorite: Bool?
+    var isHolding: Bool?
 
     enum CodingKeys: String, CodingKey {
         case id
@@ -45,27 +47,27 @@ struct CoinDetailsModel: Decodable, Observable {
 
     // MARK: - Links
     struct Links: Decodable {
-        let homepage: [String]
+        let homepage: [String]?
     }
 
     // MARK: - Image
     struct Image: Decodable {
-        let thumb: String
-        let small: String
-        let large: String
+        let thumb: String?
+        let small: String?
+        let large: String?
     }
 
     // MARK: - MarketData
     struct MarketData: Codable {
-        let currentPrice: [String: Double]
-        let marketCap: [String: Double]
-        let high24H: [String: Double]
-        let low24H: [String: Double]
-        let priceChangePercentage7D: Double
-        let priceChangePercentage14D: Double
-        let marketCapChange24HInCurrency: [String: Double]
-        let marketCapChangePercentage24HInCurrency: [String: Double]
-        let sparkline7D: Sparkline7D
+        let currentPrice: [String: Double]?
+        let marketCap: [String: Double]?
+        let high24H: [String: Double]?
+        let low24H: [String: Double]?
+        let priceChangePercentage7D: Double?
+        let priceChangePercentage14D: Double?
+        let marketCapChange24HInCurrency: [String: Double]?
+        let marketCapChangePercentage24HInCurrency: [String: Double]?
+        let sparkline7D: Sparkline7D?
 
         enum CodingKeys: String, CodingKey {
             case currentPrice = "current_price"
@@ -81,7 +83,7 @@ struct CoinDetailsModel: Decodable, Observable {
 
         // MARK: - Sparkline7D
         struct Sparkline7D: Codable {
-            let price: [Double]
+            let price: [Double]?
         }
     }
 }

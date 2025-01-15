@@ -8,21 +8,44 @@
 import SwiftUI
 
 struct CoinDetailsView: View {
-    @ObservedObject var viewModel: CoinDetailsViewModel
-    
 
+    @ObservedObject var viewModel: DummyClass
+//    @ObservedObject var viewModel: CoinDetailsViewModel
+//    @State private var isLoading = true
+    
     var body: some View {
-        VStack {
-            Text("სჯკფსდფკსდ")
-                .padding()
-            Text(viewModel.coin?.description.en ?? "N/A")
+        NavigationView {
+            GeometryReader { geometry in
+                
+                VStack {
+                    
+                }
+                .frame(width: geometry.size.width, height: geometry.size.height)
+                .background(Color.theme.background)
+                
+            }
+
+        
+        }
+        
+        .toolbar{
+            ToolbarItem(placement: .topBarLeading) {
+                
+            }
+            ToolbarItem {
+                Image(systemName: "star")
+                    .foregroundStyle(Color.theme.blue)
+                
+                AsyncImage(url: URL(string: viewModel.coin.image?.small ?? "circle"))
+            }
+            
+            
         }
     }
-        
 }
 
 #Preview {
-//    NavigationView {
-//        CoinDetailsView()
-//    }
+    NavigationView {
+        CoinDetailsView(viewModel: DummyClass())
+    }
 }
