@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SwiftUI
 
 extension AllCoinsView: UISearchBarDelegate {
     
@@ -47,8 +48,9 @@ extension AllCoinsView: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         print("Row selected at section: \(indexPath.section), row: \(indexPath.row)")
         print("დაეჭირა")
+        let currentCoin = viewModel.coins.allCoins[indexPath.row]
         
-        // ნავიგაცია დეტალების გვერდზე
+        navigationController?.pushViewController(UIHostingController(rootView: CoinDetailsView(viewModel: CoinDetailsViewModel(coinId: currentCoin.id ?? "N/A"))), animated: true)
     }
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
