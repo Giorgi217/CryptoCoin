@@ -8,11 +8,12 @@
 import SwiftUI
 
 class CoinDetailsViewModel: ObservableObject {
-    let service = CoinDetailsService()
+    let service: CoinUseCaseProtocol
     let coinId: String
     @Published var coin: CoinDetailsModel?
     
-    init(coinId: String) {
+    init(coinId: String, service: CoinUseCaseProtocol = CoinUseCase()) {
+        self.service = service
         self.coinId = coinId
        
     }

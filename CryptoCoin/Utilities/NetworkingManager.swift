@@ -8,16 +8,11 @@
 import Foundation
 
 struct NetworkManager {
-    static let shared = NetworkManager()
-    
-    private init() {}
     
     func fetch<T: Decodable>(
-        url: URL,
+        request: URLRequest,
         responseType: T.Type
     ) async throws -> T {
-        var request = URLRequest(url: url)
-        request.setValue("application/json", forHTTPHeaderField: "Accept")
         
         do {
             let (data, response) = try await URLSession.shared.data(for: request)

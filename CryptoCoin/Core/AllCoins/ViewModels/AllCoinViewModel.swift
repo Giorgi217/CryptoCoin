@@ -8,20 +8,20 @@
 import UIKit
 
 class AllCoinViewModel {
-    private let coinService: CoinServiceProtocol
+    private let coinUseCase: CoinUseCaseProtocol
     var coins: AllCoinModel = AllCoinModel(allCoins: [], HoldingCoins: [])
     var page: Int = 1
     var onAlertDismissed: (() -> Void)?
     var onError: ((String) -> Void)?
     var isLoading: Bool = false
     
-    init(coinService: CoinServiceProtocol = CoinService()) {
-        self.coinService = coinService
+    init(coinUseCase: CoinUseCaseProtocol = CoinUseCase()) {
+        self.coinUseCase = coinUseCase
     }
     
     func loadCoins() async {
         do {
-            let newCoins = try await coinService.fetchCoins(page: page, perPage: 25)
+            let newCoins = try await coinUseCase.fetchCoins(page: page, perPage: 25)
             print("fetched data \(newCoins.count)")
             coins.allCoins.append(contentsOf: newCoins)
             page += 1
