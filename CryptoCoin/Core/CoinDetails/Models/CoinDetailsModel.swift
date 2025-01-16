@@ -56,17 +56,20 @@ struct CoinDetailsModel: Decodable, Observable {
         let small: String?
         let large: String?
     }
+    
 
     // MARK: - MarketData
     struct MarketData: Codable {
         let currentPrice: [String: Double]?
-        let marketCap: [String: Double]?
-        let high24H: [String: Double]?
-        let low24H: [String: Double]?
+        let marketCap: MarketCap?
+        let high24H: High24H?
+        let low24H: Low24H?
+        let priceChange24H: Double?
+        let priceChangePercentage24H: Double
         let priceChangePercentage7D: Double?
         let priceChangePercentage14D: Double?
-        let marketCapChange24HInCurrency: [String: Double]?
-        let marketCapChangePercentage24HInCurrency: [String: Double]?
+        let marketCapChange24HInCurrency: MarketCapChange24HInCurrency?
+        let marketCapChangePercentage24HInCurrency: MarketCapChangePercentage24HInCurrency?
         let sparkline7D: Sparkline7D?
 
         enum CodingKeys: String, CodingKey {
@@ -74,6 +77,8 @@ struct CoinDetailsModel: Decodable, Observable {
             case marketCap = "market_cap"
             case high24H = "high_24h"
             case low24H = "low_24h"
+            case priceChange24H = "price_change_24h"
+            case priceChangePercentage24H = "price_change_percentage_24h"
             case priceChangePercentage7D = "price_change_percentage_7d"
             case priceChangePercentage14D = "price_change_percentage_14d"
             case marketCapChange24HInCurrency = "market_cap_change_24h_in_currency"
@@ -84,6 +89,21 @@ struct CoinDetailsModel: Decodable, Observable {
         // MARK: - Sparkline7D
         struct Sparkline7D: Codable {
             let price: [Double]?
+        }
+        struct MarketCap: Codable {
+            let usd: Double
+        }
+        struct High24H: Codable {
+            let usd: Double
+        }
+        struct Low24H: Codable {
+            let usd: Double
+        }
+        struct MarketCapChange24HInCurrency: Codable {
+            let usd: Double
+        }
+        struct MarketCapChangePercentage24HInCurrency: Codable {
+            let usd: Double
         }
     }
 }

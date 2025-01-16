@@ -65,7 +65,7 @@ struct CoinRepository: CoinRepositoryProtocol {
         guard let url = components.url else {
             throw NetworkError.invalidURL
         }
-        
+        print("\(url)")
         return URLRequest(url: url)
     }
 }
