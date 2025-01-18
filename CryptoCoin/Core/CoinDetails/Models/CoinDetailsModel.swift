@@ -21,8 +21,8 @@ struct CoinDetailsModel: Decodable, Observable {
     let marketCapRank: Int?
     let marketData: MarketData?
     let lastUpdated: String?
-    var isFavorite: Bool?
-    var isHolding: Bool?
+    var isFavorite: Bool = false
+    var isHolding: Bool = false
 
     enum CodingKeys: String, CodingKey {
         case id
@@ -59,7 +59,7 @@ struct CoinDetailsModel: Decodable, Observable {
     
 
     // MARK: - MarketData
-    struct MarketData: Codable {
+    struct MarketData: Decodable {
         let currentPrice: [String: Double]?
         let marketCap: MarketCap?
         let high24H: High24H?
@@ -87,22 +87,22 @@ struct CoinDetailsModel: Decodable, Observable {
         }
 
         // MARK: - Sparkline7D
-        struct Sparkline7D: Codable {
+        struct Sparkline7D: Decodable {
             let price: [Double]?
         }
-        struct MarketCap: Codable {
+        struct MarketCap: Decodable {
             let usd: Double
         }
-        struct High24H: Codable {
+        struct High24H: Decodable {
             let usd: Double
         }
-        struct Low24H: Codable {
+        struct Low24H: Decodable {
             let usd: Double
         }
-        struct MarketCapChange24HInCurrency: Codable {
+        struct MarketCapChange24HInCurrency: Decodable {
             let usd: Double
         }
-        struct MarketCapChangePercentage24HInCurrency: Codable {
+        struct MarketCapChangePercentage24HInCurrency: Decodable {
             let usd: Double
         }
     }

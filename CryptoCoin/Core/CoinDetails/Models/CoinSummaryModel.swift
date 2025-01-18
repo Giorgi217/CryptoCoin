@@ -6,8 +6,9 @@
 //
 
 import Foundation
+import SwiftUI
 
-struct CoinSummaryModel {
+struct CoinSummaryModel: Decodable {
     let description: String?
     let link: String?
     let marketCap: String?

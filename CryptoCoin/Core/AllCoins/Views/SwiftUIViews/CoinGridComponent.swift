@@ -11,7 +11,6 @@ struct CoinGridComponent: View {
     var coin: CoinModel
     var body: some View {
         HStack {
- 
             AsyncImage(url: URL(string: coin.image ?? "N/A")) { phase in
                 switch phase {
                 case .empty:
@@ -24,7 +23,7 @@ struct CoinGridComponent: View {
                         .frame(width: 25, height: 25)
                         .clipShape(Circle())
                 case .failure:
-                    Image(systemName: "photo") // Default fallback image
+                    Image(systemName: "photo")
                         .resizable()
                         .scaledToFill()
                         .frame(width: 25, height: 25)

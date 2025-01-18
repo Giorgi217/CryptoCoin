@@ -54,9 +54,15 @@ struct CoinStatisticView: View {
                     Text(coinStatistics.absolutePriceChange?.asCurrencyWith6Decimals() ?? "")
                         .foregroundStyle(Color.theme.text)
                         .font(Font.system(size: 15))
-                    Text(coinStatistics.percentPriceChange?.asPercentString() ?? "")
-                        .foregroundStyle(Color.theme.text)
-                        .font(Font.system(size: 15))
+                    HStack(spacing: 2) {
+                        Image(systemName: "triangle.fill")
+                            .foregroundStyle(.green)
+                            .font(Font.system(size: 10))
+                        Text(coinStatistics.percentPriceChange?.asPercentString() ?? "")
+                            .foregroundStyle(Color.theme.text)
+                            .font(Font.system(size: 15))
+                        
+                    }
                 }
             }
             HStack {
@@ -68,9 +74,15 @@ struct CoinStatisticView: View {
                     Text(coinStatistics.absoluteMarketPriceChange?.formattedWithAbbreviations() ?? "")
                         .foregroundStyle(Color.theme.text)
                         .font(Font.system(size: 15))
-                    Text(coinStatistics.percentMarketPriceChange?.asPercentString() ?? "")
-                        .foregroundStyle(Color.theme.text)
-                        .font(Font.system(size: 15))
+                    
+                    HStack(spacing: 2){
+                        Image(systemName: "triangle.fill")
+                            .foregroundStyle(.green)
+                            .font(Font.system(size: 10))
+                        Text(coinStatistics.percentMarketPriceChange?.asPercentString() ?? "")
+                            .foregroundStyle(Color.theme.text)
+                            .font(Font.system(size: 15))
+                    }
                 }
             }
         }

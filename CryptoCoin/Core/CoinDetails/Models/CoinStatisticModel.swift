@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct CoinStatisticModel {
+struct CoinStatisticModel: Decodable {
     let hashingAlgorithm: String?
     let high24H: Double?
     let low24H: Double?

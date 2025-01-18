@@ -10,6 +10,7 @@ import Foundation
 protocol CoinRepositoryProtocol {
     func fetchCoins(page: Int, perPage: Int) async throws -> [CoinModel]
     func fetchCoinDetails(Id: String) async throws -> CoinDetailsModel
+    func fetchCoinChartStatistic(symbol: String, fromTimestamp: Int, toTimeStamp: Int) async throws -> ChartPricesModel
 }
 
 struct CoinRepository: CoinRepositoryProtocol {
@@ -24,9 +25,19 @@ struct CoinRepository: CoinRepositoryProtocol {
     }
     
     func fetchCoinDetails(Id: String) async throws -> CoinDetailsModel {
-        let request = try generateUrlForCoinDetails(Id: Id)
+        let request = try await generateUrlForCoinDetails(Id: Id)
         return try await networkManager.fetch(request: request, responseType: CoinDetailsModel.self)
     }
+    
+    func fetchCoinChartStatistic(symbol: String, fromTimestamp: Int, toTimeStamp: Int) async throws -> ChartPricesModel {
+        let request = try await generateUrlForCoinChartStatistic(symbol: symbol, fromTimestamp: fromTimestamp, toTimestamp: toTimeStamp)
+        return try await networkManager.fetch(request: request, responseType: ChartPricesModel.self)
+    }
+    
+    
+    
+    
+    
     
     private func generateUrlForCoins(page: Int, perPage: Int ) async throws -> URLRequest {
         let baseURL = baseURL + "markets"
@@ -50,7 +61,7 @@ struct CoinRepository: CoinRepositoryProtocol {
         return URLRequest(url: url)
     }
     
-    private func generateUrlForCoinDetails(Id: String) throws -> URLRequest {
+    private func generateUrlForCoinDetails(Id: String) async throws -> URLRequest {
         let baseURL = baseURL + "\(Id)"
         guard var components = URLComponents(string: baseURL) else { throw NetworkError.invalidURL }
         components.queryItems = [
@@ -68,4 +79,27 @@ struct CoinRepository: CoinRepositoryProtocol {
         print("\(url)")
         return URLRequest(url: url)
     }
+    
+    private func generateUrlForCoinChartStatistic(symbol: String, fromTimestamp: Int, toTimestamp: Int) async throws -> URLRequest {
+        let baseURL = baseURL + "\(symbol)/market_chart/range"
+        guard var components = URLComponents(string: baseURL) else { throw NetworkError.invalidURL }
+        
+        components.queryItems = [
+            URLQueryItem(name: "vs_currency", value: "usd"),
+            URLQueryItem(name: "from", value: "\(fromTimestamp)"),
+            URLQueryItem(name: "to", value: "\(toTimestamp)"),
+            URLQueryItem(name: "precision", value: "3")
+        ]
+        
+        guard let url = components.url else {
+            throw NetworkError.invalidURL
+        }
+        
+        print("\(url)")
+        return URLRequest(url: url)
+    }
+
+    
+    
+    
 }

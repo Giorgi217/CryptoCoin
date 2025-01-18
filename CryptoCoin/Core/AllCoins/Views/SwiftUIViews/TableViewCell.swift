@@ -8,11 +8,11 @@
 import SwiftUI
 
 struct TableViewCell: View {
-    @ObservedObject private var viewModel: TableViewCellViewModel
+    @ObservedObject var viewModel: TableViewCellViewModel
 
-    init(viewModel: TableViewCellViewModel) {
-        self.viewModel = viewModel
-    }
+//    init(viewModel: TableViewCellViewModel) {
+//        self.viewModel = viewModel
+//    }
 
     var body: some View {
         HStack {

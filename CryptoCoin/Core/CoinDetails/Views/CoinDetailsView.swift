@@ -10,8 +10,7 @@ import SwiftUI
 struct CoinDetailsView: View {
     
     @ObservedObject var viewModel: CoinDetailsViewModel
-    //    @ObservedObject var viewModel: CoinDetailsViewModel
-    //    @State private var isLoading = true
+
     var body: some View {
         NavigationView {
             GeometryReader { geometry in
@@ -40,21 +39,25 @@ struct CoinDetailsView: View {
                                 .background(Color.theme.blue)
                                 .cornerRadius(30)
                         }
-                        Button(action: {
-                            print("გაყიდვა")
-                        }) {
-                            Text("Sell")
-                                .font(Font.system(size: 20)).bold()
-                                .padding(10)
-                                .padding([.trailing, .leading], 40)
-                                .background(
-                                    Color.theme.blue.opacity(0.2)
-                                    
-                                )
-                                .cornerRadius(30)
+                        if let isHolding = viewModel.coin?.isHolding, isHolding {
+                            Button(action: {
+                                print("გაყიდვა")
+                            }) {
+                                Text("Sell")
+                                    .font(Font.system(size: 20)).bold()
+                                    .padding(10)
+                                    .padding([.trailing, .leading], 40)
+                                    .background(
+                                        Color.theme.blue.opacity(0.2)
+                                        
+                                    )
+                                    .cornerRadius(30)
+                            }
+                            
                         }
-                        
                     }
+                    
+                    
                     .frame(width: geometry.size.width, height: 50)
                     .background(Color.theme.background)
                 }
@@ -77,6 +80,7 @@ struct CoinDetailsView: View {
                     
                     Button(action: {
                         print("Star button tapped")
+                        
                     }) {
                         Image(systemName: "star")
                             .foregroundStyle(Color.theme.blue)

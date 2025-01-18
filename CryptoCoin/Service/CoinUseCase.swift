@@ -10,10 +10,11 @@ import Foundation
 protocol CoinUseCaseProtocol {
     func fetchCoins(page: Int, perPage: Int) async throws -> [CoinModel]
     func fetchCoinDetails(Id: String) async throws -> CoinDetailsModel
+    func fetchCoinChartStatistic(symbol: String, fromTimestamp: Int, toTimeStamp: Int) async throws -> ChartPricesModel
 }
 
 struct CoinUseCase: CoinUseCaseProtocol {
-    
+
     private let repo: CoinRepositoryProtocol
     
     init(repo: CoinRepositoryProtocol = CoinRepository()) {
@@ -27,4 +28,9 @@ struct CoinUseCase: CoinUseCaseProtocol {
     func fetchCoinDetails(Id: String) async throws -> CoinDetailsModel {
         return try await repo.fetchCoinDetails(Id: Id)
     }
+    
+    func fetchCoinChartStatistic(symbol: String, fromTimestamp: Int, toTimeStamp: Int) async throws -> ChartPricesModel {
+        return try await repo.fetchCoinChartStatistic(symbol: symbol, fromTimestamp: fromTimestamp, toTimeStamp: toTimeStamp)
+    }
+  
 }

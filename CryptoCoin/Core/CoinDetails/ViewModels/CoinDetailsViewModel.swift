@@ -8,15 +8,13 @@
 import SwiftUI
 
 class CoinDetailsViewModel: ObservableObject {
+    
     let service: CoinUseCaseProtocol
     let coinId: String
     @Published var coin: CoinDetailsModel?
     @Published var summary: CoinSummaryModel = CoinSummaryModel(description: "Loading...", link: "", marketCap: "N/A", rank: 0)
     @Published var coinStatistics: CoinStatisticModel = CoinStatisticModel(hashingAlgorithm: "N/A", high24H: 0, low24H: 0, absolutePriceChange: 0, percentPriceChange: 0, absoluteMarketPriceChange: 0, percentMarketPriceChange: 0)
-    
-    
-    
-    
+
     init(coinId: String, service: CoinUseCaseProtocol = CoinUseCase()) {
         self.service = service
         self.coinId = coinId
@@ -31,6 +29,11 @@ class CoinDetailsViewModel: ObservableObject {
                     self.coin = data
                     self.summary = self.createCoinSummaryModel()
                     self.coinStatistics = self.createCoinStatisticsModel()
+                    print("\(String(describing: self.coin?.marketData?.sparkline7D))")
+                    print(self.coin?.lastUpdated ?? "None")
+                    guard (self.coin?.lastUpdated) != nil else { return }
+
+
                 }
             }
             catch {
@@ -52,7 +55,7 @@ class CoinDetailsViewModel: ObservableObject {
     
     func createCoinStatisticsModel() -> CoinStatisticModel {
         
-            let hashingAlgorithm = coin?.hashingAlgorithm ?? "Hashing Algorithm Unavailable"
+            let hashingAlgorithm = coin?.hashingAlgorithm ?? "N/A"
         let high24H = coin?.marketData?.high24H?.usd ?? 0
         let low24H = coin?.marketData?.low24H?.usd ?? 0
             let absolutePriceChange = coin?.marketData?.priceChange24H ?? 0
