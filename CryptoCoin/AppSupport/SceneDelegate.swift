@@ -17,6 +17,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let scene = (scene as? UIWindowScene) else { return }
         window = UIWindow(windowScene: scene)
 //        let viewController = UIHostingController(rootView: CoinDetailsView(viewModel: DummyClass()))
+//        let navigator = AccountTransacionView(transactionType: .withdraw)
         let navigator = PortfolioView()
         let navigationController = UINavigationController(rootViewController: navigator)
         window?.rootViewController = navigationController

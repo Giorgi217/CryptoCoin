@@ -37,19 +37,42 @@ struct TableViewCell: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
 
-            VStack(alignment: .trailing) {
-                Text(viewModel.coinPrice).bold()
-                    .foregroundStyle(Color.theme.text)
-                    .padding(.bottom, 2)
-
-                HStack(spacing: 2) {
-                    Image(systemName: "triangle.fill")
-                        .font(Font.system(size: 10))
-                        .foregroundStyle(viewModel.priceChangeColor)
-                        .rotationEffect(Angle(degrees: viewModel.triangleRotation))
-
-                    Text(viewModel.priceChangePercentage)
-                        .foregroundStyle(viewModel.priceChangeColor)
+            if let mock = viewModel.mock {
+                VStack(alignment: .trailing) {
+                    Text(viewModel.coinPrice).bold()
+                        .foregroundStyle(Color.theme.text)
+                        .padding(.bottom, 2)
+                    
+                    HStack(spacing: 2) {
+                        Image(systemName: "triangle.fill")
+                            .font(Font.system(size: 10))
+                            .foregroundStyle(viewModel.priceChangeColor)
+                            .rotationEffect(Angle(degrees: viewModel.triangleRotation))
+                        
+                        Text(viewModel.priceChangePercentage)
+                            .foregroundStyle(viewModel.priceChangeColor)
+                        
+                        Spacer() 
+                        Text(mock).bold()
+                            .foregroundStyle(Color.theme.text)
+                            .padding(.bottom, 2)
+                    }
+                }
+            } else {
+                VStack(alignment: .trailing) {
+                    Text(viewModel.coinPrice).bold()
+                        .foregroundStyle(Color.theme.text)
+                        .padding(.bottom, 2)
+                    
+                    HStack(spacing: 2) {
+                        Image(systemName: "triangle.fill")
+                            .font(Font.system(size: 10))
+                            .foregroundStyle(viewModel.priceChangeColor)
+                            .rotationEffect(Angle(degrees: viewModel.triangleRotation))
+                        
+                        Text(viewModel.priceChangePercentage)
+                            .foregroundStyle(viewModel.priceChangeColor)
+                    }
                 }
             }
         }

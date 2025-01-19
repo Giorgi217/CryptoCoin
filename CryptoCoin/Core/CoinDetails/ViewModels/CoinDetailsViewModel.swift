@@ -32,8 +32,6 @@ class CoinDetailsViewModel: ObservableObject {
                     self.summary = self.createCoinSummaryModel()
                     self.coinStatistics = self.createCoinStatisticsModel()
                     guard (self.coin?.lastUpdated) != nil else { return }
-
-
                 }
             }
             catch {
@@ -55,14 +53,14 @@ class CoinDetailsViewModel: ObservableObject {
     
     func createCoinStatisticsModel() -> CoinStatisticModel {
         
-            let hashingAlgorithm = coin?.hashingAlgorithm ?? "N/A"
+        let hashingAlgorithm = coin?.hashingAlgorithm ?? "N/A"
         let high24H = coin?.marketData?.high24H?.usd ?? 0
         let low24H = coin?.marketData?.low24H?.usd ?? 0
-            let absolutePriceChange = coin?.marketData?.priceChange24H ?? 0
-            let percentPriceChange = coin?.marketData?.priceChangePercentage24H ?? 0
+        let absolutePriceChange = coin?.marketData?.priceChange24H ?? 0
+        let percentPriceChange = coin?.marketData?.priceChangePercentage24H ?? 0
         let absoluteMarketPriceChange = coin?.marketData?.marketCapChange24HInCurrency?.usd ?? 0
         let percentMarketPriceChange = coin?.marketData?.marketCapChangePercentage24HInCurrency?.usd ?? 0
-
+        
         return CoinStatisticModel(hashingAlgorithm: hashingAlgorithm, high24H: high24H, low24H: low24H, absolutePriceChange: absolutePriceChange, percentPriceChange: percentPriceChange, absoluteMarketPriceChange: absoluteMarketPriceChange, percentMarketPriceChange: percentMarketPriceChange)
     }
 }

@@ -34,11 +34,6 @@ struct CoinRepository: CoinRepositoryProtocol {
         return try await networkManager.fetch(request: request, responseType: ChartPricesModel.self)
     }
     
-    
-    
-    
-    
-    
     private func generateUrlForCoins(page: Int, perPage: Int ) async throws -> URLRequest {
         let baseURL = baseURL + "markets"
         guard var components = URLComponents(string: baseURL) else {
@@ -98,8 +93,4 @@ struct CoinRepository: CoinRepositoryProtocol {
         print("\(url)")
         return URLRequest(url: url)
     }
-
-    
-    
-    
 }
