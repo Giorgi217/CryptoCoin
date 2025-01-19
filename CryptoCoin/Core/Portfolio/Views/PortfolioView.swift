@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SwiftUI
 
 class PortfolioView: UIViewController {
     let scrollView = UIScrollView()
@@ -70,6 +71,8 @@ class PortfolioView: UIViewController {
         super.viewDidLoad()
         setupUI()
         view.backgroundColor = UIColor.themeKit.background
+        
+        detailsButton.addTarget(self, action: #selector(detailsButtonTapped), for: .touchUpInside)
     }
     
     func setupUI() {
@@ -120,7 +123,9 @@ class PortfolioView: UIViewController {
             buttonStackView.topAnchor.constraint(equalTo: chartView.bottomAnchor, constant: 20),
             buttonStackView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
             buttonStackView.widthAnchor.constraint(equalTo: contentView.widthAnchor),
-            buttonStackView.heightAnchor.constraint(equalToConstant: 65)
+            buttonStackView.heightAnchor.constraint(equalToConstant: 65),
+            
+            buttonStackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
         ])
     }
     
@@ -167,6 +172,10 @@ class PortfolioView: UIViewController {
     @objc func buttonTapped() {
         navigationController?.pushViewController(AllCoinsView(), animated: true)
     }
-    
+    @objc func detailsButtonTapped() {
+        print("SomeOne Tapped")
+        
+//        navigationController?.pushViewController(UIHostingController(rootView: ChartView()), animated: true)
+    }
 
 }

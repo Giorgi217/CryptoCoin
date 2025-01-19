@@ -7,14 +7,14 @@
 
 import Foundation
 
-struct CoinModel: Codable {
-    let id: String
-    let symbol: String
-    let name: String
-    let image: String
-    let currentPrice: Double
-    let priceChange24h: Double
-    let priceChangePercentage24h: Double
+struct CoinModel: Decodable {
+    let id: String?
+    let symbol: String?
+    let name: String?
+    let image: String?
+    let currentPrice: Double?
+    let priceChange24h: Double?
+    let priceChangePercentage24h: Double?
     
     enum CodingKeys: String, CodingKey {
         case id, symbol, name, image
@@ -24,6 +24,4 @@ struct CoinModel: Codable {
     }
 }
 
-struct Sparkline: Codable {
-    let price: [Double]
-}
+

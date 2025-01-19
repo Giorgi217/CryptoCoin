@@ -25,6 +25,7 @@ struct ColorThemeKit {
     let secondaryView = UIColor(named: "subviewcolor")!
     let text = UIColor(named: "textcolor")!
     let secondaryBlue = UIColor(named: "secondaryblue")!
+    let statictext = UIColor(named: "staticText")
 }
 
 struct ColorTheme {
@@ -36,4 +37,5 @@ struct ColorTheme {
    let subview = Color("subviewcolor")
    let text = Color("textcolor")
    let secondaryBlue = Color("secondaryblue")
+   let statictext = Color("staticText")
 }

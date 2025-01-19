@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SwiftUI
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
@@ -15,8 +16,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let scene = (scene as? UIWindowScene) else { return }
         window = UIWindow(windowScene: scene)
-        let viewController = PortfolioView()
-        let navigationController = UINavigationController(rootViewController: viewController)
+//        let viewController = UIHostingController(rootView: CoinDetailsView(viewModel: DummyClass()))
+        let navigator = PortfolioView()
+        let navigationController = UINavigationController(rootViewController: navigator)
         window?.rootViewController = navigationController
         window?.makeKeyAndVisible()
     }

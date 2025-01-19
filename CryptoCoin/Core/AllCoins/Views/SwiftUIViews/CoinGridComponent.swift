@@ -11,20 +11,29 @@ struct CoinGridComponent: View {
     var coin: CoinModel
     var body: some View {
         HStack {
- 
-            AsyncImage(url: URL(string: coin.image)) { image in
-                image
-                    .resizable()
-                    .scaledToFill()
-                    .frame(width: 25, height: 25)
-                    .clipShape(Circle())
-            } placeholder: {
-                // You can use a placeholder like a default image or a spinner while loading
-                ProgressView()
-                    .frame(width: 25, height: 25)
+            AsyncImage(url: URL(string: coin.image ?? "N/A")) { phase in
+                switch phase {
+                case .empty:
+                    ProgressView()
+                        .frame(width: 25, height: 25)
+                case .success(let image):
+                    image
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: 25, height: 25)
+                        .clipShape(Circle())
+                case .failure:
+                    Image(systemName: "photo")
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: 25, height: 25)
+                        .clipShape(Circle())
+                @unknown default:
+                    EmptyView()
+                }
             }
             
-            Text("\(coin.symbol)")
+            Text("\(coin.symbol ?? "N/A")")
                 .foregroundStyle(Color.theme.text)
         }
         
