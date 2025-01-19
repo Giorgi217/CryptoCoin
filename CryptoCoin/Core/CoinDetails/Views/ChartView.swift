@@ -9,79 +9,62 @@ import SwiftUI
 import Charts
 
 struct ChartView: View {
-    @StateObject var viewModel = ChartViewModel()
+    @ObservedObject var viewModel: ChartViewModel
     
-    
+    //MARK: MODIFIERIA მოსაშთობი
+
     var body: some View {
-        
-        Chart {
-            ForEach(viewModel.coinHistoricData, id: \.id) { coinData in
-                LineMark(
-                    x: .value("Date", coinData.date),
-                    y: .value("Value", coinData.price)
-                )
-//                .shadow(color: Color.blue.opacity(3), radius: 5, x: 0, y: 5)
+        VStack {
+            VStack(spacing: 0) {
+                Chart {
+                    ForEach(viewModel.coinHistoricData, id: \.id) { coinData in
+                        LineMark(
+                            x: .value("Date", coinData.date),
+                            y: .value("Value", coinData.price)
+                        )
+                        AreaMark(
+                            x: .value("Date", coinData.date),
+                            yStart: .value("Baseline", coinData.price),
+                            yEnd: .value("Value", viewModel.minimumPrice)
+                        )
+                        .foregroundStyle(
+                            LinearGradient(
+                                colors: [Color.blue.opacity(0.6), Color.clear],
+                                startPoint: .top,
+                                endPoint: .bottom
+                            )
+                        )
+                    }
+                }
+                .customXAxisModifier(data: viewModel.coinHistoricData, selectedFilter: viewModel.selectedFilter)
+                .frame(height: 200)
+                .chartYScale(domain: viewModel.minimumPrice - viewModel.minimumPrice/70...viewModel.maximumPrice + viewModel.maximumPrice/70)
                 
-                AreaMark(
-                    x: .value("Date", coinData.date),
-                    yStart: .value("Baseline", coinData.price),
-                    yEnd: .value("Value", viewModel.minimumPrice)
-                )
-                .foregroundStyle(
-                    LinearGradient(
-                        colors: [Color.blue.opacity(0.6), Color.clear],
-                        startPoint: .top,
-                        endPoint: .bottom))
-                
-
-
-                
+                .background(Color.theme.background)
+                .padding([.leading, .trailing])
             }
-
-            
+            ChartFilterView(selectedFilter: $viewModel.selectedFilter)
+                .onChange(of: viewModel.selectedFilter) { newFilter in
+                    viewModel.fetchData(for: newFilter) 
+                }
         }
-        .chartYAxis {
-            AxisMarks(position: .automatic) { _ in
-                AxisValueLabel()
-            }
-        }
-        .chartXAxis {
-            AxisMarks(position: .bottom) { _ in
-                AxisValueLabel()
-            }
-        }
-
-        .frame(height: 200)
-        .chartYScale(domain: viewModel.minimumPrice - viewModel.minimumPrice/20...viewModel.maximumPrice + viewModel.maximumPrice/20)
-//        .foregroundStyle(Color.theme.background)
-        .padding(20)
-    }
-}
-  
- 
-
-extension DateFormatter {
-    static var short: DateFormatter {
-        let formatter = DateFormatter()
-        formatter.dateStyle = .short
-        formatter.timeStyle = .short
-        return formatter
+        .background(Color.theme.background)
     }
 }
 
-
-#Preview {
-    ChartView()
+extension View {
+    func customXAxisModifier(data: [ChartModel], selectedFilter: ChartFilter) -> some View {
+        self.modifier(CustomXAxisModifier(data: data, selectedFilter: selectedFilter))
+    }
 }
 
+//
+//#Preview {
+//    ChartView()
+//}
 
-/*
- ForEach(prices.indices, id: \.self) { index in
- let price = prices[index]
- LineMark(
- x: .value("Time", price[safe: 0] ?? 0),
- y: .value("Price", price[safe: 1] ?? 0)
- )
- 
- }
- */
+
+
+
+
+

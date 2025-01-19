@@ -175,7 +175,7 @@ class PortfolioView: UIViewController {
     @objc func detailsButtonTapped() {
         print("SomeOne Tapped")
         
-        navigationController?.pushViewController(UIHostingController(rootView: ChartView()), animated: true)
+//        navigationController?.pushViewController(UIHostingController(rootView: ChartView()), animated: true)
     }
 
 }

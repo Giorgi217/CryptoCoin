@@ -11,6 +11,7 @@ class CoinDetailsViewModel: ObservableObject {
     
     let service: CoinUseCaseProtocol
     let coinId: String
+   
     @Published var coin: CoinDetailsModel?
     @Published var summary: CoinSummaryModel = CoinSummaryModel(description: "Loading...", link: "", marketCap: "N/A", rank: 0)
     @Published var coinStatistics: CoinStatisticModel = CoinStatisticModel(hashingAlgorithm: "N/A", high24H: 0, low24H: 0, absolutePriceChange: 0, percentPriceChange: 0, absoluteMarketPriceChange: 0, percentMarketPriceChange: 0)
@@ -18,6 +19,7 @@ class CoinDetailsViewModel: ObservableObject {
     init(coinId: String, service: CoinUseCaseProtocol = CoinUseCase()) {
         self.service = service
         self.coinId = coinId
+       
         fetchData()
     }
     
@@ -29,8 +31,6 @@ class CoinDetailsViewModel: ObservableObject {
                     self.coin = data
                     self.summary = self.createCoinSummaryModel()
                     self.coinStatistics = self.createCoinStatisticsModel()
-                    print("\(String(describing: self.coin?.marketData?.sparkline7D))")
-                    print(self.coin?.lastUpdated ?? "None")
                     guard (self.coin?.lastUpdated) != nil else { return }
 
 

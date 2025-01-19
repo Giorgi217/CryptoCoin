@@ -8,10 +8,11 @@ import SwiftUI
 
 class ChartViewModel: ObservableObject {
     
-    private let service: CoinUseCaseProtocol
-    private let symbol = "bitcoin"
-    private let fromTimestamp = 1734547418
-    private let toTimeStamp = 1737510038
+    let service: CoinUseCaseProtocol
+    let symbol: String
+    private var fromTimestamp = 1736598218
+    private var toTimeStamp = Int(Date().timeIntervalSince1970)
+    @Published var selectedFilter: ChartFilter = .week
     
     @Published var coinHistoricData: [ChartModel] = [
         ChartModel(price: 197.452, date: Date(timeIntervalSince1970: 1736371200)),
@@ -26,26 +27,27 @@ class ChartViewModel: ObservableObject {
         ChartModel(price: 219.779, date: Date(timeIntervalSince1970: 1737148800)),
         ChartModel(price: 220.695, date: Date(timeIntervalSince1970: 1737151718))
     ]
-    
     @Published var maximumPrice: Double = 220.695
     @Published var minimumPrice: Double = 183.114
     
-    
-    init(service: CoinUseCaseProtocol = CoinUseCase()) {
-        self.service = service
-        fetchData()
-    }
 
-    private func fetchData() {
+    init(service: CoinUseCaseProtocol = CoinUseCase(), symbol: String) {
+        self.symbol = symbol
+        self.service = service
+        fetchData(for: .week)
+        
+    }
+    
+     func fetchData(for filter: ChartFilter) {
+        calculateTimestamp(for: filter)
         Task {
             do {
-                let data = try await service.fetchCoinChartStatistic(symbol: symbol, fromTimestamp: fromTimestamp, toTimeStamp: 1737053018)
+                let data = try await service.fetchCoinChartStatistic(symbol: symbol, fromTimestamp: fromTimestamp, toTimeStamp: toTimeStamp)
                 DispatchQueue.main.async {
                     let data = self.convertToChartModels(from: data)
                     self.coinHistoricData = data
                     self.maximumPrice = self.checkMaxPrice(from: data)
                     self.minimumPrice = self.checkMinPrice(from: data)
-                    print("\(self.coinHistoricData)")
                 }
             }
             catch {
@@ -63,7 +65,7 @@ class ChartViewModel: ObservableObject {
         let chartModels: [ChartModel] = prices.compactMap { priceData in
             guard priceData.count == 2 else { return nil }
             
-            let timestamp = priceData[0] / 1000 
+            let timestamp = priceData[0] / 1000
             let price = priceData[1]
             
             let date = Date(timeIntervalSince1970: timestamp)
@@ -80,6 +82,44 @@ class ChartViewModel: ObservableObject {
     private func checkMinPrice(from historyData: [ChartModel]) -> Double {
         historyData.compactMap{ $0.price }.min() ?? 0
     }
+    
+    
+
+    
+    func calculateTimestamp(for filter: ChartFilter)  {
+        let calendar = Calendar.current
+        let now = Date()
+        let startDate: Date?
+        
+        switch filter {
+        case .day:
+            startDate = calendar.date(byAdding: .day, value: -1, to: now)
+        case .week:
+            startDate = calendar.date(byAdding: .weekOfYear, value: -1, to: now)
+        case .month:
+            startDate = calendar.date(byAdding: .month, value: -1, to: now)
+        case .currentYear:
+            startDate = calendar.date(from: calendar.dateComponents([.year], from: now))
+        case .year:
+            startDate = calendar.date(byAdding: .year, value: -1, to: now)
+
+        }
+        fromTimestamp = Int(startDate?.timeIntervalSince1970 ?? now.timeIntervalSince1970)
+    }
+    
+    private func dateFormatter(for filter: ChartFilter) -> DateFormatter {
+        let formatter = DateFormatter()
+        switch filter {
+        case .day:
+            formatter.dateFormat = "HH:mm" // e.g., 13:54, 11:49
+        case .week, .month, .currentYear:
+            formatter.dateFormat = "d MMM" // e.g., 14 Mar, 15 Mar
+        case .year:
+            formatter.dateFormat = "MMM yyyy" // e.g., Dec 2024, Jan 2025
+        }
+        return formatter
+    }
+    
 }
 
 /*

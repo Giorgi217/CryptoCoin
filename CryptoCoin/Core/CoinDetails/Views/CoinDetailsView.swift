@@ -9,24 +9,21 @@ import SwiftUI
 
 struct CoinDetailsView: View {
     
-    @ObservedObject var viewModel: CoinDetailsViewModel
-
+    @StateObject var viewModel: CoinDetailsViewModel
+    @StateObject var chartViewModel: ChartViewModel
+    
     var body: some View {
         NavigationView {
             GeometryReader { geometry in
                 VStack {
                     ScrollView {
-                        //MARK: CHArtVIew GOING TO BE HERE
-                        VStack{
-                            VStack {
-                                Color.black
-                            }
-                            .frame(width: geometry.size.width, height: geometry.size.height / 3)
-                            
+                        VStack(alignment: .center) {
+                            ChartView(viewModel: chartViewModel)
                             CompanySummaryView(coinSummary: viewModel.summary)
                             CoinStatisticView(coinStatistics: viewModel.coinStatistics)
                         }
                     }
+                    .frame(width: geometry.size.width - 10 )
                     HStack(spacing: 20) {
                         Button(action: {
                             print("ყიდვა")
@@ -47,17 +44,11 @@ struct CoinDetailsView: View {
                                     .font(Font.system(size: 20)).bold()
                                     .padding(10)
                                     .padding([.trailing, .leading], 40)
-                                    .background(
-                                        Color.theme.blue.opacity(0.2)
-                                        
-                                    )
+                                    .background(Color.theme.blue.opacity(0.2))
                                     .cornerRadius(30)
                             }
-                            
                         }
                     }
-                    
-                    
                     .frame(width: geometry.size.width, height: 50)
                     .background(Color.theme.background)
                 }
@@ -66,7 +57,7 @@ struct CoinDetailsView: View {
                 .background(Color.theme.background)
             }
         }
-        .padding([.trailing, .leading], 15)
+        .padding([.trailing, .leading], 5)
         .background(Color.theme.background)
         .toolbar{
             ToolbarItemGroup(placement: .topBarTrailing){
@@ -94,9 +85,10 @@ struct CoinDetailsView: View {
     }
 }
 
-
+//
 //#Preview {
 //    NavigationView {
-//        CoinDetailsView()
+//        CoinDetailsView(viewModel: CoinDetailsViewModel(coinId: ""), chartViewModel: ChartView(viewModel: ChartViewModel(symbol: "")))
 //    }
 //}
+

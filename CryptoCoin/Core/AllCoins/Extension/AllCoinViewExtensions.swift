@@ -51,7 +51,7 @@ extension AllCoinsView: UITableViewDataSource, UITableViewDelegate {
         let currentCoin = viewModel.coins.allCoins[indexPath.row]
         print(currentCoin.id!)
         guard let coinId = currentCoin.id else { return}
-        navigationController?.pushViewController(UIHostingController(rootView: CoinDetailsView(viewModel: CoinDetailsViewModel(coinId: coinId))), animated: true)
+        navigationController?.pushViewController(UIHostingController(rootView: CoinDetailsView(viewModel: CoinDetailsViewModel(coinId: coinId), chartViewModel: ChartViewModel(symbol: coinId))), animated: true)
     }
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
