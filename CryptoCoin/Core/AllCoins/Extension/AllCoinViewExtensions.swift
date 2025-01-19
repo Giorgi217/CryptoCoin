@@ -38,7 +38,21 @@ extension AllCoinsView: UITableViewDataSource, UITableViewDelegate {
             guard let cell = tableView.dequeueReusableCell(withIdentifier: "AllCoinTableViewCell", for: indexPath) as? AllCoinTableViewCell else {
                 return UITableViewCell()
             }
+            
             let currentCoin = viewModel.coins.allCoins[indexPath.row]
+            
+            let mockData: CoinModel =
+                CoinModel(
+                    id: "bitcoin",
+                    symbol: "btc",
+                    name: "Bitcoin",
+                    image: "https://example.com/bitcoin.png",
+                    currentPrice: 43123.45,
+                    priceChange24h: 123.45,
+                    priceChangePercentage24h: 0.29,
+                    mock: "43123.45"
+                )
+            
             cell.configure(with: currentCoin)
             print("coin at \(indexPath.row)")
             return cell

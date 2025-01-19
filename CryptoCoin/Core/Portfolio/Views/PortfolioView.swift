@@ -63,7 +63,7 @@ class PortfolioView: UIViewController {
     
     let buyButton = UIButton.circleButton(for: .plus)
     let depositButton = UIButton.circleButton(for: .wallet)
-    let withDrawButton = UIButton.circleButton(for: .arrow)
+    let withdrawButton = UIButton.circleButton(for: .arrow)
     let detailsButton = UIButton.circleButton(for: .ellipsis)
     
     
@@ -73,6 +73,8 @@ class PortfolioView: UIViewController {
         view.backgroundColor = UIColor.themeKit.background
         
         detailsButton.addTarget(self, action: #selector(detailsButtonTapped), for: .touchUpInside)
+        depositButton.addTarget(self, action: #selector(depositButtonTapped), for: .touchUpInside)
+        withdrawButton.addTarget(self, action: #selector(withdrawButtonTapped), for: .touchUpInside)
     }
     
     func setupUI() {
@@ -130,7 +132,7 @@ class PortfolioView: UIViewController {
     }
     
     func configuraStackView() {
-        let buttons = [buyButton, depositButton, withDrawButton, detailsButton]
+        let buttons = [buyButton, depositButton, withdrawButton, detailsButton]
         let labels = [buyLabel, depositLabel, withDraw, detailsLabel]
         
         for (button, label) in zip(buttons, labels) {
@@ -173,9 +175,18 @@ class PortfolioView: UIViewController {
         navigationController?.pushViewController(AllCoinsView(), animated: true)
     }
     @objc func detailsButtonTapped() {
-        print("SomeOne Tapped")
+        print("SomeOne Tapped to Details Button")
         
-//        navigationController?.pushViewController(UIHostingController(rootView: ChartView()), animated: true)
+        
     }
-
+    
+    @objc func depositButtonTapped() {
+        navigationController?.pushViewController(AccountTransacionView(transactionType: .deposit), animated: true)
+    }
+    
+    
+    
+    @objc func withdrawButtonTapped() {
+        navigationController?.pushViewController(AccountTransacionView(transactionType: .withdraw), animated: true)
+    }
 }
