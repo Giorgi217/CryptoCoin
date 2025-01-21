@@ -60,11 +60,22 @@ class PortfolioView: UIViewController {
         text: "Other",
         font: UIFont.systemFont(ofSize: 15),
         textColor: UIColor.themeKit.text)
+    let trendingLabel = UILabel.createLabel(
+        text: "TrendingNow",
+        font: UIFont.boldSystemFont(ofSize: 17),
+        textColor: UIColor.themeKit.text)
+    let recommendedLabel = UILabel.createLabel(
+        text: "Experts Recommendetion",
+        font: UIFont.boldSystemFont(ofSize: 17),
+        textColor: UIColor.themeKit.text)
     
     let buyButton = UIButton.circleButton(for: .plus)
     let depositButton = UIButton.circleButton(for: .wallet)
     let withdrawButton = UIButton.circleButton(for: .arrow)
     let detailsButton = UIButton.circleButton(for: .ellipsis)
+    
+    let trendingCollection = TrendingCollectionView()
+    let recommendedCollection = RecommendedCollectionView()
     
     
     override func viewDidLoad() {
@@ -75,6 +86,8 @@ class PortfolioView: UIViewController {
         detailsButton.addTarget(self, action: #selector(detailsButtonTapped), for: .touchUpInside)
         depositButton.addTarget(self, action: #selector(depositButtonTapped), for: .touchUpInside)
         withdrawButton.addTarget(self, action: #selector(withdrawButtonTapped), for: .touchUpInside)
+        trendingCollection.viewController = self
+        recommendedCollection.viewController = self
     }
     
     func setupUI() {
@@ -85,11 +98,19 @@ class PortfolioView: UIViewController {
         contentView.addSubview(portfolioValue)
         contentView.addSubview(chartView)
         contentView.addSubview(buttonStackView)
+        contentView.addSubview(trendingLabel)
+        contentView.addSubview(trendingCollection)
+        contentView.addSubview(recommendedLabel)
+        contentView.addSubview(recommendedCollection)
         
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         contentView.translatesAutoresizingMaskIntoConstraints = false
         portfolioValue.translatesAutoresizingMaskIntoConstraints = false
         chartView.translatesAutoresizingMaskIntoConstraints = false
+        trendingCollection.translatesAutoresizingMaskIntoConstraints = false
+        trendingCollection.translatesAutoresizingMaskIntoConstraints = false
+        recommendedLabel.translatesAutoresizingMaskIntoConstraints = false
+        recommendedCollection.translatesAutoresizingMaskIntoConstraints = false
         
         setupNavigationBar()
         setupConstraints()
@@ -127,7 +148,24 @@ class PortfolioView: UIViewController {
             buttonStackView.widthAnchor.constraint(equalTo: contentView.widthAnchor),
             buttonStackView.heightAnchor.constraint(equalToConstant: 65),
             
-            buttonStackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
+            trendingLabel.topAnchor.constraint(equalTo: buttonStackView.bottomAnchor, constant: 25),
+            trendingLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            
+            trendingCollection.topAnchor.constraint(equalTo: trendingLabel.bottomAnchor),
+            trendingCollection.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            trendingCollection.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            trendingCollection.heightAnchor.constraint(equalToConstant: 150),
+            
+            
+            recommendedLabel.topAnchor.constraint(equalTo: trendingCollection.bottomAnchor),
+            recommendedLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            
+            recommendedCollection.topAnchor.constraint(equalTo: recommendedLabel.bottomAnchor),
+            recommendedCollection.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            recommendedCollection.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            recommendedCollection.heightAnchor.constraint(equalToConstant: 150),
+            
+            recommendedCollection.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
         ])
     }
     
