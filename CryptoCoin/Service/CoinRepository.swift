@@ -9,18 +9,23 @@ import Foundation
 
 protocol CoinRepositoryProtocol {
     func fetchCoins(page: Int, perPage: Int) async throws -> [CoinModel]
+    func fetchRecommendedCoins(page: Int, perPage: Int) async throws -> [CoinModel]
     func fetchCoinDetails(Id: String) async throws -> CoinDetailsModel
     func fetchCoinChartStatistic(symbol: String, fromTimestamp: Int, toTimeStamp: Int) async throws -> ChartPricesModel
 }
 
 struct CoinRepository: CoinRepositoryProtocol {
-    
     let networkManager = NetworkManager()
     
     let baseURL = "https://api.coingecko.com/api/v3/coins/"
     
     func fetchCoins(page: Int, perPage: Int) async throws -> [CoinModel] {
         let request = try await generateUrlForCoins(page: page, perPage: perPage)
+        return try await networkManager.fetch(request: request, responseType: [CoinModel].self)
+    }
+    
+    func fetchRecommendedCoins(page: Int, perPage: Int) async throws -> [CoinModel] {
+        let request = try await generateUrlForRecommendedCoins(page: page, perPage: perPage)
         return try await networkManager.fetch(request: request, responseType: [CoinModel].self)
     }
     
@@ -55,6 +60,29 @@ struct CoinRepository: CoinRepositoryProtocol {
         
         return URLRequest(url: url)
     }
+    
+    private func generateUrlForRecommendedCoins(page: Int, perPage: Int) async throws -> URLRequest {
+        let baseURL = baseURL + "markets"
+        guard var components = URLComponents(string: baseURL) else {
+            throw NetworkError.invalidURL
+        }
+        components.queryItems = [
+            URLQueryItem(name: "vs_currency", value: "usd"),
+            URLQueryItem(name: "order", value: "volume_desc"),
+            URLQueryItem(name: "per_page", value: "\(perPage)"),
+            URLQueryItem(name: "page", value: "\(page)"),
+            URLQueryItem(name: "sparkline", value: "false"),
+            URLQueryItem(name: "price_change_percentage", value: "24h"),
+            URLQueryItem(name: "precision", value: "2")
+        ]
+        
+        guard let url = components.url else {
+            throw NetworkError.invalidURL
+        }
+        
+        return URLRequest(url: url)
+    }
+
     
     private func generateUrlForCoinDetails(Id: String) async throws -> URLRequest {
         let baseURL = baseURL + "\(Id)"

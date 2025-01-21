@@ -30,7 +30,7 @@ struct CoinDetailsView: View {
                         }) {
                             Text("Buy")
                                 .font(Font.system(size: 20)).bold()
-                                .foregroundStyle(.statictext)
+                                .foregroundStyle(Color.theme.statictext)
                                 .padding(10)
                                 .padding([.trailing, .leading], 40)
                                 .background(Color.theme.blue)
