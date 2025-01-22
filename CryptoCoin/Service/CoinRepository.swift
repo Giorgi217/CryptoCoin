@@ -21,11 +21,13 @@ struct CoinRepository: CoinRepositoryProtocol {
     
     func fetchCoins(page: Int, perPage: Int) async throws -> [CoinModel] {
         let request = try await generateUrlForCoins(page: page, perPage: perPage)
+        print("Maybe tranding requested Requested")
         return try await networkManager.fetch(request: request, responseType: [CoinModel].self)
     }
     
     func fetchRecommendedCoins(page: Int, perPage: Int) async throws -> [CoinModel] {
         let request = try await generateUrlForRecommendedCoins(page: page, perPage: perPage)
+        print("Recommendation Requested")
         return try await networkManager.fetch(request: request, responseType: [CoinModel].self)
     }
     

@@ -77,6 +77,8 @@ class PortfolioView: UIViewController {
     let trendingCollection = TrendingCollectionView()
     let recommendedCollection = RecommendedCollectionView()
     
+    let investmentView = InvestmentView()
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -102,15 +104,19 @@ class PortfolioView: UIViewController {
         contentView.addSubview(trendingCollection)
         contentView.addSubview(recommendedLabel)
         contentView.addSubview(recommendedCollection)
+        contentView.addSubview(investmentView)
         
+        trendingCollection.backgroundColor = UIColor.themeKit.background
+        recommendedCollection.backgroundColor = UIColor.themeKit.background
+
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         contentView.translatesAutoresizingMaskIntoConstraints = false
         portfolioValue.translatesAutoresizingMaskIntoConstraints = false
         chartView.translatesAutoresizingMaskIntoConstraints = false
         trendingCollection.translatesAutoresizingMaskIntoConstraints = false
-        trendingCollection.translatesAutoresizingMaskIntoConstraints = false
         recommendedLabel.translatesAutoresizingMaskIntoConstraints = false
         recommendedCollection.translatesAutoresizingMaskIntoConstraints = false
+        investmentView.translatesAutoresizingMaskIntoConstraints = false
         
         setupNavigationBar()
         setupConstraints()
@@ -165,7 +171,17 @@ class PortfolioView: UIViewController {
             recommendedCollection.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             recommendedCollection.heightAnchor.constraint(equalToConstant: 150),
             
-            recommendedCollection.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            investmentView.topAnchor.constraint(equalTo: recommendedCollection.bottomAnchor),
+            investmentView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            investmentView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            investmentView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+            investmentView.heightAnchor.constraint(equalToConstant: 350),
+            
+            investmentView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
+            
+            
+            
+
         ])
     }
     
