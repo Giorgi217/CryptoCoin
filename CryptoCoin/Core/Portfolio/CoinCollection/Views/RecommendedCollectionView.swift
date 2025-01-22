@@ -13,7 +13,8 @@ class RecommendedCollectionView: ReusableCollectionView<CoinModel, CollectionVie
     
     override init(layout: UICollectionViewLayout = UICollectionViewFlowLayout(), itemSize: CGSize = CGSize(width: 150, height: 120)) {
         super.init(layout: layout, itemSize: itemSize)
-        
+        self.backgroundColor = UIColor.themeKit.background
+        self.translatesAutoresizingMaskIntoConstraints = false
         register(cellType: CollectionViewCell.self)
         configureCell = { cell, coin in
             cell.configure(with: coin)

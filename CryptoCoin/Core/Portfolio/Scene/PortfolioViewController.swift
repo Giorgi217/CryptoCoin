@@ -9,21 +9,32 @@ import UIKit
 import SwiftUI
 
 class PortfolioViewController: UIViewController {
-    let scrollView = UIScrollView()
-    let contentView = UIView()
+    
+    let scrollView: UIScrollView = {
+        let scrollView = UIScrollView()
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        return scrollView
+    }()
+    
+    let contentView: UIView = {
+       let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
     let chartView: UIView = {
         let view = UIView()
         view.backgroundColor = UIColor.themeKit.secondaryView
         view.layer.cornerRadius = 15
+        view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
     
-    let buttonsView = ButtonsView()
-    
-    let titleLabel = UILabel.createLabel(
-        text: "Wallet",
-        font: UIFont.boldSystemFont(ofSize: 20),
-        textColor: UIColor.themeKit.text)
+    let buttonsView: ButtonsView = {
+       let buttonsView = ButtonsView()
+        buttonsView.translatesAutoresizingMaskIntoConstraints = false
+        return buttonsView
+    }()
     
     let walletLabel = UILabel.createLabel(
         text: "Total portfolio value",
@@ -52,16 +63,16 @@ class PortfolioViewController: UIViewController {
     
     let trendingCollection = TrendingCollectionView()
     let recommendedCollection = RecommendedCollectionView()
-    
     let investmentView = InvestmentView()
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
-        buttonsView.delegate = self
+        
         view.backgroundColor = UIColor.themeKit.background
         
+        buttonsView.delegate = self
         trendingCollection.viewController = self
         recommendedCollection.viewController = self
     }
@@ -70,7 +81,6 @@ class PortfolioViewController: UIViewController {
         view.addSubview(scrollView)
         scrollView.addSubview(contentView)
         contentView.addSubview(walletLabel)
-        contentView.addSubview(titleLabel)
         contentView.addSubview(portfolioValue)
         contentView.addSubview(chartView)
         contentView.addSubview(buttonsView)
@@ -80,20 +90,6 @@ class PortfolioViewController: UIViewController {
         contentView.addSubview(recommendedCollection)
         contentView.addSubview(holdingLabel)
         contentView.addSubview(investmentView)
-        
-        trendingCollection.backgroundColor = UIColor.themeKit.background
-        recommendedCollection.backgroundColor = UIColor.themeKit.background
-
-        scrollView.translatesAutoresizingMaskIntoConstraints = false
-        contentView.translatesAutoresizingMaskIntoConstraints = false
-        portfolioValue.translatesAutoresizingMaskIntoConstraints = false
-        chartView.translatesAutoresizingMaskIntoConstraints = false
-        trendingCollection.translatesAutoresizingMaskIntoConstraints = false
-        recommendedLabel.translatesAutoresizingMaskIntoConstraints = false
-        recommendedCollection.translatesAutoresizingMaskIntoConstraints = false
-        investmentView.translatesAutoresizingMaskIntoConstraints = false
-        holdingLabel.translatesAutoresizingMaskIntoConstraints = false
-        buttonsView.translatesAutoresizingMaskIntoConstraints = false
         
         setupNavigationBar()
         setupConstraints()
@@ -159,37 +155,18 @@ class PortfolioViewController: UIViewController {
         ])
     }
     
-    func createButtonLabelContainer(button: UIButton, label: UILabel) -> UIView {
-        let containerView = UIView()
-        containerView.addSubview(button)
-        containerView.addSubview(label)
-        
-        button.translatesAutoresizingMaskIntoConstraints = false
-        label.translatesAutoresizingMaskIntoConstraints = false
-        
-        NSLayoutConstraint.activate([
-            button.topAnchor.constraint(equalTo: containerView.topAnchor),
-            button.centerXAnchor.constraint(equalTo: containerView.centerXAnchor),
-            
-            label.topAnchor.constraint(equalTo: button.bottomAnchor, constant: 8),
-            label.centerXAnchor.constraint(equalTo: containerView.centerXAnchor),
-            label.bottomAnchor.constraint(equalTo: containerView.bottomAnchor)
-        ])
-        return containerView
-    }
-    
     func setupNavigationBar() {
         let buttonImage = UIImage(systemName: "magnifyingglass")
         let barButton = UIBarButtonItem(
             image: buttonImage,
             style: .plain,
             target: self,
-            action: #selector(buttonTapped))
+            action: #selector(searchButtonTapped))
         navigationItem.rightBarButtonItem = barButton
-        navigationItem.titleView = titleLabel
+        title = "Wallet"
     }
     
-    @objc func buttonTapped() {
+    @objc func searchButtonTapped() {
         navigationController?.pushViewController(AllCoinsView(), animated: true)
     }
 }

@@ -98,19 +98,12 @@ class InvestmentView: UIView {
     
     private func setUp() {
         viewModel.fetchCoins()
+        self.translatesAutoresizingMaskIntoConstraints = false
         self.backgroundColor = UIColor.themeKit.background
         setupUI()
         configureSegmentedControl()
         configureInvestedTableView()
     }
-//    override func viewDidLoad() {
-//        super.viewDidLoad()
-//        viewModel.fetchCoins()
-//        view.backgroundColor = UIColor.themeKit.background
-//        setupUI()
-//        configureSegmentedControl()
-//        configureInvestedTableView()
-//    }
     
     func setupUI() {
         self.addSubview(conteinerView)
