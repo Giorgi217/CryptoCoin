@@ -8,7 +8,7 @@
 import UIKit
 import SwiftUI
 
-class PortfolioView: UIViewController {
+class PortfolioViewController: UIViewController {
     let scrollView = UIScrollView()
     let contentView = UIView()
     let chartView: UIView = {
@@ -18,13 +18,7 @@ class PortfolioView: UIViewController {
         return view
     }()
     
-    let buttonStackView: UIStackView = {
-        let stackView = UIStackView()
-        stackView.axis = .horizontal
-        stackView.distribution = .fillEqually
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        return stackView
-    }()
+    let buttonsView = ButtonsView()
     
     let titleLabel = UILabel.createLabel(
         text: "Wallet",
@@ -41,38 +35,15 @@ class PortfolioView: UIViewController {
         font: UIFont.boldSystemFont(ofSize: 25),
         textColor: UIColor.themeKit.text)
     
-    let buyLabel = UILabel.createLabel(
-        text: "Buy",
-        font: UIFont.systemFont(ofSize: 15),
-        textColor: UIColor.themeKit.text)
-    
-    let depositLabel = UILabel.createLabel(
-        text: "Deposit",
-        font: UIFont.systemFont(ofSize: 15),
-        textColor: UIColor.themeKit.text)
-    
-    let withDraw = UILabel.createLabel(
-        text: "Withdraw",
-        font: UIFont.systemFont(ofSize: 15),
-        textColor: UIColor.themeKit.text)
-    
-    let detailsLabel = UILabel.createLabel(
-        text: "Other",
-        font: UIFont.systemFont(ofSize: 15),
-        textColor: UIColor.themeKit.text)
     let trendingLabel = UILabel.createLabel(
         text: "TrendingNow",
         font: UIFont.boldSystemFont(ofSize: 17),
         textColor: UIColor.themeKit.text)
+    
     let recommendedLabel = UILabel.createLabel(
         text: "Experts Recommendetion",
         font: UIFont.boldSystemFont(ofSize: 17),
         textColor: UIColor.themeKit.text)
-    
-    let buyButton = UIButton.circleButton(for: .plus)
-    let depositButton = UIButton.circleButton(for: .wallet)
-    let withdrawButton = UIButton.circleButton(for: .arrow)
-    let detailsButton = UIButton.circleButton(for: .ellipsis)
     
     let trendingCollection = TrendingCollectionView()
     let recommendedCollection = RecommendedCollectionView()
@@ -83,11 +54,9 @@ class PortfolioView: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
+        buttonsView.delegate = self
         view.backgroundColor = UIColor.themeKit.background
         
-        detailsButton.addTarget(self, action: #selector(detailsButtonTapped), for: .touchUpInside)
-        depositButton.addTarget(self, action: #selector(depositButtonTapped), for: .touchUpInside)
-        withdrawButton.addTarget(self, action: #selector(withdrawButtonTapped), for: .touchUpInside)
         trendingCollection.viewController = self
         recommendedCollection.viewController = self
     }
@@ -99,7 +68,7 @@ class PortfolioView: UIViewController {
         contentView.addSubview(titleLabel)
         contentView.addSubview(portfolioValue)
         contentView.addSubview(chartView)
-        contentView.addSubview(buttonStackView)
+        contentView.addSubview(buttonsView)
         contentView.addSubview(trendingLabel)
         contentView.addSubview(trendingCollection)
         contentView.addSubview(recommendedLabel)
@@ -117,10 +86,10 @@ class PortfolioView: UIViewController {
         recommendedLabel.translatesAutoresizingMaskIntoConstraints = false
         recommendedCollection.translatesAutoresizingMaskIntoConstraints = false
         investmentView.translatesAutoresizingMaskIntoConstraints = false
+        buttonsView.translatesAutoresizingMaskIntoConstraints = false
         
         setupNavigationBar()
         setupConstraints()
-        configuraStackView()
     }
     
     func setupConstraints() {
@@ -149,12 +118,12 @@ class PortfolioView: UIViewController {
             chartView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
             chartView.heightAnchor.constraint(equalToConstant: 220),
             
-            buttonStackView.topAnchor.constraint(equalTo: chartView.bottomAnchor, constant: 20),
-            buttonStackView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-            buttonStackView.widthAnchor.constraint(equalTo: contentView.widthAnchor),
-            buttonStackView.heightAnchor.constraint(equalToConstant: 65),
+            buttonsView.topAnchor.constraint(equalTo: chartView.bottomAnchor, constant: 20),
+            buttonsView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+            buttonsView.widthAnchor.constraint(equalTo: contentView.widthAnchor),
+            buttonsView.heightAnchor.constraint(equalToConstant: 65),
             
-            trendingLabel.topAnchor.constraint(equalTo: buttonStackView.bottomAnchor, constant: 25),
+            trendingLabel.topAnchor.constraint(equalTo: buttonsView.bottomAnchor, constant: 25),
             trendingLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             
             trendingCollection.topAnchor.constraint(equalTo: trendingLabel.bottomAnchor),
@@ -176,23 +145,8 @@ class PortfolioView: UIViewController {
             investmentView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             investmentView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
             investmentView.heightAnchor.constraint(equalToConstant: 350),
-            
             investmentView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
-            
-            
-            
-
         ])
-    }
-    
-    func configuraStackView() {
-        let buttons = [buyButton, depositButton, withdrawButton, detailsButton]
-        let labels = [buyLabel, depositLabel, withDraw, detailsLabel]
-        
-        for (button, label) in zip(buttons, labels) {
-            let containerView = createButtonLabelContainer(button: button, label: label)
-            buttonStackView.addArrangedSubview(containerView)
-        }
     }
     
     func createButtonLabelContainer(button: UIButton, label: UILabel) -> UIView {
@@ -228,19 +182,24 @@ class PortfolioView: UIViewController {
     @objc func buttonTapped() {
         navigationController?.pushViewController(AllCoinsView(), animated: true)
     }
-    @objc func detailsButtonTapped() {
-        print("SomeOne Tapped to Details Button")
-        
-        
-    }
-    
-    @objc func depositButtonTapped() {
+}
+
+// MARK: ButtonsViewDelegate
+
+extension PortfolioViewController: ButtonsViewDelegate {
+    func depositButtonTapped() {
         navigationController?.pushViewController(AccountTransacionView(transactionType: .deposit), animated: true)
     }
     
-    
-    
-    @objc func withdrawButtonTapped() {
+    func withdrawButtonTapped() {
         navigationController?.pushViewController(AccountTransacionView(transactionType: .withdraw), animated: true)
+    }
+    
+    func detailsButtonTapped() {
+        print("SomeOne Tapped to Details Button")
+    }
+    
+    func buyButtonTapped() {
+        navigationController?.pushViewController(AllCoinsView(), animated: true)
     }
 }
