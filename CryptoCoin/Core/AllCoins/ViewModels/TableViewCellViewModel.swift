@@ -25,7 +25,6 @@ class TableViewCellViewModel: ObservableObject {
         self.priceChangePercentage = coin.priceChangePercentage24h?.asPercentString() ?? "N/A"
         self.priceChangeColor = coin.priceChangePercentage24h ?? 0 >= 0 ? .green : .red
         self.triangleRotation = coin.priceChangePercentage24h ?? 0 >= 0 ? 0 : 180
-        self.mock = coin.mock
         loadImage()
     }
 

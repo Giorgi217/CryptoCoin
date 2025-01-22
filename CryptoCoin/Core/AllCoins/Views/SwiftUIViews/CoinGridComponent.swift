@@ -46,3 +46,6 @@ struct CoinGridComponent: View {
         
     }
 }
+#Preview {
+//    CoinGridComponent(coin: CoinModel(id: "1", symbol: "pepes", name: "bitcoin", image: "", currentPrice: 122, priceChange24h: 122, priceChangePercentage24h: 122, mock: "n"))
+}

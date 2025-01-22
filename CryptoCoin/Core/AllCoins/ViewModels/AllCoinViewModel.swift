@@ -9,8 +9,17 @@ import UIKit
 
 class AllCoinViewModel {
     private let coinUseCase: CoinUseCaseProtocol
-    var coins: AllCoinModel = AllCoinModel(allCoins: [], HoldingCoins: [])
+    var coins: AllCoinModel = AllCoinModel(allCoins: [], SearchedCoins: [
+//        CoinModel(id: "BTC1", symbol: "pepes", name: "Bitcoin", image: "", currentPrice: 23.12334, priceChange24h: 47000, priceChangePercentage24h: 12, mock: "საურონი"),
+//        CoinModel(id: "BTC3", symbol: "BtCs", name: "Bitcoin", image: "", currentPrice: 23.12334, priceChange24h: 47000, priceChangePercentage24h: 12, mock: "საურონი"),
+//        CoinModel(id: "BTC2", symbol: "BtCs", name: "Bitcoin", image: "", currentPrice: 23.12334, priceChange24h: 47000, priceChangePercentage24h: 12, mock: "საურონი"),
+//        CoinModel(id: "BTC6", symbol: "BtCs", name: "Bitcoin", image: "", currentPrice: 23.12334, priceChange24h: 47000, priceChangePercentage24h: 12, mock: "საურონი"),
+//        CoinModel(id: "BTC9", symbol: "BtCs", name: "Bitcoin", image: "", currentPrice: 23.12334, priceChange24h: 47000, priceChangePercentage24h: 12, mock: "საურონი"),
+//        CoinModel(id: "BTC8", symbol: "BtCs", name: "Bitcoin", image: "", currentPrice: 23.12334, priceChange24h: 47000, priceChangePercentage24h: 12, mock: "საურონი"),
+//        CoinModel(id: "BTC0", symbol: "BtCs", name: "Bitcoin", image: "", currentPrice: 23.12334, priceChange24h: 47000, priceChangePercentage24h: 12, mock: "საურონი")
+    ])
     var page: Int = 1
+    
     var onAlertDismissed: (() -> Void)?
     var onError: ((String) -> Void)?
     var isLoading: Bool = false

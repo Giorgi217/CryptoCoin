@@ -10,10 +10,6 @@ import SwiftUI
 struct TableViewCell: View {
     @ObservedObject var viewModel: TableViewCellViewModel
 
-//    init(viewModel: TableViewCellViewModel) {
-//        self.viewModel = viewModel
-//    }
-
     var body: some View {
         HStack {
             HStack {
@@ -37,33 +33,10 @@ struct TableViewCell: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
 
-            if let mock = viewModel.mock {
-                VStack(alignment: .trailing) {
-                    Text(viewModel.coinPrice).bold()
-                        .foregroundStyle(Color.theme.text)
-                        .padding(.bottom, 2)
-                    
-                    HStack(spacing: 2) {
-                        Image(systemName: "triangle.fill")
-                            .font(Font.system(size: 10))
-                            .foregroundStyle(viewModel.priceChangeColor)
-                            .rotationEffect(Angle(degrees: viewModel.triangleRotation))
-                        
-                        Text(viewModel.priceChangePercentage)
-                            .foregroundStyle(viewModel.priceChangeColor)
-                        
-                        Spacer() 
-                        Text(mock).bold()
-                            .foregroundStyle(Color.theme.text)
-                            .padding(.bottom, 2)
-                    }
-                }
-            } else {
-                VStack(alignment: .trailing) {
-                    Text(viewModel.coinPrice).bold()
-                        .foregroundStyle(Color.theme.text)
-                        .padding(.bottom, 2)
-                    
+            VStack(alignment: .trailing) {
+                Text(viewModel.coinPrice).bold()
+                    .foregroundStyle(Color.theme.text)
+                    .padding(.bottom, 2)
                     HStack(spacing: 2) {
                         Image(systemName: "triangle.fill")
                             .font(Font.system(size: 10))
@@ -73,7 +46,6 @@ struct TableViewCell: View {
                         Text(viewModel.priceChangePercentage)
                             .foregroundStyle(viewModel.priceChangeColor)
                     }
-                }
             }
         }
         .padding()
@@ -81,3 +53,6 @@ struct TableViewCell: View {
     }
 }
 
+#Preview {
+    TableViewCell(viewModel: TableViewCellViewModel(coin: CoinModel(id: "Btc", symbol: "BTC", name: "bitcoin", image: "", currentPrice: 25000, priceChange24h: 1000, priceChangePercentage24h: 8.74, date: nil, purchasedQuantity: nil, purchasePrice: nil, quantity: nil)))
+}

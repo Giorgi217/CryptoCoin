@@ -8,6 +8,6 @@
 import Foundation
 
 struct AllCoinModel {
-    var allCoins: [CoinModel] = []
-    var HoldingCoins: [CoinModel] = []
+    var allCoins: [CoinModel] 
+    var SearchedCoins: [CoinModel]
 }
