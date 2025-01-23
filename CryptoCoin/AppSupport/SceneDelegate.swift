@@ -18,7 +18,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window = UIWindow(windowScene: scene)
 //        let viewController = UIHostingController(rootView: CoinDetailsView(viewModel: DummyClass()))
 //        let navigator = AccountTransacionView(transactionType: .withdraw)
-        let navigator = PortfolioView()
+        let navigator = PortfolioViewController()
         let navigationController = UINavigationController(rootViewController: navigator)
         window?.rootViewController = navigationController
         window?.makeKeyAndVisible()
