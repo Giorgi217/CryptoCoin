@@ -26,6 +26,7 @@ struct ColorThemeKit {
     let text = UIColor(named: "textcolor")!
     let secondaryBlue = UIColor(named: "secondaryblue")!
     let statictext = UIColor(named: "staticText")
+    let secondary = UIColor(named: "secondary")
 }
 
 struct ColorTheme {
@@ -38,4 +39,5 @@ struct ColorTheme {
    let text = Color("textcolor")
    let secondaryBlue = Color("secondaryblue")
    let statictext = Color("staticText")
+   let secondary = Color("secondary")
 }
