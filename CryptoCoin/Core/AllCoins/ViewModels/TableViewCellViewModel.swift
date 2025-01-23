@@ -14,6 +14,8 @@ class TableViewCellViewModel: ObservableObject {
     @Published var priceChangeColor: Color
     @Published var triangleRotation: Double
     @Published var mock: String?
+    @Published var isHolding: Bool?
+    @Published var priceChange: String?
     
     private let fileManager = LocalFileManager.instance
     private let folderName = "CoinImages"
@@ -25,6 +27,8 @@ class TableViewCellViewModel: ObservableObject {
         self.priceChangePercentage = coin.priceChangePercentage24h?.asPercentString() ?? "N/A"
         self.priceChangeColor = coin.priceChangePercentage24h ?? 0 >= 0 ? .green : .red
         self.triangleRotation = coin.priceChangePercentage24h ?? 0 >= 0 ? 0 : 180
+        self.isHolding = coin.isHolding
+        self.priceChange = coin.priceChange
         loadImage()
     }
 

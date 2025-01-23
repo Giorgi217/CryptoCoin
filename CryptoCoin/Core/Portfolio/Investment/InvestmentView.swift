@@ -9,12 +9,13 @@ import UIKit
 
 class InvestmentView: UIView {
 
-    var viewModel: InvestmentViewModelProtocol
-
+//    var viewModel: InvestmentViewModelProtocol
+    var myCoin: MyCoin?
+    
     // MARK: Init
     
     init(viewModel: InvestmentViewModelProtocol = InvestmentViewModel()) {
-        self.viewModel = viewModel
+//        self.viewModel = viewModel
         super.init(frame: .zero)
         self.setUp()
     }
@@ -95,9 +96,8 @@ class InvestmentView: UIView {
         investedTableView.register(AllCoinTableViewCell.self, forCellReuseIdentifier: "AllCoinTableViewCell")
     }
 
-    
     private func setUp() {
-        viewModel.fetchCoins()
+//        viewModel.fetchCoins()
         self.translatesAutoresizingMaskIntoConstraints = false
         self.backgroundColor = UIColor.themeKit.background
         setupUI()
@@ -183,19 +183,28 @@ class InvestmentView: UIView {
         } else {
             print("All selected")
         }
+        investedTableView.reloadData()
     }
+    
+    public func configure(with model: MyCoin) {
+        self.myCoin = model
+        investedTableView.reloadData()
+    }
+    
 }
 
 extension InvestmentView: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        viewModel.coins.count
+        segmentedControl.selectedSegmentIndex == 0 ? myCoin?.day.count ?? 0 : myCoin?.all.count ?? 0
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = investedTableView.dequeueReusableCell(withIdentifier: "AllCoinTableViewCell") as? AllCoinTableViewCell else {
+        guard let cell = investedTableView.dequeueReusableCell(withIdentifier: "AllCoinTableViewCell") as? AllCoinTableViewCell,
+              let currentCoin = segmentedControl.selectedSegmentIndex == 0 ? myCoin?.day[indexPath.row]: myCoin?.all[indexPath.row]
+        else {
             return UITableViewCell()
         }
-        let currentCoin = viewModel.coins[indexPath.row]
+        
         cell.configure(with: currentCoin)
         return cell
     }

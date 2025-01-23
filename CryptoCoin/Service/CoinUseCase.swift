@@ -12,6 +12,7 @@ protocol CoinUseCaseProtocol {
     func fetchRecommendedCoins(page: Int, perPage: Int) async throws -> [CoinModel]
     func fetchCoinDetails(Id: String) async throws -> CoinDetailsModel
     func fetchCoinChartStatistic(symbol: String, fromTimestamp: Int, toTimeStamp: Int) async throws -> ChartPricesModel
+    func fetchMyCoins() async throws -> MyCoin
 }
 
 struct CoinUseCase: CoinUseCaseProtocol {
@@ -35,6 +36,10 @@ struct CoinUseCase: CoinUseCaseProtocol {
     
     func fetchCoinChartStatistic(symbol: String, fromTimestamp: Int, toTimeStamp: Int) async throws -> ChartPricesModel {
         return try await repo.fetchCoinChartStatistic(symbol: symbol, fromTimestamp: fromTimestamp, toTimeStamp: toTimeStamp)
+    }
+    
+    func fetchMyCoins() async throws -> MyCoin {
+        return try await repo.fetchMyCoins()
     }
   
 }

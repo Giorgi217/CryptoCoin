@@ -27,7 +27,9 @@ class InvestmentViewModel: InvestmentViewModelProtocol {
                 image: "https://assets.coingecko.com/coins/images/1/large/bitcoin.png",
                 currentPrice: 30000.0,
                 priceChange24h: -500.0,
-                priceChangePercentage24h: -1.64
+                priceChangePercentage24h: -1.64,
+                isHolding: true,
+                priceChange: "23$"
             ),
             CoinModel(
                 id: "ethereum",
@@ -36,7 +38,9 @@ class InvestmentViewModel: InvestmentViewModelProtocol {
                 image: "https://assets.coingecko.com/coins/images/279/large/ethereum.png",
                 currentPrice: 2000.0,
                 priceChange24h: 50.0,
-                priceChangePercentage24h: 2.56
+                priceChangePercentage24h: 2.56,
+                isHolding: true,
+                priceChange: "23$"
             ),
             CoinModel(
                 id: "cardano",
@@ -45,7 +49,9 @@ class InvestmentViewModel: InvestmentViewModelProtocol {
                 image: "https://assets.coingecko.com/coins/images/975/large/cardano.png",
                 currentPrice: 0.5,
                 priceChange24h: 0.02,
-                priceChangePercentage24h: 4.0
+                priceChangePercentage24h: 4.0,
+                isHolding: true,
+                priceChange: "23$"
             ),
             CoinModel(
                 id: "bitcoin",
@@ -54,7 +60,9 @@ class InvestmentViewModel: InvestmentViewModelProtocol {
                 image: "https://assets.coingecko.com/coins/images/1/large/bitcoin.png",
                 currentPrice: 30000.0,
                 priceChange24h: -500.0,
-                priceChangePercentage24h: -1.64
+                priceChangePercentage24h: -1.64,
+                isHolding: true,
+                priceChange: "23$"
             ),
             CoinModel(
                 id: "ethereum",
@@ -63,7 +71,9 @@ class InvestmentViewModel: InvestmentViewModelProtocol {
                 image: "https://assets.coingecko.com/coins/images/279/large/ethereum.png",
                 currentPrice: 2000.0,
                 priceChange24h: 50.0,
-                priceChangePercentage24h: 2.56
+                priceChangePercentage24h: 2.56,
+                isHolding: true,
+                priceChange: "23$"
             ),
             CoinModel(
                 id: "cardano",
@@ -72,7 +82,9 @@ class InvestmentViewModel: InvestmentViewModelProtocol {
                 image: "https://assets.coingecko.com/coins/images/975/large/cardano.png",
                 currentPrice: 0.5,
                 priceChange24h: 0.02,
-                priceChangePercentage24h: 4.0
+                priceChangePercentage24h: 4.0,
+                isHolding: true,
+                priceChange: "23$"
             )
         ]
     }

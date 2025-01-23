@@ -16,6 +16,9 @@ struct CoinModel: Decodable, Hashable {
     let priceChange24h: Double?
     let priceChangePercentage24h: Double?
     
+    var isHolding: Bool?
+    var priceChange: String?
+    
     let date: Date?
     let purchasedQuantity: Double?
     let purchasePrice: Double?
@@ -23,9 +26,7 @@ struct CoinModel: Decodable, Hashable {
     var purchasedValue: Double {
         (quantity ?? 0) * (purchasePrice ?? 0)
     }
-    
-    var isHolding: Bool?
-    
+
     enum CodingKeys: String, CodingKey {
         case id, symbol, name, image, date, purchasedQuantity, purchasePrice, quantity
         case currentPrice = "current_price"
@@ -33,7 +34,7 @@ struct CoinModel: Decodable, Hashable {
         case priceChangePercentage24h = "price_change_percentage_24h"
     }
     
-    init(id: String?, symbol: String?, name: String?, image: String?, currentPrice: Double?, priceChange24h: Double?, priceChangePercentage24h: Double?, date: Date? = nil, purchasedQuantity: Double? = nil, purchasePrice: Double? = nil, quantity: Double? = nil, isHolding: Bool? = false) {
+    init(id: String?, symbol: String?, name: String?, image: String?, currentPrice: Double?, priceChange24h: Double?, priceChangePercentage24h: Double?, date: Date? = nil, purchasedQuantity: Double? = nil, purchasePrice: Double? = nil, quantity: Double? = nil, isHolding: Bool? = false, priceChange: String?) {
         self.id = id
         self.symbol = symbol
         self.name = name
@@ -46,6 +47,7 @@ struct CoinModel: Decodable, Hashable {
         self.purchasePrice = purchasePrice
         self.quantity = quantity
         self.isHolding = isHolding
+        self.priceChange = priceChange
     }
     
 }
