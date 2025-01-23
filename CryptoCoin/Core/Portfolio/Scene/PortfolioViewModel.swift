@@ -8,7 +8,6 @@
 protocol PortfolioViewModelProtocol {
     func fetchMyCoins() async
     var myCoins: MyCoin? { get set }
-    
 }
 
 class PortfolioViewModel: PortfolioViewModelProtocol {

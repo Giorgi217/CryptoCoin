@@ -66,6 +66,7 @@ class PortfolioViewController: UIViewController {
     let trendingCollection = TrendingCollectionView()
     let recommendedCollection = RecommendedCollectionView()
     let investmentView = InvestmentView()
+    let investmentBalanceView = InvestmentBalanceView()
     
     init(viewModel: PortfolioViewModelProtocol = PortfolioViewModel()) {
         self.viewModel = viewModel
@@ -103,6 +104,7 @@ class PortfolioViewController: UIViewController {
         contentView.addSubview(trendingCollection)
         contentView.addSubview(recommendedLabel)
         contentView.addSubview(recommendedCollection)
+        contentView.addSubview(investmentBalanceView)
         contentView.addSubview(holdingLabel)
         contentView.addSubview(investmentView)
         
@@ -154,11 +156,16 @@ class PortfolioViewController: UIViewController {
             recommendedLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             
             recommendedCollection.topAnchor.constraint(equalTo: recommendedLabel.bottomAnchor),
-            recommendedCollection.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            recommendedCollection.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            recommendedCollection.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            recommendedCollection.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             recommendedCollection.heightAnchor.constraint(equalToConstant: 150),
             
-            holdingLabel.topAnchor.constraint(equalTo: recommendedCollection.bottomAnchor),
+            investmentBalanceView.topAnchor.constraint(equalTo: recommendedCollection.bottomAnchor, constant: 15),
+            investmentBalanceView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            investmentBalanceView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            investmentBalanceView.heightAnchor.constraint(equalToConstant: 77),
+            
+            holdingLabel.topAnchor.constraint(equalTo: investmentBalanceView.bottomAnchor, constant: 25),
             holdingLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             
             investmentView.topAnchor.constraint(equalTo: holdingLabel.bottomAnchor, constant: 10),
@@ -205,3 +212,4 @@ extension PortfolioViewController: ButtonsViewDelegate {
         navigationController?.pushViewController(AllCoinsView(), animated: true)
     }
 }
+

@@ -37,7 +37,7 @@ class InvestmentView: UIView {
         imageView.tintColor = .white
         imageView.contentMode = .center
         imageView.clipsToBounds = true
-        imageView.backgroundColor = UIColor.green
+        imageView.backgroundColor = UIColor.themeKit.secondary
         imageView.layer.cornerRadius = 20
         return imageView
     }()
@@ -51,8 +51,7 @@ class InvestmentView: UIView {
     let investmentTotalValueLabel = UILabel.createLabel(
         text: "20,119.00$",
         font: UIFont.systemFont(ofSize: 15),
-        textColor: UIColor.themeKit.text,
-        textAlignment: .center)
+        textColor: UIColor.themeKit.text)
 
     let segmentedControl: UISegmentedControl = {
         let control = UISegmentedControl(items: ["Day", "All"])
