@@ -65,7 +65,7 @@ class CoinExchangeViewModel: ObservableObject {
         
         if let existingindex = dayCoins.firstIndex(where: { $0.id == exchangeCoin?.id }) {
             
-            
+            print("someon \(existingindex)")
         } else {
             print(dayCoins.first?.id ?? "araa")
             print(purchasedCoin.id ?? "arraa")

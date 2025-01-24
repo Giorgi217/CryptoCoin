@@ -9,7 +9,6 @@ import UIKit
 
 class InvestmentView: UIView {
     var myCoin: MyCoin?
-    
     // MARK: Init
     
     init() {
@@ -45,8 +44,8 @@ class InvestmentView: UIView {
         textColor: UIColor.themeKit.secondaryText,
         textAlignment: .center)
     
-    let investmentTotalValueLabel = UILabel.createLabel(
-        text: "20,119.00$",
+    lazy var investmentTotalValueLabel = UILabel.createLabel(
+        text: "0.00",
         font: UIFont.systemFont(ofSize: 15),
         textColor: UIColor.themeKit.text)
 
@@ -184,13 +183,12 @@ class InvestmentView: UIView {
         
     }
     
-    public func configure(with model: MyCoin) {
+    public func configure(with model: MyCoin, investmentBalance: Double) {
         self.myCoin = model
-        DispatchQueue.main.async {
-            self.investedTableView.reloadData()
-        }
+        investmentTotalValueLabel.text = investmentBalance.asCurrencyWith6Decimals()
+        investmentTotalValueLabel.reloadInputViews()
+            investedTableView.reloadData()
     }
-    
 }
 
 extension InvestmentView: UITableViewDataSource, UITableViewDelegate {

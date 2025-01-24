@@ -68,6 +68,8 @@ class PortfolioViewController: UIViewController {
     let investmentView = InvestmentView()
     let investmentBalanceView = InvestmentBalanceView()
     
+    //MARK: INIT
+    
     init(viewModel: PortfolioViewModelProtocol = PortfolioViewModel()) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
@@ -83,7 +85,9 @@ class PortfolioViewController: UIViewController {
         
         Task {
             await viewModel.fetchMyCoins()
-            investmentView.configure(with: viewModel.myCoins!)
+            investmentView.configure(with: viewModel.myCoins!, investmentBalance: viewModel.investedBalance ?? 0)
+            investmentBalanceView.configure(with: viewModel.investmentBalance?.asCurrencyWith6Decimals() ?? "")
+            
         }
         
         view.backgroundColor = UIColor.themeKit.background
