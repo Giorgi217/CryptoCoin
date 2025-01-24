@@ -8,14 +8,11 @@
 import UIKit
 
 class InvestmentView: UIView {
-
-//    var viewModel: InvestmentViewModelProtocol
     var myCoin: MyCoin?
     
     // MARK: Init
     
     init() {
-//        self.viewModel = viewModel
         super.init(frame: .zero)
         self.setUp()
     }
@@ -179,7 +176,7 @@ class InvestmentView: UIView {
     
     @objc func segmentChanged() {
         if segmentedControl.selectedSegmentIndex == 0 {
-            print("Day selected")
+            print("Day selected")            
         } else {
             print("All selected")
         }
@@ -189,8 +186,9 @@ class InvestmentView: UIView {
     
     public func configure(with model: MyCoin) {
         self.myCoin = model
-        investedTableView.reloadData()
-        
+        DispatchQueue.main.async {
+            self.investedTableView.reloadData()
+        }
     }
     
 }

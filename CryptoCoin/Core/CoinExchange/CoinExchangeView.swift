@@ -6,12 +6,18 @@
 //
 
 import SwiftUI
+import Combine
 
 struct CoinExchangeView: View {
     
     @StateObject var viewModel: CoinExchangeViewModel
     @State private var purchaseValue: String = ""
     @State private var coinQuantity: String = ""
+    @State private var isUpdatingQuantity: Bool = false
+    @State private var isUpdatingValue: Bool = false
+    @State private var keyboardHeight: CGFloat = 0
+    
+    @FocusState private var focus: Bool
 
     
     var body: some View {
@@ -23,7 +29,22 @@ struct CoinExchangeView: View {
                     Text("USD Dollars")
                         .font(Font.system(size: 16)).bold()
                         .foregroundStyle(Color.theme.subtext)
-                    TextField("Amount", text: $purchaseValue)
+                    TextField("Amount", text: Binding(get: {
+                        self.purchaseValue
+                    }, set: { newValue in
+                        let correctedValue = newValue.replacingOccurrences(of: ",", with: ".")
+                        let filteredValue = correctedValue.filter { "0123456789.".contains($0) }
+                        
+                        if !isUpdatingQuantity {
+                            isUpdatingValue = false
+                            if let formatedValue = Double(filteredValue) {
+                                let purchasedValue = formatedValue / (Double(viewModel.exchangeCoin?.price ?? "") ?? 0)
+                                coinQuantity = String(purchasedValue.asCurrencyWith6Decimals())
+                            } else {
+                                coinQuantity = ""
+                            }
+                        }
+                    }))
                         .padding(5)
                         .background(Color.theme.background)
                         .tint(Color.theme.text)
@@ -36,32 +57,40 @@ struct CoinExchangeView: View {
                     Text("Quantity")
                         .font(Font.system(size: 16)).bold()
                         .foregroundStyle(Color.theme.subtext)
-                    TextField("Coin Quantity", text: $coinQuantity)
+                    TextField("Coin Quantity", text: Binding(
+                        get: {
+                            self.coinQuantity
+                        },
+                        set: { newValue in
+                            let correctedQuantity = newValue.replacingOccurrences(of: ",", with: ".")
+                            let filteredQuantity = correctedQuantity.filter { "0123456789.".contains($0) }
+                            
+                            if !isUpdatingValue {
+                                isUpdatingQuantity = true
+                                
+                                if let quantityValue = Double(filteredQuantity) {
+                                    let coinValue = quantityValue * (Double(viewModel.exchangeCoin?.price ?? "") ?? 0)
+                                    purchaseValue = String(coinValue.asCurrencyWith6Decimals())
+                                }
+                                else {
+                                    purchaseValue = ""
+                                }
+                            }
+                        }
+                    ))
                         .padding(5)
                         .background(Color.theme.background)
                         .tint(Color.theme.text)
                         .keyboardType(.decimalPad)
-                        .onChange(of: coinQuantity) { newValue in
-                            let correctedValue = newValue.replacingOccurrences(of: ",", with: ".")
-                            let filteredValue = correctedValue.filter { "0123456789.".contains($0) }
-                            
-                            coinQuantity = filteredValue
-
-                            if let quantityValue = Double(coinQuantity) {
-                               let coinValue = quantityValue * (Double(viewModel.exchangeCoin?.price ?? "") ?? 0)
-                                
-                                purchaseValue = String(coinValue.asCurrencyWith6Decimals())
-                            } else {
-                                purchaseValue = ""
-                            }
-                        }
                         
                     Divider()
                 }
             }
             .frame(height: 90)
+            Spacer()
             Button(action: {
                 print("Go ahead \(Double(coinQuantity) ?? 0)")
+                viewModel.updateHoldingCoins(value: 20, quantity: 20)
             }) {
                 Text(viewModel.exchachangeType == .buying ? "Buy" : "Sell")
                     .font(Font.system(size: 19)).bold()
@@ -69,19 +98,18 @@ struct CoinExchangeView: View {
                     .frame(width: 200, height: 40)
                     .background(Color.theme.blue)
                     .cornerRadius(20)
-                    .padding(.top, 40)
+                    .padding(.bottom, 100)
+//                    .padding(.bottom, keyboardHeight - 300)
             }
-            Spacer()
+//            Spacer()
         }
+       
         .background(Color.theme.background)
-    }
-
-    var customFormatter: NumberFormatter {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .decimal
-        formatter.maximumFractionDigits = 6
-        formatter.maximumIntegerDigits = 10
-        return formatter
+        .onReceive(Publishers.keyboardHeight) { height in
+            withAnimation {
+                self.keyboardHeight = height
+            }
+        }
     }
 }
 
@@ -131,3 +159,21 @@ enum ExchangeType {
     case selling
 }
 
+extension Publishers {
+    static var keyboardHeight: AnyPublisher<CGFloat, Never> {
+        let willShow = NotificationCenter.default.publisher(for: UIResponder.keyboardWillShowNotification)
+            .map { $0.keyboardHeight }
+        
+        let willHide = NotificationCenter.default.publisher(for: UIResponder.keyboardWillHideNotification)
+            .map { _ in CGFloat(0) }
+        
+        return MergeMany(willShow, willHide)
+            .eraseToAnyPublisher()
+    }
+}
+
+extension Notification {
+    var keyboardHeight: CGFloat {
+        (userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect)?.height ?? 0
+    }
+}

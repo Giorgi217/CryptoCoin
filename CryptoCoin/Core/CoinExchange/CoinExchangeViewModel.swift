@@ -8,6 +8,10 @@
 import Foundation
 import UIKit
 
+protocol PostRequest {
+    
+}
+
 class CoinExchangeViewModel: ObservableObject {
     
     @Published var uiImage: UIImage?
@@ -39,6 +43,34 @@ class CoinExchangeViewModel: ObservableObject {
                     fileManager.saveImage(image: image, imageName: imageName, folderName: folderName)
                 }
             }
+        }
+    }
+    
+    func updateHoldingCoins(value: Double, quantity: Double) {
+        let dayCoins = MyCoinSharedClass.shared.mockDay
+        let purchasedCoin = CoinModel(
+            id: exchangeCoin?.id,
+            symbol: exchangeCoin?.symbol,
+            name: exchangeCoin?.name,
+            image: exchangeCoin?.image,
+            currentPrice: 45,
+            priceChange24h: 20,
+            priceChangePercentage24h: 30,
+            date: Date(),
+            purchasedQuantity: quantity,
+            purchasePrice: Double(exchangeCoin?.price ?? "40"),
+            quantity: quantity,
+            isHolding: true,
+            priceChange: "23.00")
+        
+        if let existingindex = dayCoins.firstIndex(where: { $0.id == exchangeCoin?.id }) {
+            
+            
+        } else {
+            print(dayCoins.first?.id ?? "araa")
+            print(purchasedCoin.id ?? "arraa")
+            MyCoinSharedClass.shared.myCoin.day.append(purchasedCoin)
+            MyCoinSharedClass.shared.myCoin.all.append(purchasedCoin)
         }
     }
 }
