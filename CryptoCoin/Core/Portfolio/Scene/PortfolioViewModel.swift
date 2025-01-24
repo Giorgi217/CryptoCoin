@@ -5,14 +5,23 @@
 //  Created by Giorgi Amiranashvili on 23.01.25.
 //
 
+import Foundation
+
 protocol PortfolioViewModelProtocol {
     func fetchMyCoins() async
     var myCoins: MyCoin? { get set }
+    var portfolioValue: Double? { get set }
+    var investmentBalance: Double? { get set }
+    var investedBalance: Double? { get set }
 }
 
 class PortfolioViewModel: PortfolioViewModelProtocol {
     
+    var portfolioValue: Double?
+    var investmentBalance: Double?
+    var investedBalance: Double?
     let useCase: CoinUseCaseProtocol
+    
     
     var myCoins: MyCoin?
     
@@ -31,13 +40,12 @@ class PortfolioViewModel: PortfolioViewModelProtocol {
     }
 }
 
-
 class MyCoinSharedClass {
     static let shared = MyCoinSharedClass()
     
     private init() { }
     
-    let mockDay: [CoinModel] = [
+    var mockDay: [CoinModel] = [
         CoinModel(
             id: "bitcoin",
             symbol: "BTC",
@@ -94,8 +102,7 @@ class MyCoinSharedClass {
             priceChange: "-$5.00"
         ),
     ]
-
-    let mockAll: [CoinModel] = [
+    var mockAll: [CoinModel] = [
         CoinModel(
             id: "bitcoin",
             symbol: "BTC",
@@ -154,9 +161,12 @@ class MyCoinSharedClass {
     ]
     
     lazy var myCoin: MyCoin = MyCoin(day: mockDay, all: mockAll)
+
 }
 
 struct MyCoin {
-    let day: [CoinModel]
-    let all: [CoinModel]
+    var day: [CoinModel]
+    var all: [CoinModel]
 }
+
+

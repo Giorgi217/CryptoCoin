@@ -63,6 +63,17 @@ class CoinDetailsViewModel: ObservableObject {
         
         return CoinStatisticModel(hashingAlgorithm: hashingAlgorithm, high24H: high24H, low24H: low24H, absolutePriceChange: absolutePriceChange, percentPriceChange: percentPriceChange, absoluteMarketPriceChange: absoluteMarketPriceChange, percentMarketPriceChange: percentMarketPriceChange)
     }
+    
+    func createCoinModel() -> Coin {
+          let coinToSend = Coin(
+            id: coinId,
+            image: coin?.image?.large ?? "",
+            name: coin?.name,
+            symbol: coin?.symbol,
+            price: coin?.marketData?.currentPrice?.usd.asNumberString(),
+            priceChangePercentage: coin?.marketData?.priceChangePercentage24H)
+        return coinToSend
+    }
 }
 
 

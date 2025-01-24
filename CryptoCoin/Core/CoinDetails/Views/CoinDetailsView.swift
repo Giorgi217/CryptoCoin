@@ -11,6 +11,9 @@ struct CoinDetailsView: View {
     
     @StateObject var viewModel: CoinDetailsViewModel
     @StateObject var chartViewModel: ChartViewModel
+    @State var transactionButtonTapped = false
+    @State private var isPresentingBuyView = false
+    @State private var isPresentingSellView = false
     
     var body: some View {
         NavigationView {
@@ -23,10 +26,10 @@ struct CoinDetailsView: View {
                             CoinStatisticView(coinStatistics: viewModel.coinStatistics)
                         }
                     }
-                    .frame(width: geometry.size.width - 10 )
+                    .frame(width: geometry.size.width - 10)
                     HStack(spacing: 20) {
                         Button(action: {
-                            print("ყიდვა")
+                            isPresentingBuyView = true
                         }) {
                             Text("Buy")
                                 .font(Font.system(size: 20)).bold()
@@ -36,9 +39,18 @@ struct CoinDetailsView: View {
                                 .background(Color.theme.blue)
                                 .cornerRadius(30)
                         }
+                        .sheet(isPresented: $isPresentingBuyView) {
+                            CoinExchangeView(
+                                viewModel: CoinExchangeViewModel(
+                                    exchangeType: .buying,
+                                    exchangeCoin: viewModel.createCoinModel()
+                                )
+                            )
+                        }
+                        
                         if let isHolding = viewModel.coin?.isHolding, isHolding {
                             Button(action: {
-                                print("გაყიდვა")
+                                isPresentingSellView = true
                             }) {
                                 Text("Sell")
                                     .font(Font.system(size: 20)).bold()
@@ -47,20 +59,27 @@ struct CoinDetailsView: View {
                                     .background(Color.theme.blue.opacity(0.2))
                                     .cornerRadius(30)
                             }
+                            .sheet(isPresented: $isPresentingSellView) {
+                                CoinExchangeView(
+                                    viewModel: CoinExchangeViewModel(
+                                        exchangeType: .selling,
+                                        exchangeCoin: viewModel.createCoinModel()
+                                    )
+                                )
+                            }
                         }
                     }
                     .frame(width: geometry.size.width, height: 50)
                     .background(Color.theme.background)
                 }
-                
                 .frame(width: geometry.size.width, height: geometry.size.height)
                 .background(Color.theme.background)
             }
         }
         .padding([.trailing, .leading], 5)
         .background(Color.theme.background)
-        .toolbar{
-            ToolbarItemGroup(placement: .topBarTrailing){
+        .toolbar {
+            ToolbarItemGroup(placement: .topBarTrailing) {
                 HStack {
                     HStack {
                         AsyncImage(url: URL(string: viewModel.coin?.image?.thumb ?? ""))
@@ -71,19 +90,16 @@ struct CoinDetailsView: View {
                     
                     Button(action: {
                         print("Star button tapped")
-                        
                     }) {
                         Image(systemName: "star")
                             .foregroundStyle(Color.theme.blue)
                     }
-                    
                 }
-                
             }
-            
         }
     }
 }
+
 
 //
 //#Preview {

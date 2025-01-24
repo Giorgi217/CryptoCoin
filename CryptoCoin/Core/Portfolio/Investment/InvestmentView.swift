@@ -14,7 +14,7 @@ class InvestmentView: UIView {
     
     // MARK: Init
     
-    init(viewModel: InvestmentViewModelProtocol = InvestmentViewModel()) {
+    init() {
 //        self.viewModel = viewModel
         super.init(frame: .zero)
         self.setUp()
@@ -94,6 +94,7 @@ class InvestmentView: UIView {
         
         investedTableView.register(AllCoinTableViewCell.self, forCellReuseIdentifier: "AllCoinTableViewCell")
     }
+    
 
     private func setUp() {
 //        viewModel.fetchCoins()
@@ -183,11 +184,13 @@ class InvestmentView: UIView {
             print("All selected")
         }
         investedTableView.reloadData()
+        
     }
     
     public func configure(with model: MyCoin) {
         self.myCoin = model
         investedTableView.reloadData()
+        
     }
     
 }
@@ -200,6 +203,7 @@ extension InvestmentView: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = investedTableView.dequeueReusableCell(withIdentifier: "AllCoinTableViewCell") as? AllCoinTableViewCell,
               let currentCoin = segmentedControl.selectedSegmentIndex == 0 ? myCoin?.day[indexPath.row]: myCoin?.all[indexPath.row]
+                
         else {
             return UITableViewCell()
         }
