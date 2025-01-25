@@ -5,13 +5,21 @@
 //  Created by Giorgi Amiranashvili on 23.01.25.
 //
 
+import Foundation
+
 protocol PortfolioViewModelProtocol {
     func fetchMyCoins() async
     var myCoins: MyCoin? { get set }
+    var portfolioValue: Double? { get set }
+    var investmentBalance: Double? { get set }
+    var investedBalance: Double? { get set }
 }
 
 class PortfolioViewModel: PortfolioViewModelProtocol {
     
+    var portfolioValue: Double?
+    var investmentBalance: Double?
+    var investedBalance: Double?
     let useCase: CoinUseCaseProtocol
     
     var myCoins: MyCoin?
@@ -24,12 +32,19 @@ class PortfolioViewModel: PortfolioViewModelProtocol {
         do {
             let fetchedCoins = try await useCase.fetchMyCoins()
             myCoins = fetchedCoins
+            investedBalance = balance()
+            investmentBalance = 1000.00
         }
         catch {
             print("handle error here")
         }
     }
+    
+    func balance() -> Double {
+        return myCoins?.day.reduce(0) { $0 + ($1.currentPrice ?? 0) } ?? 0.00
+    }
 }
+
 
 
 class MyCoinSharedClass {
@@ -37,13 +52,13 @@ class MyCoinSharedClass {
     
     private init() { }
     
-    let mockDay: [CoinModel] = [
+    var mockDay: [CoinModel] = [
         CoinModel(
             id: "bitcoin",
             symbol: "BTC",
             name: "Bitcoin",
             image: "https://example.com/bitcoin.png",
-            currentPrice: 50000.0,
+            currentPrice: 300.0,
             priceChange24h: -1500.0,
             priceChangePercentage24h: -2.94,
             isHolding: true,
@@ -54,7 +69,7 @@ class MyCoinSharedClass {
             symbol: "ETH",
             name: "Ethereum",
             image: "https://example.com/ethereum.png",
-            currentPrice: 3500.0,
+            currentPrice: 200.0,
             priceChange24h: 100.0,
             priceChangePercentage24h: 2.94,
             isHolding: true,
@@ -76,32 +91,21 @@ class MyCoinSharedClass {
             symbol: "XRP",
             name: "Ripple",
             image: "https://example.com/ripple.png",
-            currentPrice: 1.0,
+            currentPrice: 100.0,
             priceChange24h: 0.05,
             priceChangePercentage24h: 5.0,
             isHolding: true,
             priceChange: "$10.00"
         ),
-        CoinModel(
-            id: "cardano",
-            symbol: "ADA",
-            name: "Cardano",
-            image: "https://example.com/cardano.png",
-            currentPrice: 1.5,
-            priceChange24h: -0.02,
-            priceChangePercentage24h: -1.3,
-            isHolding: true,
-            priceChange: "-$5.00"
-        ),
+ 
     ]
-
-    let mockAll: [CoinModel] = [
+    var mockAll: [CoinModel] = [
         CoinModel(
             id: "bitcoin",
             symbol: "BTC",
             name: "Bitcoin",
             image: "https://example.com/bitcoin.png",
-            currentPrice: 50000.0,
+            currentPrice: 300.0,
             priceChange24h: -1500.0,
             priceChangePercentage24h: -2.94,
             isHolding: true,
@@ -112,7 +116,7 @@ class MyCoinSharedClass {
             symbol: "ETH",
             name: "Ethereum",
             image: "https://example.com/ethereum.png",
-            currentPrice: 3500.0,
+            currentPrice: 200.0,
             priceChange24h: 100.0,
             priceChangePercentage24h: 2.94,
             isHolding: true,
@@ -134,29 +138,22 @@ class MyCoinSharedClass {
             symbol: "XRP",
             name: "Ripple",
             image: "https://example.com/ripple.png",
-            currentPrice: 1.0,
+            currentPrice: 100.0,
             priceChange24h: 0.05,
             priceChangePercentage24h: 5.0,
             isHolding: true,
             priceChange: "$98.00"
         ),
-        CoinModel(
-            id: "cardano",
-            symbol: "ADA",
-            name: "Cardano",
-            image: "https://example.com/cardano.png",
-            currentPrice: 1.5,
-            priceChange24h: -0.02,
-            priceChangePercentage24h: -1.3,
-            isHolding: true,
-            priceChange: "-$90.00"
-        ),
     ]
     
     lazy var myCoin: MyCoin = MyCoin(day: mockDay, all: mockAll)
+    
+
 }
 
 struct MyCoin {
-    let day: [CoinModel]
-    let all: [CoinModel]
+    var day: [CoinModel]
+    var all: [CoinModel]
 }
+
+

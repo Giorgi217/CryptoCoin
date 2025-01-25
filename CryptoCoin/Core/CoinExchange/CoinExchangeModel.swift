@@ -8,9 +8,12 @@
 import UIKit
 
 struct Coin {
-    let image: UIImage?
+    let id: String?
+    let image: String?
     let name: String?
     let symbol: String?
     let price: String?
-    let priceChangePercentage: String?
+    let priceChangePercentage: Double?
 }
+
+

@@ -1,5 +1,5 @@
 //
-//  Coin.swift
+//  CoinModel.swift
 //  CryptoCoin
 //
 //  Created by Giorgi Amiranashvili on 13.01.25.
@@ -22,7 +22,7 @@ struct CoinModel: Decodable, Hashable {
     let date: Date?
     let purchasedQuantity: Double?
     let purchasePrice: Double?
-    let quantity: Double?
+    var quantity: Double?
     var purchasedValue: Double {
         (quantity ?? 0) * (purchasePrice ?? 0)
     }

@@ -8,14 +8,10 @@
 import UIKit
 
 class InvestmentView: UIView {
-
-//    var viewModel: InvestmentViewModelProtocol
     var myCoin: MyCoin?
-    
     // MARK: Init
     
-    init(viewModel: InvestmentViewModelProtocol = InvestmentViewModel()) {
-//        self.viewModel = viewModel
+    init() {
         super.init(frame: .zero)
         self.setUp()
     }
@@ -48,8 +44,8 @@ class InvestmentView: UIView {
         textColor: UIColor.themeKit.secondaryText,
         textAlignment: .center)
     
-    let investmentTotalValueLabel = UILabel.createLabel(
-        text: "20,119.00$",
+    lazy var investmentTotalValueLabel = UILabel.createLabel(
+        text: "0.00",
         font: UIFont.systemFont(ofSize: 15),
         textColor: UIColor.themeKit.text)
 
@@ -94,6 +90,7 @@ class InvestmentView: UIView {
         
         investedTableView.register(AllCoinTableViewCell.self, forCellReuseIdentifier: "AllCoinTableViewCell")
     }
+    
 
     private func setUp() {
 //        viewModel.fetchCoins()
@@ -178,18 +175,20 @@ class InvestmentView: UIView {
     
     @objc func segmentChanged() {
         if segmentedControl.selectedSegmentIndex == 0 {
-            print("Day selected")
+            print("Day selected")            
         } else {
             print("All selected")
         }
         investedTableView.reloadData()
+        
     }
     
-    public func configure(with model: MyCoin) {
+    public func configure(with model: MyCoin, investmentBalance: Double) {
         self.myCoin = model
-        investedTableView.reloadData()
+        investmentTotalValueLabel.text = investmentBalance.asCurrencyWith6Decimals()
+        investmentTotalValueLabel.reloadInputViews()
+            investedTableView.reloadData()
     }
-    
 }
 
 extension InvestmentView: UITableViewDataSource, UITableViewDelegate {
@@ -200,6 +199,7 @@ extension InvestmentView: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = investedTableView.dequeueReusableCell(withIdentifier: "AllCoinTableViewCell") as? AllCoinTableViewCell,
               let currentCoin = segmentedControl.selectedSegmentIndex == 0 ? myCoin?.day[indexPath.row]: myCoin?.all[indexPath.row]
+                
         else {
             return UITableViewCell()
         }

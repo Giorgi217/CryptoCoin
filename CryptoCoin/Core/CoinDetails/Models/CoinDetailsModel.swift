@@ -60,7 +60,7 @@ struct CoinDetailsModel: Decodable, Observable {
 
     // MARK: - MarketData
     struct MarketData: Decodable {
-        let currentPrice: [String: Double]?
+        let currentPrice: CurrentPrice?
         let marketCap: MarketCap?
         let high24H: High24H?
         let low24H: Low24H?
@@ -103,6 +103,9 @@ struct CoinDetailsModel: Decodable, Observable {
             let usd: Double
         }
         struct MarketCapChangePercentage24HInCurrency: Decodable {
+            let usd: Double
+        }
+        struct CurrentPrice: Decodable {
             let usd: Double
         }
     }

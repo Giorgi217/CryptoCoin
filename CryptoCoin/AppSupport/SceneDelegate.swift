@@ -19,7 +19,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 //        let viewController = UIHostingController(rootView:     CoinExchangeView(viewModel: CoinExchangeViewModel(coin: CoinModel(id: "Id", symbol: "BTC", name: "Bitcoin", image: "https://assets.coingecko.com/coins/images/1/large/bitcoin.png", currentPrice: 2000233401, priceChange24h: 13443232.87, priceChangePercentage24h: -12.33, priceChange: nil), exchangeType: .selling)))
 //        let navigator = AccountTransacionView(transactionType: .withdraw)
         let navigator = PortfolioViewController()
-        let navigationController = UINavigationController(rootViewController: PortfolioViewController())
+        let navigationController = UINavigationController(rootViewController: navigator)
         window?.rootViewController = navigationController
         window?.makeKeyAndVisible()
     }
