@@ -7,6 +7,7 @@
 
 import UIKit
 import FirebaseAuth
+import FirebaseFirestore
 
 class AuthViewModel {
     
@@ -15,6 +16,9 @@ class AuthViewModel {
             let authResult = try await Auth.auth().signIn(withEmail: email, password: password )
            let user = authResult.user
             print("User is \(user)")
+            UserSession.shared.userID = user.uid
+            
+            
         }
         catch let error as NSError {
                print("Error: \(error.localizedDescription)")
@@ -102,3 +106,25 @@ extension String {
         return self.count >= 8 
     }
 }
+
+
+
+class UserSession {
+    static let shared = UserSession()
+    
+    private init() {}
+    
+    var userID: String?
+    var dayCoins: [CoinModel]?
+    var allCoins: [CoinModel]?
+    var portfolioValue: Double?
+    var investmentBalance: Double?
+    var investedBalance: Double?
+}
+
+
+
+
+
+
+

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C71B23032D47CD850085300B /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = C71B23022D47CD850085300B /* FirebaseFirestore */; };
 		C7E8E4592D47753D00791C86 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = C7E8E4582D47753D00791C86 /* FirebaseAuth */; };
 /* End PBXBuildFile section */
 
@@ -41,6 +42,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C7E8E4592D47753D00791C86 /* FirebaseAuth in Frameworks */,
+				C71B23032D47CD850085300B /* FirebaseFirestore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -84,6 +86,7 @@
 			name = CryptoCoin;
 			packageProductDependencies = (
 				C7E8E4582D47753D00791C86 /* FirebaseAuth */,
+				C71B23022D47CD850085300B /* FirebaseFirestore */,
 			);
 			productName = CryptoCoin;
 			productReference = C7E8DD6D2D3553FB003FB922 /* CryptoCoin.app */;
@@ -353,6 +356,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		C71B23022D47CD850085300B /* FirebaseFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C7E8E4572D47753D00791C86 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
+		};
 		C7E8E4582D47753D00791C86 /* FirebaseAuth */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = C7E8E4572D47753D00791C86 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
