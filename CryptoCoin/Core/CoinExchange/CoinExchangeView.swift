@@ -37,12 +37,15 @@ struct CoinExchangeView: View {
                         
                         if !isUpdatingQuantity {
                             isUpdatingValue = false
+                            purchaseValue = filteredValue
+                            
                             if let formatedValue = Double(filteredValue) {
                                 let purchasedValue = formatedValue / (Double(viewModel.exchangeCoin?.price ?? "") ?? 0)
-                                coinQuantity = String(purchasedValue.asCurrencyWith6Decimals())
+                                coinQuantity = String(format: "%.8f", purchasedValue)
                             } else {
                                 coinQuantity = ""
                             }
+                            isUpdatingValue = false
                         }
                     }))
                         .padding(5)
@@ -67,14 +70,15 @@ struct CoinExchangeView: View {
                             
                             if !isUpdatingValue {
                                 isUpdatingQuantity = true
-                                
+                                coinQuantity = filteredQuantity
                                 if let quantityValue = Double(filteredQuantity) {
                                     let coinValue = quantityValue * (Double(viewModel.exchangeCoin?.price ?? "") ?? 0)
-                                    purchaseValue = String(coinValue.asCurrencyWith6Decimals())
+                                    purchaseValue = String(format: "%.2f", coinValue)
                                 }
                                 else {
                                     purchaseValue = ""
                                 }
+                                isUpdatingQuantity = false
                             }
                         }
                     ))
@@ -91,6 +95,7 @@ struct CoinExchangeView: View {
             Button(action: {
                 print("Go ahead \(Double(coinQuantity) ?? 0)")
                 viewModel.updateHoldingCoins(value: 20, quantity: 20)
+                viewModel.updateInvestment(investedValue: Double(purchaseValue) ?? 0)
             }) {
                 Text(viewModel.exchachangeType == .buying ? "Buy" : "Sell")
                     .font(Font.system(size: 19)).bold()

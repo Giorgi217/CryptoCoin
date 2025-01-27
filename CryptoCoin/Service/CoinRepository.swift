@@ -17,7 +17,7 @@ protocol CoinRepositoryProtocol {
 
 struct CoinRepository: CoinRepositoryProtocol {
     func fetchMyCoins() async throws -> MyCoin {
-        return MyCoinSharedClass.shared.myCoin
+        MyCoinSharedClass.shared.myCoin
     }
     
     let networkManager = NetworkManager()

@@ -44,7 +44,7 @@ class PortfolioViewController: UIViewController {
         textColor: UIColor.themeKit.text)
     
     let portfolioValue = UILabel.createLabel(
-        text: "100.34 $",
+        text: "",
         font: UIFont.boldSystemFont(ofSize: 25),
         textColor: UIColor.themeKit.text)
     
@@ -82,12 +82,18 @@ class PortfolioViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
+        NotificationCenter.default.addObserver(self, selector: #selector(handleMockDayChange), name: .holdingCoinsNotification, object: nil)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(handlePortfolioChanhe), name: .portfolioNotification, object: nil)
+        
+        
         
         Task {
             await viewModel.fetchMyCoins()
-            investmentView.configure(with: viewModel.myCoins!, investmentBalance: viewModel.investedBalance ?? 0)
-            investmentBalanceView.configure(with: viewModel.investmentBalance?.asCurrencyWith6Decimals() ?? "")
-            
+            await viewModel.fetchPortfolio()
+            portfolioValue.text = viewModel.portfolio?.portfolioValue.asCurrencyWith6Decimals()
+            investmentView.configure(with: viewModel.myCoins!, investedBalance: viewModel.portfolio?.investedBalance ?? 0.00)
+            investmentBalanceView.configure(with: viewModel.portfolio?.investmentBalance.asCurrencyWith6Decimals() ?? "0.00")
         }
         
         view.backgroundColor = UIColor.themeKit.background
@@ -95,6 +101,31 @@ class PortfolioViewController: UIViewController {
         buttonsView.delegate = self
         trendingCollection.viewController = self
         recommendedCollection.viewController = self
+    }
+    
+    private func updateInvestmentUI() {
+        Task {
+            await viewModel.fetchMyCoins()
+            investmentView.configure(with: viewModel.myCoins!, investedBalance: viewModel.portfolio?.investedBalance ?? 0.00)
+        }
+    }
+    
+    private func updatePortfolioUI() {
+        Task {
+            await viewModel.fetchPortfolio()
+            portfolioValue.text = viewModel.portfolio?.portfolioValue.asCurrencyWith6Decimals()
+            investmentBalanceView.configure(with: viewModel.portfolio?.investmentBalance.asCurrencyWith6Decimals() ?? "0.00")
+//            investmentBalanceView.balanceValueLabel.text = viewModel.portfolio?.portfolioValue.asCurrencyWith6Decimals()
+        }
+    }
+    
+    @objc private func handleMockDayChange() {
+        print("mockDay has been updated! Updating the UI.")
+        updateInvestmentUI()
+    }
+    @objc private func handlePortfolioChanhe() {
+        print("portfolio changed! Updating the UI")
+        updatePortfolioUI()
     }
     
     func setupUI() {

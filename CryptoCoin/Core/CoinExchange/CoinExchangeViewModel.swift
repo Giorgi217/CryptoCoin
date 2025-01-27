@@ -47,30 +47,45 @@ class CoinExchangeViewModel: ObservableObject {
     }
     
     func updateHoldingCoins(value: Double, quantity: Double) {
-        let dayCoins = MyCoinSharedClass.shared.mockDay
+       
+        let myCoinsShared = MyCoinSharedClass.shared
+        let dayCoins = myCoinsShared.myCoin.day
+        let allCoins = myCoinsShared.myCoin.all
+        
         let purchasedCoin = CoinModel(
             id: exchangeCoin?.id,
             symbol: exchangeCoin?.symbol,
             name: exchangeCoin?.name,
             image: exchangeCoin?.image,
-            currentPrice: 45,
-            priceChange24h: 20,
-            priceChangePercentage24h: 30,
+            currentPrice: value,
+            priceChange24h: 100,
+            priceChangePercentage24h: 0.00,
             date: Date(),
             purchasedQuantity: quantity,
             purchasePrice: Double(exchangeCoin?.price ?? "40"),
             quantity: quantity,
             isHolding: true,
-            priceChange: "23.00")
+            priceChange: "0.01")
         
-        if let existingindex = dayCoins.firstIndex(where: { $0.id == exchangeCoin?.id }) {
-            
-            print("someon \(existingindex)")
+        if let existingIndexInDay = dayCoins.firstIndex(where: { $0.id == exchangeCoin?.id }) {
+            print("Found in dayCoins at index: \(existingIndexInDay)")
+      
+        } else if let existingIndexInAll = allCoins.firstIndex(where: { $0.id == exchangeCoin?.id }) {
+            print("Found in allCoins at index: \(existingIndexInAll)")
+       
         } else {
-            print(dayCoins.first?.id ?? "araa")
-            print(purchasedCoin.id ?? "arraa")
-            MyCoinSharedClass.shared.myCoin.day.append(purchasedCoin)
-            MyCoinSharedClass.shared.myCoin.all.append(purchasedCoin)
+            
+            myCoinsShared.updateMyCoins(mockDay: purchasedCoin, mockAll: purchasedCoin)
         }
+    }
+    
+    
+    
+    func updateInvestment(investedValue: Double) {
+//        updatePortfolio
+        let myPortfolio = PortfolioSharedClass.shared
+        
+        myPortfolio.updatePortfolio(investedValue: investedValue)
+        
     }
 }

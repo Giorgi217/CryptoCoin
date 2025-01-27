@@ -9,6 +9,7 @@ import UIKit
 
 class InvestmentView: UIView {
     var myCoin: MyCoin?
+    
     // MARK: Init
     
     init() {
@@ -183,10 +184,10 @@ class InvestmentView: UIView {
         
     }
     
-    public func configure(with model: MyCoin, investmentBalance: Double) {
+    public func configure(with model: MyCoin, investedBalance: Double) {
         self.myCoin = model
-        investmentTotalValueLabel.text = investmentBalance.asCurrencyWith6Decimals()
-        investmentTotalValueLabel.reloadInputViews()
+        investmentTotalValueLabel.text = investedBalance.asCurrencyWith6Decimals()
+//        investmentTotalValueLabel.reloadInputViews()
             investedTableView.reloadData()
     }
 }
