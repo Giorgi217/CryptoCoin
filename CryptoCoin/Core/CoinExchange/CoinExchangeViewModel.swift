@@ -8,43 +8,33 @@
 import Foundation
 import UIKit
 
+protocol PostRequest {
+    
+}
+
 class CoinExchangeViewModel: ObservableObject {
     
     @Published var uiImage: UIImage?
-    @Published var coin: CoinModel
     @Published var exchangeCoin: Coin?
-    let exchangeType: ExchangeType
+    let exchachangeType: ExchangeType
     
     private let fileManager = LocalFileManager.instance
     private let folderName = "CoinImages"
     
-    init(coin: CoinModel, exchangeType: ExchangeType) {
-        self.coin = coin
-        self.exchangeType = exchangeType
+    init(exchangeType: ExchangeType, exchangeCoin: Coin) {
+        self.exchangeCoin = exchangeCoin
+        self.exchachangeType = exchangeType
         loadImage()
-        createExchangeCoinModel(from: coin)
     }
-    
-    
-    func createExchangeCoinModel(from coin: CoinModel)  {
-         let changedModel = Coin(
-            image: uiImage,
-            name: coin.name,
-            symbol: coin.symbol,
-            price: coin.currentPrice?.asCurrencyWith6Decimals(),
-            priceChangePercentage: coin.priceChangePercentage24h?.asPercentString())
-        exchangeCoin = changedModel
-    }
-    
     
     private func loadImage() {
-        guard let imageName = coin.id, !imageName.isEmpty else { return }
+        guard let imageName = exchangeCoin?.id, !imageName.isEmpty else { return }
        
         if let cachedImage = fileManager.getImage(imageName: imageName, folderName: folderName) {
             self.uiImage = cachedImage
             print("saved Image Used")
         } else {
-            guard let url = URL(string: coin.image ?? "N/A") else { return }
+            guard let url = URL(string: exchangeCoin?.image ?? "N/A") else { return }
             Task {
                 if let data = try? Data(contentsOf: url), let image = UIImage(data: data) {
                     DispatchQueue.main.async {
@@ -54,5 +44,48 @@ class CoinExchangeViewModel: ObservableObject {
                 }
             }
         }
+    }
+    
+    func updateHoldingCoins(value: Double, quantity: Double) {
+       
+        let myCoinsShared = MyCoinSharedClass.shared
+        let dayCoins = myCoinsShared.myCoin.day
+        let allCoins = myCoinsShared.myCoin.all
+        
+        let purchasedCoin = CoinModel(
+            id: exchangeCoin?.id,
+            symbol: exchangeCoin?.symbol,
+            name: exchangeCoin?.name,
+            image: exchangeCoin?.image,
+            currentPrice: value,
+            priceChange24h: 100,
+            priceChangePercentage24h: 0.00,
+            date: Date(),
+            purchasedQuantity: quantity,
+            purchasePrice: Double(exchangeCoin?.price ?? "40"),
+            quantity: quantity,
+            isHolding: true,
+            priceChange: "0.01")
+        
+        if let existingIndexInDay = dayCoins.firstIndex(where: { $0.id == exchangeCoin?.id }) {
+            print("Found in dayCoins at index: \(existingIndexInDay)")
+      
+        } else if let existingIndexInAll = allCoins.firstIndex(where: { $0.id == exchangeCoin?.id }) {
+            print("Found in allCoins at index: \(existingIndexInAll)")
+       
+        } else {
+            
+            myCoinsShared.updateMyCoins(mockDay: purchasedCoin, mockAll: purchasedCoin)
+        }
+    }
+    
+    
+    
+    func updateInvestment(investedValue: Double) {
+//        updatePortfolio
+        let myPortfolio = PortfolioSharedClass.shared
+        
+        myPortfolio.updatePortfolio(investedValue: investedValue)
+        
     }
 }

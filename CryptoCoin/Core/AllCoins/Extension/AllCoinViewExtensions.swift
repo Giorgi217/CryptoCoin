@@ -40,10 +40,6 @@ extension AllCoinsView: UITableViewDataSource, UITableViewDelegate {
             }
             
             let currentCoin = viewModel.coins.allCoins[indexPath.row]
-            
-            let mockData: CoinModel 
-
-            
             cell.configure(with: currentCoin)
             print("coin at \(indexPath.row)")
             return cell
