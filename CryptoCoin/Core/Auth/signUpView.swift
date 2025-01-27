@@ -17,7 +17,7 @@ class signUpView: UIViewController {
     private let signUpLabel = UILabel.createLabel(text: "Sign Up", font: UIFont.boldSystemFont(ofSize: 25), textColor: UIColor.themeKit.text)
     private let emailLabel = UILabel.createLabel(text: "Email", font: UIFont.systemFont(ofSize: 15), textColor: UIColor.themeKit.text)
     private let passwordLabel = UILabel.createLabel(text: "Password", font: UIFont.systemFont(ofSize: 15), textColor: UIColor.themeKit.text)
-    private let confirmPassword = UILabel.createLabel(text: "Confirm Password", font: UIFont.systemFont(ofSize: 15), textColor: UIColor.themeKit.text)
+    private let confirmPasswordLabel = UILabel.createLabel(text: "Confirm Password", font: UIFont.systemFont(ofSize: 15), textColor: UIColor.themeKit.text)
     
     private let SignUpButton: UIButton = {
         let button = UIButton()
@@ -41,25 +41,25 @@ class signUpView: UIViewController {
     private func setupTextFields() {
         emailTextField.placeholder = "Your Email"
         emailTextField.isSecure = false
-        emailTextField.frame = CGRect(x: 40, y: 210, width: 300, height: 44)
-        view.addSubview(emailTextField)
+        emailTextField.translatesAutoresizingMaskIntoConstraints = false
         
         passwordTextField.placeholder = "Password"
         passwordTextField.isSecure = true
-        passwordTextField.frame = CGRect(x: 40, y: 304, width: 300, height: 44)
-        view.addSubview(passwordTextField)
+        passwordTextField.translatesAutoresizingMaskIntoConstraints = false
         
         confirmPasswordTextField.placeholder = "Confirm Password"
         confirmPasswordTextField.isSecure = true
-        confirmPasswordTextField.frame = CGRect(x: 40, y: 398, width: 300, height: 44)
-        view.addSubview(confirmPasswordTextField)
+        confirmPasswordTextField.translatesAutoresizingMaskIntoConstraints = false
     }
     
     func setupLabel() {
         view.addSubview(signUpLabel)
         view.addSubview(emailLabel)
+        view.addSubview(emailTextField)
         view.addSubview(passwordLabel)
-        view.addSubview(confirmPassword)
+        view.addSubview(passwordTextField)
+        view.addSubview(confirmPasswordLabel)
+        view.addSubview(confirmPasswordTextField)
         view.addSubview(SignUpButton)
         
         NSLayoutConstraint.activate([
@@ -67,13 +67,28 @@ class signUpView: UIViewController {
             signUpLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             
             emailLabel.topAnchor.constraint(equalTo: signUpLabel.topAnchor, constant: 85),
-            emailLabel.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 35),
+            emailLabel.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 40),
             
-            passwordLabel.topAnchor.constraint(equalTo: emailTextField.bottomAnchor, constant: 25),
+            emailTextField.topAnchor.constraint(equalTo: emailLabel.bottomAnchor, constant: 5),
+            emailTextField.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 40),
+            emailTextField.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -40),
+            emailTextField.heightAnchor.constraint(equalToConstant: 44),
+            
+            passwordLabel.topAnchor.constraint(equalTo: emailTextField.bottomAnchor, constant: 35),
             passwordLabel.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 35),
             
-            confirmPassword.topAnchor.constraint(equalTo: passwordTextField.bottomAnchor, constant: 25),
-            confirmPassword.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 35),
+            passwordTextField.topAnchor.constraint(equalTo: passwordLabel.bottomAnchor, constant: 5),
+            passwordTextField.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 40),
+            passwordTextField.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -40),
+            passwordTextField.heightAnchor.constraint(equalToConstant: 44),
+            
+            confirmPasswordLabel.topAnchor.constraint(equalTo: passwordTextField.bottomAnchor, constant: 35),
+            confirmPasswordLabel.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 35),
+            
+            confirmPasswordTextField.topAnchor.constraint(equalTo: confirmPasswordLabel.bottomAnchor, constant: 5),
+            confirmPasswordTextField.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 40),
+            confirmPasswordTextField.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -40),
+            confirmPasswordTextField.heightAnchor.constraint(equalToConstant: 44),
             
             SignUpButton.topAnchor.constraint(equalTo: confirmPasswordTextField.bottomAnchor, constant: 50),
             SignUpButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),

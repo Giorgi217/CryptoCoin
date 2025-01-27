@@ -52,7 +52,7 @@ class LogInView: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = UIColor.themeKit.background
         setupTextFields()
-        setupLabel()
+        configureUI()
         setupButtons()
         self.navigationController?.setNavigationBarHidden(true, animated: false)
     }
@@ -60,29 +60,39 @@ class LogInView: UIViewController {
     private func setupTextFields() {
         emailTextField.placeholder = "Your Email"
         emailTextField.isSecure = false
-        emailTextField.frame = CGRect(x: 40, y: 210, width: 300, height: 44)
-        view.addSubview(emailTextField)
+        emailTextField.translatesAutoresizingMaskIntoConstraints = false
         
         passwordTextField.placeholder = "Password"
         passwordTextField.isSecure = true
-        passwordTextField.frame = CGRect(x: 40, y: 304, width: 300, height: 44)
-        view.addSubview(passwordTextField)
+        passwordTextField.translatesAutoresizingMaskIntoConstraints = false
     }
     
-    private func setupLabel() {
+    private func configureUI() {
         view.addSubview(signUpLabel)
         view.addSubview(emailLabel)
+        view.addSubview(emailTextField)
         view.addSubview(passwordLabel)
+        view.addSubview(passwordTextField)
 
         NSLayoutConstraint.activate([
             signUpLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 100),
             signUpLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             
             emailLabel.topAnchor.constraint(equalTo: signUpLabel.topAnchor, constant: 85),
-            emailLabel.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 35),
+            emailLabel.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 40),
             
-            passwordLabel.topAnchor.constraint(equalTo: emailTextField.bottomAnchor, constant: 25),
-            passwordLabel.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 35),
+            emailTextField.topAnchor.constraint(equalTo: emailLabel.bottomAnchor, constant: 5),
+            emailTextField.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 40),
+            emailTextField.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -40),
+            emailTextField.heightAnchor.constraint(equalToConstant: 44),
+            
+            passwordLabel.topAnchor.constraint(equalTo: emailTextField.bottomAnchor, constant: 35),
+            passwordLabel.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 40),
+            
+            passwordTextField.topAnchor.constraint(equalTo: passwordLabel.bottomAnchor, constant: 5),
+            passwordTextField.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 40),
+            passwordTextField.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -40),
+            passwordTextField.heightAnchor.constraint(equalToConstant: 44),
         ])
     }
     
@@ -90,13 +100,11 @@ class LogInView: UIViewController {
         view.addSubview(SignUpButton)
         view.addSubview(resetPasswod)
         view.addSubview(SignInButton)
-       
-        
+    
         SignUpButton.addTarget(self, action: #selector(signUpTapped), for: .touchUpInside)
         SignInButton.addTarget(self, action: #selector(signInTapped), for: .touchUpInside)
         resetPasswod.addTarget(self, action: #selector(resetPasswordTapped), for: .touchUpInside)
 
-        
         NSLayoutConstraint.activate([
             SignUpButton.topAnchor.constraint(equalTo: passwordTextField.bottomAnchor, constant: 10),
             SignUpButton.trailingAnchor.constraint(equalTo: passwordTextField.trailingAnchor),
@@ -104,7 +112,7 @@ class LogInView: UIViewController {
             resetPasswod.topAnchor.constraint(equalTo: passwordTextField.bottomAnchor, constant: 10),
             resetPasswod.leadingAnchor.constraint(equalTo: passwordTextField.leadingAnchor),
             
-            SignInButton.topAnchor.constraint(equalTo: passwordTextField.bottomAnchor, constant: 85),
+            SignInButton.topAnchor.constraint(equalTo: passwordTextField.bottomAnchor, constant: 120),
             SignInButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             SignInButton.heightAnchor.constraint(equalToConstant: 40),
             SignInButton.widthAnchor.constraint(equalToConstant: 150)
