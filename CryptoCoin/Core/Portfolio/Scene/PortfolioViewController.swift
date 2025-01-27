@@ -86,7 +86,7 @@ class PortfolioViewController: UIViewController {
         
         NotificationCenter.default.addObserver(self, selector: #selector(handlePortfolioChanhe), name: .portfolioNotification, object: nil)
         
-        
+        self.navigationController?.setNavigationBarHidden(true, animated: false)
         
         Task {
             await viewModel.fetchMyCoins()
