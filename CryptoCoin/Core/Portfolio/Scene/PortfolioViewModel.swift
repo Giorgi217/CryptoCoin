@@ -209,3 +209,4 @@ struct MyCoin {
     var day: [CoinModel]
     var all: [CoinModel]
 }
+

@@ -18,7 +18,7 @@ struct CoinModel: Decodable, Hashable {
     
     var isHolding: Bool?
     var priceChange: String?
-    
+    var isFavorite: Bool?
     let date: Date?
     let purchasedQuantity: Double?
     let purchasePrice: Double?
@@ -52,4 +52,22 @@ struct CoinModel: Decodable, Hashable {
     
 }
 
-
+extension CoinModel {
+    func toDictionary() -> [String: Any] {
+        return [
+            "id": id ?? "",
+            "symbol": symbol ?? "",
+            "name": name ?? "",
+            "image": image ?? "",
+            "currentPrice": currentPrice ?? 0,
+            "priceChange24h": priceChange24h ?? 0,
+            "priceChangePercentage24h": priceChangePercentage24h ?? 0,
+            "date": date?.timeIntervalSince1970 ?? 0,
+            "purchasedQuantity": purchasedQuantity ?? 0,
+            "purchasePrice": purchasePrice ?? 0,
+            "quantity": quantity ?? 0,
+            "isHolding": isHolding ?? false,
+            "priceChange": priceChange ?? ""
+        ]
+    }
+}
