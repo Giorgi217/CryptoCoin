@@ -76,6 +76,7 @@ struct CoinDetailsView: View {
                 .background(Color.theme.background)
             }
         }
+        .navigationBarHidden(false)
         .padding([.trailing, .leading], 5)
         .background(Color.theme.background)
         .toolbar {

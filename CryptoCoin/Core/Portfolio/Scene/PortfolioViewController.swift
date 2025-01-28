@@ -12,7 +12,7 @@ import FirebaseFirestore
 
 class PortfolioViewController: UIViewController {
     var viewModel: PortfolioViewModelProtocol
-    let firebase = FirestoreService()
+    let useId = UserSessionManager.shared.userId
     
     let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
@@ -46,7 +46,7 @@ class PortfolioViewController: UIViewController {
         textColor: UIColor.themeKit.text)
     
     let portfolioValue = UILabel.createLabel(
-        text: "",
+        text: "0000",
         font: UIFont.boldSystemFont(ofSize: 25),
         textColor: UIColor.themeKit.text)
     
@@ -85,54 +85,29 @@ class PortfolioViewController: UIViewController {
         super.viewDidLoad()
         setupUI()
         
-        
-        NotificationCenter.default.addObserver(self, selector: #selector(handleMockDayChange), name: .holdingCoinsNotification, object: nil)
-        
-        NotificationCenter.default.addObserver(self, selector: #selector(handlePortfolioChanhe), name: .portfolioNotification, object: nil)
-        
-       self.navigationController?.setNavigationBarHidden(false, animated: false)
-        
-        Task {
-            await viewModel.fetchMyCoins()
-            await viewModel.fetchPortfolio()
-            portfolioValue.text = viewModel.portfolio?.portfolioValue.asCurrencyWith6Decimals()
-            investmentView.configure(with: viewModel.myCoins!, investedBalance: viewModel.portfolio?.investedBalance ?? 0.00)
-            investmentBalanceView.configure(with: viewModel.portfolio?.investmentBalance.asCurrencyWith6Decimals() ?? "0.00")
-        }
-        
         view.backgroundColor = UIColor.themeKit.background
         
         buttonsView.delegate = self
         trendingCollection.viewController = self
         recommendedCollection.viewController = self
-    }
-    
-    private func updateInvestmentUI() {
+        self.navigationController?.setNavigationBarHidden(false, animated: false)
+        
         Task {
-            await viewModel.fetchMyCoins()
-            investmentView.configure(with: viewModel.myCoins!, investedBalance: viewModel.portfolio?.investedBalance ?? 0.00)
+          let porfolio = try await viewModel.fetchMyPortfolio(userId: useId ?? "")
+            
+            guard let dayCoins = porfolio.dayCoins,
+                  let allCoins = porfolio.allCoins,
+                  let investedBalance = porfolio.investedBalance else {
+                return
+            }
+            investmentView.dayCoins = dayCoins
+            investmentView.allCoins = allCoins
+            investmentView.configure(dayCoins: dayCoins, allCoins: allCoins, investedBalance: investedBalance)
+            portfolioValue.text = viewModel.myPorfolio?.portfolioValue?.asCurrencyWith2Decimals()
+            investmentBalanceView.balanceValueLabel.text = viewModel.myPorfolio?.investmentBalance?.asCurrencyWith2Decimals()
         }
     }
-    
-    private func updatePortfolioUI() {
-        Task {
-            await viewModel.fetchPortfolio()
-            portfolioValue.text = viewModel.portfolio?.portfolioValue.asCurrencyWith6Decimals()
-            investmentBalanceView.configure(with: viewModel.portfolio?.investmentBalance.asCurrencyWith6Decimals() ?? "0.00")
-//            investmentBalanceView.balanceValueLabel.text = viewModel.portfolio?.portfolioValue.asCurrencyWith6Decimals()
-        }
-    }
-    
-    @objc private func handleMockDayChange() {
-        print("mockDay has been updated! Updating the UI.")
-        updateInvestmentUI()
-    }
-    @objc private func handlePortfolioChanhe() {
-        print("portfolio changed! Updating the UI")
-        updatePortfolioUI()
-    }
-         
-    
+
     func setupUI() {
         view.addSubview(scrollView)
         scrollView.addSubview(contentView)
@@ -226,6 +201,7 @@ class PortfolioViewController: UIViewController {
             action: #selector(searchButtonTapped))
         navigationItem.rightBarButtonItem = barButton
         title = "Wallet"
+        navigationItem.hidesBackButton = true
     }
     
     @objc func searchButtonTapped() {

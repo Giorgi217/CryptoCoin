@@ -91,13 +91,10 @@ class AccountTransacionView: UIViewController {
         UIView.animate(withDuration: animationDuration) {
             self.actionButton.transform = CGAffineTransform(translationX: 0, y: -keyboardHeight + 40)
         }
-        
-        
-
     }
     
     private func setupUI() {
-       
+        self.navigationController?.setNavigationBarHidden(false, animated: false)
         // MARK: sd
         transactionLabel.text = transactionType == .deposit ? "Deposit" : "WithDraw"
         transactionLabel.font = UIFont.boldSystemFont(ofSize: 25)

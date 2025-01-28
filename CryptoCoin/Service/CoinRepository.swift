@@ -12,14 +12,9 @@ protocol CoinRepositoryProtocol {
     func fetchRecommendedCoins(page: Int, perPage: Int) async throws -> [CoinModel]
     func fetchCoinDetails(Id: String) async throws -> CoinDetailsModel
     func fetchCoinChartStatistic(symbol: String, fromTimestamp: Int, toTimeStamp: Int) async throws -> ChartPricesModel
-    func fetchMyCoins() async throws -> MyCoin
 }
 
 struct CoinRepository: CoinRepositoryProtocol {
-    func fetchMyCoins() async throws -> MyCoin {
-        MyCoinSharedClass.shared.myCoin
-    }
-    
     let networkManager = NetworkManager()
     
     let baseURL = "https://api.coingecko.com/api/v3/coins/"

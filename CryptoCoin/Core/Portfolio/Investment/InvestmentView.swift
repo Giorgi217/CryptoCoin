@@ -8,7 +8,8 @@
 import UIKit
 
 class InvestmentView: UIView {
-    var myCoin: MyCoin?
+    var dayCoins: [CoinModel]?
+    var allCoins: [CoinModel]?
     
     // MARK: Init
     
@@ -184,8 +185,8 @@ class InvestmentView: UIView {
         
     }
     
-    public func configure(with model: MyCoin, investedBalance: Double) {
-        self.myCoin = model
+    public func configure(dayCoins: [CoinModel], allCoins: [CoinModel], investedBalance: Double) {
+        
         investmentTotalValueLabel.text = investedBalance.asCurrencyWith6Decimals()
 //        investmentTotalValueLabel.reloadInputViews()
             investedTableView.reloadData()
@@ -194,12 +195,13 @@ class InvestmentView: UIView {
 
 extension InvestmentView: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        segmentedControl.selectedSegmentIndex == 0 ? myCoin?.day.count ?? 0 : myCoin?.all.count ?? 0
+        segmentedControl.selectedSegmentIndex == 0 ? dayCoins?.count ?? 0 : allCoins?.count ?? 0
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = investedTableView.dequeueReusableCell(withIdentifier: "AllCoinTableViewCell") as? AllCoinTableViewCell,
-              let currentCoin = segmentedControl.selectedSegmentIndex == 0 ? myCoin?.day[indexPath.row]: myCoin?.all[indexPath.row]
+              
+              let currentCoin = segmentedControl.selectedSegmentIndex == 0 ? dayCoins?[indexPath.row]: allCoins?[indexPath.row]
                 
         else {
             return UITableViewCell()

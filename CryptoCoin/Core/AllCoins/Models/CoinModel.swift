@@ -24,9 +24,7 @@ struct CoinModel: Codable, Hashable {
     let purchasePrice: Double?
     var quantity: Double?
     var timeStamp: Int?
-    var purchasedValue: Double {
-        (quantity ?? 0) * (purchasePrice ?? 0)
-    }
+    var purchasedValue: Double?
 
     enum CodingKeys: String, CodingKey {
         case id, symbol, name, image, date, purchasedQuantity, purchasePrice, quantity, timeStamp

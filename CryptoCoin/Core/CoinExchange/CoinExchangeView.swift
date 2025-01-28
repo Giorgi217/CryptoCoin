@@ -19,7 +19,6 @@ struct CoinExchangeView: View {
     
     @FocusState private var focus: Bool
 
-    
     var body: some View {
         VStack {
             CoinView(viewModel: viewModel)
@@ -94,8 +93,7 @@ struct CoinExchangeView: View {
             Spacer()
             Button(action: {
                 print("Go ahead \(Double(coinQuantity) ?? 0)")
-                viewModel.updateHoldingCoins(value: 20, quantity: 20)
-                viewModel.updateInvestment(investedValue: Double(purchaseValue) ?? 0)
+                viewModel.updateHoldingCoins(value: Double(purchaseValue) ?? 0, quantity: Double(coinQuantity) ?? 0)
             }) {
                 Text(viewModel.exchachangeType == .buying ? "Buy" : "Sell")
                     .font(Font.system(size: 19)).bold()

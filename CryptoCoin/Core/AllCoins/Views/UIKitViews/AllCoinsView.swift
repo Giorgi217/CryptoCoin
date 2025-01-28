@@ -44,7 +44,7 @@ class AllCoinsView: UIViewController {
         coinsTableView.register(AllCoinTableViewCell.self, forCellReuseIdentifier: "AllCoinTableViewCell")
         coinsTableView.register(HoldingCoinsTableViewCell.self, forCellReuseIdentifier: "HoldingCoinsTableViewCell")
         coinsTableView.backgroundColor = .backgroundcolor
-        
+        self.navigationController?.setNavigationBarHidden(false, animated: false)
         NSLayoutConstraint.activate([
             coinsTableView.leftAnchor.constraint(equalTo: view.leftAnchor),
             coinsTableView.rightAnchor.constraint(equalTo: view.rightAnchor),

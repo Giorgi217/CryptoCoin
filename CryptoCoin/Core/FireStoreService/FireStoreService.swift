@@ -9,17 +9,20 @@ import FirebaseFirestore
 
 class FirestoreService {
     private let db = Firestore.firestore()
+    
+    static let shared = FirestoreService()
+    
+    private init () { }
+    
+    var myPortfolio: MyPortfolio?
         
-    func fetchData(userId: String) {
-        Task {
-            do {
-               let myPortfolio = try await db.document("users/\(userId)").getDocument(as: MyPortfolio.self)
-                print("\(myPortfolio.allCoins?.count ?? 40)")
-                print("Portfolio fetched successfully!")
-            }
-            catch {
-                print("Error fetching data: \(error.localizedDescription)")
-            }
+    func fetchData(userId: String) async throws -> MyPortfolio {
+        do {
+            let myPortfolioData = try await db.document("users/\(userId)").getDocument(as: MyPortfolio.self)
+            self.myPortfolio = myPortfolioData
+            return myPortfolioData
+        } catch {
+            throw error
         }
     }
     
