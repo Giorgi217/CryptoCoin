@@ -143,8 +143,8 @@ class LogInView: UIViewController {
         Task {
             do {
                 try await viewModel.logIn(email: email, password: password)
+                print("Login successful!")
                 navigationController?.pushViewController(PortfolioViewController(), animated: true)
-                
             } catch {
                 if let error = error as NSError? {
                     showAlert(message: error.localizedDescription)

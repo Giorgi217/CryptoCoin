@@ -9,6 +9,7 @@ import UIKit
 import SwiftUI
 import FirebaseFirestore
 
+
 class PortfolioViewController: UIViewController {
     var viewModel: PortfolioViewModelProtocol
     let firebase = FirestoreService()
@@ -83,6 +84,8 @@ class PortfolioViewController: UIViewController {
     override func viewDidLoad()  {
         super.viewDidLoad()
         setupUI()
+        
+        
         NotificationCenter.default.addObserver(self, selector: #selector(handleMockDayChange), name: .holdingCoinsNotification, object: nil)
         
         NotificationCenter.default.addObserver(self, selector: #selector(handlePortfolioChanhe), name: .portfolioNotification, object: nil)
@@ -102,72 +105,6 @@ class PortfolioViewController: UIViewController {
         buttonsView.delegate = self
         trendingCollection.viewController = self
         recommendedCollection.viewController = self
-        
-
- 
-//        Task {
-//            let userID = UserSession.shared.userID ?? "defaultUserID"
-//            let yle = try await firebase.fetchUserData(userID: userID)
-//            print("\(String(describing: yle))")
-//        }
-        
-        Task {
-            do {
-                let userID = UserSession.shared.userID ?? "defaultUserID"
-                try await firebase.saveUserData(
-                    userID: userID,
-                    portfolioValue: 10000,
-                    investmentBalance: 5000,
-                    investedBalance: 2000,
-                    dayCoins: [    CoinModel(
-                        id: "bitcoin",
-                        symbol: "btc",
-                        name: "Bitcoin",
-                        image: "https://assets.coingecko.com/coins/images/1/large/bitcoin.png",
-                        currentPrice: 34000.0,
-                        priceChange24h: -200.0,
-                        priceChangePercentage24h: -0.58,
-                        priceChange: "-200.0"
-                    ),
-                    CoinModel(
-                        id: "ethereum",
-                        symbol: "eth",
-                        name: "Ethereum",
-                        image: "https://assets.coingecko.com/coins/images/279/large/ethereum.png",
-                        currentPrice: 2100.0,
-                        priceChange24h: 50.0,
-                        priceChangePercentage24h: 2.44,
-                        priceChange: "+50.0"
-                    )],
-                    allCoins: [
-                        CoinModel(
-                            id: "binancecoin",
-                            symbol: "bnb",
-                            name: "Binance Coin",
-                            image: "https://assets.coingecko.com/coins/images/825/large/binance-coin-logo.png",
-                            currentPrice: 250.0,
-                            priceChange24h: -10.0,
-                            priceChangePercentage24h: -3.85,
-                            priceChange: "-10.0"
-                        ),
-                        CoinModel(
-                            id: "cardano",
-                            symbol: "ada",
-                            name: "Cardano",
-                            image: "https://assets.coingecko.com/coins/images/975/large/cardano.png",
-                            currentPrice: 0.28,
-                            priceChange24h: 0.01,
-                            priceChangePercentage24h: 3.7,
-                            priceChange: "+0.01"
-                        )
-                    ]
-                )
-                print("User data saved successfully!")
-            } catch {
-                print("Failed to save user data: \(error.localizedDescription)")
-            }
-        }
-        
     }
     
     private func updateInvestmentUI() {
@@ -194,6 +131,7 @@ class PortfolioViewController: UIViewController {
         print("portfolio changed! Updating the UI")
         updatePortfolioUI()
     }
+         
     
     func setupUI() {
         view.addSubview(scrollView)
@@ -293,9 +231,6 @@ class PortfolioViewController: UIViewController {
     @objc func searchButtonTapped() {
         navigationController?.pushViewController(AllCoinsView(), animated: true)
     }
-
-    
-    
 }
 
 // MARK: ButtonsViewDelegate

@@ -6,15 +6,21 @@
 //
 
 import Foundation
+import FirebaseFirestore
 
 protocol PortfolioViewModelProtocol {
     func fetchMyCoins() async
     func fetchPortfolio() async
     var myCoins: MyCoin? { get set }
     var portfolio: Portfolio? { get set }
+    func fetchMyPortfolio() async
 }
 
 class PortfolioViewModel: PortfolioViewModelProtocol {
+    func fetchMyPortfolio() async {
+        
+    }
+    
     var portfolio: Portfolio?
     let coinUseCase: CoinUseCaseProtocol
     let portfolioUseCase: PortfolioUseCaseProtocol
@@ -136,6 +142,7 @@ class MyCoinSharedClass {
             isHolding: true,
             priceChange: "$250.00"
         ),
+        
         CoinModel(
             id: "ethereum",
             symbol: "ETH",
@@ -210,3 +217,11 @@ struct MyCoin {
     var all: [CoinModel]
 }
 
+struct MyPortfolio: Codable {
+    @DocumentID var userID: String?
+    var dayCoins: [CoinModel]?
+    var allCoins: [CoinModel]?
+    var portfolioValue: Double?
+    var investmentBalance: Double?
+    var investedBalance: Double?
+}
