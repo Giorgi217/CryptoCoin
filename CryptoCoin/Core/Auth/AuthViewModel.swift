@@ -17,6 +17,8 @@ class AuthViewModel {
             let user = authResult.user
             print("User is \(user)")
             UserSessionManager.shared.setUserId(user.uid)
+            FirestoreService.shared.createDocument(userId: user.uid, myPorfolio: MyPortfolio(portfolioCoin: [PortfolioCoin]()))
+//            FirestoreService.shared.createDocument(userId: user.uid, myPorfolio: MyPortfolio(userID: nil, dayCoins: [CoinModel](), allCoins: [CoinModel](), portfolioValue: 0, investmentBalance: 0, investedBalance: 0))
         }
         catch let error as NSError {
             print("Error: \(error.localizedDescription)")

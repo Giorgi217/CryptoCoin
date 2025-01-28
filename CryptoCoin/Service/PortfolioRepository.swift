@@ -12,31 +12,15 @@ import FirebaseCore
 
 
 protocol PortfolioRepositoryProtocol {
-    func fetchPortfolio() async throws -> Portfolio
-//    func fetchMyPortfolio() async throws -> MyPortfolio
+    func fetchMyPortfolio(userId: String) async throws -> MyPortfolio
 }
 
 
 struct PortfolioRepository: PortfolioRepositoryProtocol {
+   let fireStoreService = FirestoreService.shared
     
-    let fireStoreService = FirestoreService()
-    
-    
-//    func fetchMyPortfolio() async throws -> MyPortfolio {
-//        do {
-//            
-//        }
-//        catch {
-//            
-//        }
-//    }
-
-    
-    func fetchPortfolio() async throws -> Portfolio {
-        PortfolioSharedClass.shared.myPortfolio
+    func fetchMyPortfolio(userId: String) async throws -> MyPortfolio {
+        return try await fireStoreService.fetchData(userId: userId)
     }
-    
-    
-    
     
 }

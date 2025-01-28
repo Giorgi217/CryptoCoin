@@ -8,8 +8,8 @@
 import Foundation
 
 protocol PortfolioUseCaseProtocol {
-    func fetchPortfolio() async throws -> Portfolio
-//    func fetchMyPortfolio() async throws -> MyPortfolio
+    func fetchMyPortfolio(userId: String) async throws -> MyPortfolio
+
 }
 
 class PortfolioUseCase: PortfolioUseCaseProtocol {
@@ -21,11 +21,8 @@ class PortfolioUseCase: PortfolioUseCaseProtocol {
         self.repo = repo
     }
     
-    func fetchPortfolio() async throws -> Portfolio {
-        try await repo.fetchPortfolio()
+    func fetchMyPortfolio(userId: String) async throws -> MyPortfolio {
+        try await repo.fetchMyPortfolio(userId: userId)
     }
     
-//    func fetchMyPortfolio() async throws -> MyPortfolio {
-//        <#code#>
-//    }
 }

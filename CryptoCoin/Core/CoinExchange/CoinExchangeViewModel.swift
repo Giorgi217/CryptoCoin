@@ -17,7 +17,7 @@ class CoinExchangeViewModel: ObservableObject {
     @Published var uiImage: UIImage?
     @Published var exchangeCoin: Coin?
     let exchachangeType: ExchangeType
-    
+    let fireStore = FirestoreService.shared
     private let fileManager = LocalFileManager.instance
     private let folderName = "CoinImages"
     
@@ -46,46 +46,22 @@ class CoinExchangeViewModel: ObservableObject {
         }
     }
     
-    func updateHoldingCoins(value: Double, quantity: Double) {
+    func updateHoldingCoins(value: Double, quantity: Double, coinId: String) {
+         var myPortfolio = fireStore.myPortfolio
        
-        let myCoinsShared = MyCoinSharedClass.shared
-        let dayCoins = myCoinsShared.myCoin.day
-        let allCoins = myCoinsShared.myCoin.all
-        
-        let purchasedCoin = CoinModel(
-            id: exchangeCoin?.id,
-            symbol: exchangeCoin?.symbol,
-            name: exchangeCoin?.name,
-            image: exchangeCoin?.image,
-            currentPrice: value,
-            priceChange24h: 100,
-            priceChangePercentage24h: 0.00,
-            date: Date(),
-            purchasedQuantity: quantity,
-            purchasePrice: Double(exchangeCoin?.price ?? "40"),
-            quantity: quantity,
-            isHolding: true,
-            priceChange: "0.01")
-        
-        if let existingIndexInDay = dayCoins.firstIndex(where: { $0.id == exchangeCoin?.id }) {
-            print("Found in dayCoins at index: \(existingIndexInDay)")
-      
-        } else if let existingIndexInAll = allCoins.firstIndex(where: { $0.id == exchangeCoin?.id }) {
-            print("Found in allCoins at index: \(existingIndexInAll)")
-       
+
+        if let existingIndexInAll = myPortfolio?.portfolioCoin.firstIndex(where: { $0.coinId == coinId }) {
+            myPortfolio?.portfolioCoin[existingIndexInAll].quantity += quantity
         } else {
-            
-            myCoinsShared.updateMyCoins(mockDay: purchasedCoin, mockAll: purchasedCoin)
+            let portfolioCoin = PortfolioCoin(quantity: quantity, coinId: coinId, price: value)
+            myPortfolio?.portfolioCoin.append(portfolioCoin)
         }
-    }
-    
-    
-    
-    func updateInvestment(investedValue: Double) {
-//        updatePortfolio
-        let myPortfolio = PortfolioSharedClass.shared
         
-        myPortfolio.updatePortfolio(investedValue: investedValue)
-        
+ 
+
+        FirestoreService.shared.createDocument(
+            userId: UserSessionManager.shared.userId ?? "",
+            myPorfolio: myPortfolio ?? MyPortfolio(userID: "", portfolioCoin: [])
+        )
     }
 }

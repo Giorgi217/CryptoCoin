@@ -24,18 +24,16 @@ struct CoinModel: Codable, Hashable {
     let purchasePrice: Double?
     var quantity: Double?
     var timeStamp: Int?
-    var purchasedValue: Double {
-        (quantity ?? 0) * (purchasePrice ?? 0)
-    }
+    var purchasedValue: Double?
 
     enum CodingKeys: String, CodingKey {
-        case id, symbol, name, image, date, purchasedQuantity, purchasePrice, quantity, timeStamp
+        case id, symbol, name, image, date, purchasedQuantity, purchasePrice, quantity, timeStamp, purchasedValue
         case currentPrice = "current_price"
         case priceChange24h = "price_change_24h"
         case priceChangePercentage24h = "price_change_percentage_24h"
     }
     
-    init(id: String?, symbol: String?, name: String?, image: String?, currentPrice: Double?, priceChange24h: Double?, priceChangePercentage24h: Double?, date: Date? = nil, purchasedQuantity: Double? = nil, purchasePrice: Double? = nil, quantity: Double? = nil, isHolding: Bool? = false, priceChange: String?, timeStamp: Int? = nil) {
+    init(id: String?, symbol: String?, name: String?, image: String?, currentPrice: Double?, priceChange24h: Double?, priceChangePercentage24h: Double?, date: Date? = nil, purchasedQuantity: Double? = nil, purchasePrice: Double? = nil, quantity: Double? = nil, isHolding: Bool? = false, priceChange: String?, timeStamp: Int? = nil, purchasedValue: Double? = nil) {
         self.id = id
         self.symbol = symbol
         self.name = name

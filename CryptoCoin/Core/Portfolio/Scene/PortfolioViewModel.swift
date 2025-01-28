@@ -9,219 +9,80 @@ import Foundation
 import FirebaseFirestore
 
 protocol PortfolioViewModelProtocol {
-    func fetchMyCoins() async
-    func fetchPortfolio() async
-    var myCoins: MyCoin? { get set }
-    var portfolio: Portfolio? { get set }
-    func fetchMyPortfolio() async
+    func fetchMyPortfolio(userId: String) async throws -> YLE
+    var myPorfolio: MyPortfolio? { get set }
 }
 
 class PortfolioViewModel: PortfolioViewModelProtocol {
-    func fetchMyPortfolio() async {
-        
-    }
-    
-    var portfolio: Portfolio?
-    let coinUseCase: CoinUseCaseProtocol
+
     let portfolioUseCase: PortfolioUseCaseProtocol
+    let coinUseCase: CoinUseCaseProtocol
     
+    var myPorfolio: MyPortfolio?
     
-    var myCoins: MyCoin?
-    
-    init(coinUseCase: CoinUseCaseProtocol = CoinUseCase(), portfolioUseCase: PortfolioUseCaseProtocol = PortfolioUseCase()) {
-        self.coinUseCase = coinUseCase
+    init(portfolioUseCase: PortfolioUseCaseProtocol = PortfolioUseCase(),
+         coinUseCase: CoinUseCaseProtocol = CoinUseCase()) {
         self.portfolioUseCase = portfolioUseCase
+        self.coinUseCase = coinUseCase
     }
     
-    func fetchMyCoins() async {
-        do {
-            let fetchedCoins = try await coinUseCase.fetchMyCoins()
-            myCoins = fetchedCoins
-        }
-        catch {
-            print("handle error here")
-        }
-    }
-    
-    
-    func fetchPortfolio() async {
-        do {
-            let porfolioValue = try await portfolioUseCase.fetchPortfolio()
-            portfolio = porfolioValue
-        }
-        catch {
-            print("handle error here")
-        }
-    }
-    
-//    func balance() -> Double {
-//        return myCoins?.day.reduce(0) { $0 + ($1.currentPrice ?? 0) } ?? 0.00
-//    }
-}
+    func fetchMyPortfolio(userId: String) async throws -> YLE {
+        let result = try await portfolioUseCase.fetchMyPortfolio(userId: userId)
+        var dayCoinModel = [CoinModel]()
+        var allCoinModel = [CoinModel]()
+        var investedBalance: Double = 0
+        for coin in result.portfolioCoin {
+            let coinDetail = try await coinUseCase.fetchCoinDetails(Id: coin.coinId)
 
-
-
-class PortfolioSharedClass {
-    static let shared = PortfolioSharedClass()
-    
-    private init() { }
-    
-    var myPortfolio: Portfolio = Portfolio(investmentBalance: 1000, investedBalance: 800) {
-        didSet {
-            NotificationCenter.default.post(name: .portfolioNotification, object: nil)
+            let currentToTalCoinPrice = (coinDetail.marketData?.currentPrice?.usd ?? 0) * coin.quantity
+            let totalPriceChangePercentage = 100 - (coin.price * 100 / currentToTalCoinPrice)
+            let totalpriceChange = (currentToTalCoinPrice * totalPriceChangePercentage / 100).asPercentString()
+            
+            
+            let dayPriceChangePercentage = coinDetail.marketData?.priceChangePercentage24H ?? 0
+            let changedPrice = (coinDetail.marketData?.currentPrice?.usd ?? 0) / 100 * dayPriceChangePercentage
+            let dayPriceChange = ((coinDetail.marketData?.currentPrice?.usd ?? 0) + changedPrice).asPercentString()
+            
+            allCoinModel.append(CoinModel(id: coinDetail.id, symbol: coinDetail.symbol, name: coinDetail.name, image: coinDetail.image?.large, currentPrice: currentToTalCoinPrice, priceChange24h: coinDetail.marketData?.priceChange24H, priceChangePercentage24h: totalPriceChangePercentage, isHolding: true, priceChange: totalpriceChange))
+            
+            dayCoinModel.append(CoinModel(id: coinDetail.id, symbol: coinDetail.symbol, name: coinDetail.name, image: coinDetail.image?.large, currentPrice: currentToTalCoinPrice, priceChange24h: coinDetail.marketData?.priceChange24H, priceChangePercentage24h: dayPriceChangePercentage, isHolding: true, priceChange: dayPriceChange))
+            
+            investedBalance += currentToTalCoinPrice
         }
-    }
-    
-    func updatePortfolio(investedValue: Double) {
-        myPortfolio.investedBalance += investedValue
-        myPortfolio.investmentBalance -= investedValue
+        return YLE(dayCoinModel: dayCoinModel, allCoinModel: allCoinModel, investedBalance: investedBalance)
     }
 }
 
-
-class MyCoinSharedClass {
-    static let shared = MyCoinSharedClass()
-    
-    private init() { }
-    
-    var mockDay: [CoinModel] = [
-        CoinModel(
-            id: "bitcoin",
-            symbol: "BTC",
-            name: "Bitcoin",
-            image: "https://example.com/bitcoin.png",
-            currentPrice: 300.0,
-            priceChange24h: -1500.0,
-            priceChangePercentage24h: -2.94,
-            isHolding: true,
-            priceChange: "-$25.00"
-        ),
-        CoinModel(
-            id: "ethereum",
-            symbol: "ETH",
-            name: "Ethereum",
-            image: "https://example.com/ethereum.png",
-            currentPrice: 200.0,
-            priceChange24h: 100.0,
-            priceChangePercentage24h: 2.94,
-            isHolding: true,
-            priceChange: "$50.00"
-        ),
-        CoinModel(
-            id: "litecoin",
-            symbol: "LTC",
-            name: "Litecoin",
-            image: "https://example.com/litecoin.png",
-            currentPrice: 200.0,
-            priceChange24h: -10.0,
-            priceChangePercentage24h: -5.0,
-            isHolding: true,
-            priceChange: "-$30.00"
-        ),
-        CoinModel(
-            id: "ripple",
-            symbol: "XRP",
-            name: "Ripple",
-            image: "https://example.com/ripple.png",
-            currentPrice: 100.0,
-            priceChange24h: 0.05,
-            priceChangePercentage24h: 5.0,
-            isHolding: true,
-            priceChange: "$10.00"
-        ),
-    ]
-    var mockAll: [CoinModel] = [
-        CoinModel(
-            id: "bitcoin",
-            symbol: "BTC",
-            name: "Bitcoin",
-            image: "https://example.com/bitcoin.png",
-            currentPrice: 300.0,
-            priceChange24h: -1500.0,
-            priceChangePercentage24h: -2.94,
-            isHolding: true,
-            priceChange: "$250.00"
-        ),
-        
-        CoinModel(
-            id: "ethereum",
-            symbol: "ETH",
-            name: "Ethereum",
-            image: "https://example.com/ethereum.png",
-            currentPrice: 200.0,
-            priceChange24h: 100.0,
-            priceChangePercentage24h: 2.94,
-            isHolding: true,
-            priceChange: "$65.00"
-        ),
-        CoinModel(
-            id: "litecoin",
-            symbol: "LTC",
-            name: "Litecoin",
-            image: "https://example.com/litecoin.png",
-            currentPrice: 200.0,
-            priceChange24h: -10.0,
-            priceChangePercentage24h: -5.0,
-            isHolding: true,
-            priceChange: "-$43.00"
-        ),
-        CoinModel(
-            id: "ripple",
-            symbol: "XRP",
-            name: "Ripple",
-            image: "https://example.com/ripple.png",
-            currentPrice: 100.0,
-            priceChange24h: 0.05,
-            priceChangePercentage24h: 5.0,
-            isHolding: true,
-            priceChange: "$98.00"
-        ),
-    ]
-    
-    lazy var myCoin: MyCoin = {
-        let coin = MyCoin(day: mockDay, all: mockAll)
-        return coin
-    }() {
-        didSet {
-            NotificationCenter.default.post(name: .holdingCoinsNotification, object: nil)
-        }
-    }
-    
-    func updateMyCoins(mockDay: CoinModel, mockAll: CoinModel) {
-        myCoin.day.append(mockDay)
-        myCoin.all.append(mockAll)
-    }
-    
-    func updateCoin(index: Int) {
-        
-    }
-}
-    
-
-
-extension Notification.Name {
-    static let portfolioNotification = Notification.Name("portfolioChanged")
-    static let holdingCoinsNotification = Notification.Name("holdingCoinsChanged")
+struct YLE {
+    var dayCoinModel: [CoinModel]?
+    var allCoinModel: [CoinModel]?
+    var investedBalance: Double?
 }
 
-struct Portfolio {
-    var investmentBalance: Double
-    var investedBalance: Double
-    var portfolioValue: Double {
-        investedBalance + investmentBalance
-    }
-}
-
-struct MyCoin {
-    var day: [CoinModel]
-    var all: [CoinModel]
-}
 
 struct MyPortfolio: Codable {
     @DocumentID var userID: String?
-    var dayCoins: [CoinModel]?
-    var allCoins: [CoinModel]?
-    var portfolioValue: Double?
-    var investmentBalance: Double?
-    var investedBalance: Double?
+    var portfolioCoin: [PortfolioCoin]
+//    var dayCoins: [CoinModel]?
+//    var allCoins: [CoinModel]?
+//    var portfolioValue: Double?
+//    var investmentBalance: Double?
+//    var investedBalance: Double?
 }
+
+struct PortfolioCoin: Codable {
+    var quantity: Double
+    var coinId: String
+    var price: Double
+    
+    init(quantity: Double, coinId: String, price: Double) {
+        self.quantity = quantity
+        self.coinId = coinId
+        self.price = price
+    }
+}
+
+
+ /*
+let coinUseCase: CoinUseCaseProtocol
+*/
