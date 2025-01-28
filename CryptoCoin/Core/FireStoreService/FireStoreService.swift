@@ -9,30 +9,29 @@ import FirebaseFirestore
 
 class FirestoreService {
     private let db = Firestore.firestore()
-    
-    
-
-    func saveUserData(userID: String, portfolioValue: Double, investmentBalance: Double, investedBalance: Double, dayCoins: [CoinModel], allCoins: [CoinModel]) async throws {
-        let userRef = db.collection("users").document(userID)
-        let userData: [String: Any] = [
-            "portfolioValue": portfolioValue,
-            "investmentBalance": investmentBalance,
-            "investedBalance": investedBalance,
-            "dayCoins": dayCoins.map { $0.toDictionary() },
-            "allCoins": allCoins.map { $0.toDictionary() }
-        ]
-        try await userRef.setData(userData)
+        
+    func fetchData(userId: String) {
+        Task {
+            do {
+               let myPortfolio = try await db.document("users/\(userId)").getDocument(as: MyPortfolio.self)
+                print("\(myPortfolio.allCoins?.count ?? 40)")
+                print("Portfolio fetched successfully!")
+            }
+            catch {
+                print("Error fetching data: \(error.localizedDescription)")
+            }
+        }
     }
     
-    
-    func fetchUserData(userID: String) async throws -> [String: Any]? {
-        let userRef = db.collection("users").document(userID)
-        let document = try await userRef.getDocument()
-        return document.data()
+    func createDocument(userId: String, myPorfolio: MyPortfolio) {
+        Task {
+            do {
+                try db.document("users/\(userId)").setData(from: myPorfolio)
+                print("მონაცემები შენახულია ბრაწიშკა")
+            }
+            catch {
+                print(error.localizedDescription)
+            }
+        }
     }
-    func saveCoinData(coin: CoinModel) async throws {
-        let coinRef = db.collection("coins").document(coin.id ?? UUID().uuidString)
-        try await coinRef.setData(coin.toDictionary())
-    }
-
 }

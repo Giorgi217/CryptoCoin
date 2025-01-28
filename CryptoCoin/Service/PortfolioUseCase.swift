@@ -9,9 +9,11 @@ import Foundation
 
 protocol PortfolioUseCaseProtocol {
     func fetchPortfolio() async throws -> Portfolio
+//    func fetchMyPortfolio() async throws -> MyPortfolio
 }
 
 class PortfolioUseCase: PortfolioUseCaseProtocol {
+
     
     private let repo: PortfolioRepositoryProtocol
     
@@ -22,4 +24,8 @@ class PortfolioUseCase: PortfolioUseCaseProtocol {
     func fetchPortfolio() async throws -> Portfolio {
         try await repo.fetchPortfolio()
     }
+    
+//    func fetchMyPortfolio() async throws -> MyPortfolio {
+//        <#code#>
+//    }
 }

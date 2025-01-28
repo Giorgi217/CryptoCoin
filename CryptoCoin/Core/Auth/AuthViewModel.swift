@@ -14,18 +14,15 @@ class AuthViewModel {
     func logIn(email: String, password: String) async throws {
         do {
             let authResult = try await Auth.auth().signIn(withEmail: email, password: password )
-           let user = authResult.user
+            let user = authResult.user
             print("User is \(user)")
-            UserSession.shared.userID = user.uid
-            
-            
+            UserSessionManager.shared.setUserId(user.uid)
         }
         catch let error as NSError {
-               print("Error: \(error.localizedDescription)")
+            print("Error: \(error.localizedDescription)")
             throw error
-           }
+        }
     }
-    
     
     func signUp(email: String, password: String) async throws {
         do {
@@ -42,23 +39,18 @@ class AuthViewModel {
         guard let email = email, !email.isEmpty else {
             return "Email cannot be empty."
         }
-        
         guard email.isValidEmail else {
             return "Invalid email format."
         }
-        
         guard let password = password, !password.isEmpty else {
             return "Password cannot be empty."
         }
-        
         guard password.isValidPassword else {
             return "Password must be at least 8 characters."
         }
-        
         guard let confirmPassword = confirmPassword, confirmPassword == password else {
             return "Passwords do not match."
         }
-        
         return nil
     }
     
@@ -66,22 +58,17 @@ class AuthViewModel {
         guard let email = email, !email.isEmpty else {
             return "Email cannot be empty."
         }
-        
         guard email.isValidEmail else {
             return "Invalid email format."
         }
-        
         guard let password = password, !password.isEmpty else {
             return "Password cannot be empty."
         }
-        
         guard password.isValidPassword else {
             return "Invalid Password."
         }
-        
         return nil
     }
-    
     
     func sendPasswordReset(email: String) async throws {
         do {
@@ -92,7 +79,6 @@ class AuthViewModel {
             throw error
         }
     }
-    
 }
 
 extension String {
@@ -101,26 +87,28 @@ extension String {
         let emailPredicate = NSPredicate(format: "SELF MATCHES %@", emailRegEx)
         return emailPredicate.evaluate(with: self)
     }
-
+    
     var isValidPassword: Bool {
-        return self.count >= 8 
+        return self.count >= 8
     }
 }
 
-
-
-class UserSession {
-    static let shared = UserSession()
+class UserSessionManager {
+    static let shared = UserSessionManager()
+    
+    private(set) var userId: String?
     
     private init() {}
     
-    var userID: String?
-    var dayCoins: [CoinModel]?
-    var allCoins: [CoinModel]?
-    var portfolioValue: Double?
-    var investmentBalance: Double?
-    var investedBalance: Double?
+    func setUserId(_ id: String) {
+        self.userId = id
+    }
+    
+    func clearSession() {
+        self.userId = nil
+    }
 }
+
 
 
 
