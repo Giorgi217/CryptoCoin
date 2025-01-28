@@ -46,66 +46,22 @@ class CoinExchangeViewModel: ObservableObject {
         }
     }
     
-    func updateHoldingCoins(value: Double, quantity: Double) {
-        guard var myPortfolio = fireStore.myPortfolio else {
-            print("Portfolio is not available.")
-            return
-        }
-        
-        var dayCoins = fireStore.myPortfolio?.dayCoins
-        var allCoins = fireStore.myPortfolio?.dayCoins
- 
-        let purchasedCoin = CoinModel(
-            id: exchangeCoin?.id,
-            symbol: exchangeCoin?.symbol,
-            name: exchangeCoin?.name,
-            image: exchangeCoin?.image,
-            currentPrice: value,
-            priceChange24h: 100,
-            priceChangePercentage24h: 0.00,
-            purchasedQuantity: quantity,
-            purchasePrice: Double(exchangeCoin?.price ?? "40"),
-            quantity: quantity,
-            isHolding: true,
-            priceChange: "0.00",
-            timeStamp: Int(Date().timeIntervalSince1970)
-        )
-        
-        if let existingIndexInDay = dayCoins?.firstIndex(where: { $0.id == exchangeCoin?.id }) {
-
-            var coinquantity = dayCoins?[existingIndexInDay].quantity
-            coinquantity = (coinquantity ?? 0) + quantity
-            var coinValue = dayCoins?[existingIndexInDay].purchasedValue
-            coinValue = (coinValue ?? 0) + value
-            
-            dayCoins?[existingIndexInDay].quantity = coinquantity
-            dayCoins?[existingIndexInDay].purchasedValue = coinValue
-            
-        } else if let existingIndexInAll = allCoins?.firstIndex(where: { $0.id == exchangeCoin?.id }) {
-            var coinquantity = allCoins?[existingIndexInAll].quantity
-            coinquantity = (allCoins?[existingIndexInAll].quantity ?? 0) + quantity
-            
-            var coinValue = allCoins?[existingIndexInAll].purchasedValue
-            coinValue = (allCoins?[existingIndexInAll].purchasedValue ?? 0) + value
-            
-            allCoins?[existingIndexInAll].quantity = coinquantity
-            allCoins?[existingIndexInAll].purchasedValue = coinValue
-            
-            fireStore.myPortfolio?.dayCoins = dayCoins
-            fireStore.myPortfolio?.allCoins = allCoins
+    func updateHoldingCoins(value: Double, quantity: Double, coinId: String) {
+         var myPortfolio = fireStore.myPortfolio
        
+
+        if let existingIndexInAll = myPortfolio?.portfolioCoin.firstIndex(where: { $0.coinId == coinId }) {
+            myPortfolio?.portfolioCoin[existingIndexInAll].quantity += quantity
         } else {
-            fireStore.myPortfolio?.dayCoins?.append(purchasedCoin)
-            fireStore.myPortfolio?.allCoins?.append(purchasedCoin)
-            
+            let portfolioCoin = PortfolioCoin(quantity: quantity, coinId: coinId, price: value)
+            myPortfolio?.portfolioCoin.append(portfolioCoin)
         }
-        myPortfolio.dayCoins = dayCoins
-        myPortfolio.allCoins = allCoins
-        fireStore.myPortfolio = myPortfolio
+        
+ 
 
         FirestoreService.shared.createDocument(
             userId: UserSessionManager.shared.userId ?? "",
-            myPorfolio: myPortfolio
+            myPorfolio: myPortfolio ?? MyPortfolio(userID: "", portfolioCoin: [])
         )
     }
 }

@@ -70,6 +70,8 @@ class PortfolioViewController: UIViewController {
     let investmentView = InvestmentView()
     let investmentBalanceView = InvestmentBalanceView()
     
+    let refreshControl = UIRefreshControl()
+    
     //MARK: INIT
     
     init(viewModel: PortfolioViewModelProtocol = PortfolioViewModel()) {
@@ -92,19 +94,30 @@ class PortfolioViewController: UIViewController {
         recommendedCollection.viewController = self
         self.navigationController?.setNavigationBarHidden(false, animated: false)
         
+        // Configure the refresh control
+        refreshControl.addTarget(self, action: #selector(refreshData), for: .valueChanged)
+        scrollView.refreshControl = refreshControl
+        
+        refreshData()
+    }
+
+    @objc func refreshData() {
         Task {
           let porfolio = try await viewModel.fetchMyPortfolio(userId: useId ?? "")
             
-            guard let dayCoins = porfolio.dayCoins,
-                  let allCoins = porfolio.allCoins,
+            guard let dayCoins = porfolio.dayCoinModel,
+                  let allCoins = porfolio.allCoinModel,
                   let investedBalance = porfolio.investedBalance else {
+                refreshControl.endRefreshing()
                 return
             }
             investmentView.dayCoins = dayCoins
             investmentView.allCoins = allCoins
             investmentView.configure(dayCoins: dayCoins, allCoins: allCoins, investedBalance: investedBalance)
-            portfolioValue.text = viewModel.myPorfolio?.portfolioValue?.asCurrencyWith2Decimals()
-            investmentBalanceView.balanceValueLabel.text = viewModel.myPorfolio?.investmentBalance?.asCurrencyWith2Decimals()
+            portfolioValue.text = investedBalance.asCurrencyWith2Decimals()
+            investmentBalanceView.balanceValueLabel.text = investedBalance.asCurrencyWith2Decimals()
+            
+            refreshControl.endRefreshing()
         }
     }
 
