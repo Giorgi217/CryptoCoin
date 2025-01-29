@@ -9,18 +9,21 @@ import Foundation
 import FirebaseFirestore
 import FirebaseCore
 
-
-
 protocol PortfolioRepositoryProtocol {
     func fetchMyPortfolio(userId: String) async throws -> MyPortfolio
+    func fetchMyBalance(userId: String) async throws -> Double
 }
 
 
 struct PortfolioRepository: PortfolioRepositoryProtocol {
+
    let fireStoreService = FirestoreService.shared
     
     func fetchMyPortfolio(userId: String) async throws -> MyPortfolio {
         return try await fireStoreService.fetchData(userId: userId)
     }
     
+    func fetchMyBalance(userId: String) async throws -> Double {
+        return try await fireStoreService.fetchMyBalance(userId: userId)
+    }
 }

@@ -32,6 +32,8 @@ class PortfolioViewModel: PortfolioViewModelProtocol {
         var allCoinModel = [CoinModel]()
         var investedBalance: Double = 0
         var totalChangedBalance: Double = 0
+        var userBalance: Double?
+        
         for coin in result.portfolioCoin {
             let coinDetail = try await coinUseCase.fetchCoinDetails(Id: coin.coinId)
 
@@ -51,7 +53,10 @@ class PortfolioViewModel: PortfolioViewModelProtocol {
             investedBalance += currentToTalCoinPrice
             totalChangedBalance += currentToTalCoinPrice - coin.price
         }
-        return InvestmentModel(dayCoinModel: dayCoinModel, allCoinModel: allCoinModel, investedBalance: investedBalance, totalChangedBalance: totalChangedBalance)
+        
+        userBalance = try await portfolioUseCase.fetchMyBalance(userId: userId)
+        
+        return InvestmentModel(dayCoinModel: dayCoinModel, allCoinModel: allCoinModel, investedBalance: investedBalance, userBalance: userBalance, totalChangedBalance: totalChangedBalance)
     }
 }
 
@@ -59,6 +64,7 @@ struct InvestmentModel {
     var dayCoinModel: [CoinModel]?
     var allCoinModel: [CoinModel]?
     var investedBalance: Double?
+    var userBalance: Double?
     var totalChangedBalance: Double
 }
 
@@ -66,6 +72,11 @@ struct InvestmentModel {
 struct MyPortfolio: Codable {
     @DocumentID var userID: String?
     var portfolioCoin: [PortfolioCoin]
+}
+
+struct Balance: Codable {
+    @DocumentID var userID: String?
+    var balance: Double?
 }
 
 struct PortfolioCoin: Codable {

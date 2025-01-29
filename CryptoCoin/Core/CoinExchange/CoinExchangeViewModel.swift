@@ -43,19 +43,31 @@ class CoinExchangeViewModel: ObservableObject {
     }
     
     func buyCoin(value: Double, quantity: Double, coinId: String) {
-         var myPortfolio = fireStore.myPortfolio
+        var myPortfolio = fireStore.myPortfolio ?? MyPortfolio(userID: "", portfolioCoin: [])
         
-        if let existing = myPortfolio?.portfolioCoin.firstIndex(where: { $0.coinId == coinId }) {
-            myPortfolio?.portfolioCoin[existing].quantity += quantity
-        } else {
-            let portfolioCoin = PortfolioCoin(quantity: quantity, coinId: coinId, price: value)
-            myPortfolio?.portfolioCoin.append(portfolioCoin)
+        Task {
+            let balance = try await FirestoreService.shared.fetchMyBalance(userId: UserSessionManager.shared.userId ?? "")
+            
+            if balance < value {
+                return
+            }
+            
+            if let existing = myPortfolio.portfolioCoin.firstIndex(where: { $0.coinId == coinId }) {
+                myPortfolio.portfolioCoin[existing].quantity += quantity
+                myPortfolio.portfolioCoin[existing].price += value
+            } else {
+                let portfolioCoin = PortfolioCoin(quantity: quantity, coinId: coinId, price: value)
+                myPortfolio.portfolioCoin.append(portfolioCoin)
+            }
+            
+            try await FirestoreService.shared.spendBalance(userId: UserSessionManager.shared.userId ?? "", balance: value)
+            
+            FirestoreService.shared.createDocument(
+                userId: UserSessionManager.shared.userId ?? "",
+                myPorfolio: myPortfolio
+            )
+            
         }
-
-        FirestoreService.shared.createDocument(
-            userId: UserSessionManager.shared.userId ?? "",
-            myPorfolio: myPortfolio ?? MyPortfolio(userID: "", portfolioCoin: [])
-        )
     }
     
     
@@ -64,6 +76,9 @@ class CoinExchangeViewModel: ObservableObject {
         
         guard let existing = myPortfolio?.portfolioCoin.firstIndex(where: { $0.coinId == coinId }) else { return }
         
+        Task {
+            try await FirestoreService.shared.fillBalance(userId: UserSessionManager.shared.userId ?? "", balance: value)
+        }
         if myPortfolio?.portfolioCoin[existing].price ?? 0 >= value {
             
             myPortfolio?.portfolioCoin[existing].price -= value

@@ -11,6 +11,8 @@ import SwiftUI
 
 class AccountTransacionView: UIViewController {
 
+    let viewModel: AccountTransacionViewModelProtocol?
+    
     let transactionType: TransactionType
     
     let transactionLabel = UILabel()
@@ -63,6 +65,14 @@ class AccountTransacionView: UIViewController {
             name: UIResponder.keyboardWillHideNotification,
             object: nil
         )
+        
+        Task {
+            let myBalance = try await viewModel?.fetchMyBalance(userId: UserSessionManager.shared.userId ?? "")
+            targetBalanceLabel.text = myBalance?.asNumberString()
+            
+            let myCardBalance = try await viewModel?.fetchCardMyBalance(userId: UserSessionManager.shared.userId ?? "")
+            startingBalanceLabel.text = myCardBalance?.asNumberString()
+        }
     }
 
     deinit {
@@ -172,7 +182,9 @@ class AccountTransacionView: UIViewController {
         
         //MARK: TRANASCRION textfield
         transactionTextField.placeholder = "Amount"
+        transactionTextField.keyboardType = .numberPad
         transactionTextField.translatesAutoresizingMaskIntoConstraints = false
+        transactionTextField.delegate = self
         transactionView.addSubview(transactionTextField)
         
         
@@ -192,6 +204,7 @@ class AccountTransacionView: UIViewController {
         actionButton.backgroundColor = UIColor.themeKit.blue
         actionButton.layer.cornerRadius = 15
         actionButton.translatesAutoresizingMaskIntoConstraints = false
+        actionButton.addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)
         view.addSubview(actionButton)
         
         NSLayoutConstraint.activate([
@@ -274,10 +287,24 @@ class AccountTransacionView: UIViewController {
         
     }
 
-
+    @objc func buttonTapped() {
+        let userID = UserSessionManager.shared.userId ?? ""
+        let amounttext = transactionTextField.text ?? ""
+        let amount = Double(amounttext) ?? 0
+        if  transactionType == .deposit {
+            Task {
+                try await viewModel?.withowMyCardBalance(userId: userID, balance: amount)
+            }
+        } else {
+            Task {
+                try await viewModel?.fillMyCardBalance(userId: userID, balance: amount)
+            }
+        }
+    }
     
-    init(transactionType: TransactionType) {
+    init(transactionType: TransactionType, viewModel: AccountTransacionViewModelProtocol = AccountTransacionViewModel()) {
         self.transactionType = transactionType
+        self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -317,3 +344,9 @@ enum TransactionType {
         func updateUIViewController(_ uiViewController: ViewController, context: Context) {}
     }
 
+
+extension AccountTransacionView: UITextFieldDelegate {
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        return CharacterSet.decimalDigits.isSuperset(of: CharacterSet(charactersIn: string))
+    }
+}

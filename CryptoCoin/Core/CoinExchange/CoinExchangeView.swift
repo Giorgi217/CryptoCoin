@@ -93,7 +93,11 @@ struct CoinExchangeView: View {
             Spacer()
             Button(action: {
                 print("Go ahead \(Double(coinQuantity) ?? 0)")
-                viewModel.buyCoin(value: Double(purchaseValue) ?? 0, quantity: Double(coinQuantity) ?? 0, coinId: viewModel.exchangeCoin?.id ?? "")
+                if viewModel.exchachangeType == .buying {
+                    viewModel.buyCoin(value: Double(purchaseValue) ?? 0, quantity: Double(coinQuantity) ?? 0, coinId: viewModel.exchangeCoin?.id ?? "")
+                } else {
+                    viewModel.sellCoin(value: Double(purchaseValue) ?? 0, quantity: Double(coinQuantity) ?? 0, coinId: viewModel.exchangeCoin?.id ?? "")
+                }
             }) {
                 Text(viewModel.exchachangeType == .buying ? "Buy" : "Sell")
                     .font(Font.system(size: 19)).bold()

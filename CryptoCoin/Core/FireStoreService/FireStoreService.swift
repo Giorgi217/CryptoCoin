@@ -15,7 +15,8 @@ class FirestoreService {
     private init () { }
     
     var myPortfolio: MyPortfolio?
-        
+    var myBalance: Double?
+    
     func fetchData(userId: String) async throws -> MyPortfolio {
         do {
             let myPortfolioData = try await db.document("users/\(userId)").getDocument(as: MyPortfolio.self)
@@ -25,6 +26,44 @@ class FirestoreService {
             throw error
         }
     }
+    
+    func fetchMyBalance(userId: String) async throws -> Double {
+        do {
+            let documentSnapshot = try await db.document("users/\(userId)").getDocument()
+            if let data = documentSnapshot.data() {
+                // Access the data from the document
+                if let balance = data["balance"] as? Double {
+                    self.myBalance = balance
+                    return balance
+                }
+            } else {
+                print("Document does not exist")
+            }
+        } catch {
+            print("Error fetching document: \(error)")
+        }
+        return 0
+    }
+    
+    func fillBalance(userId: String, balance: Double) async throws {
+        try await createBalance(userId: userId, balance: (self.myBalance ?? 0) + balance)
+    }
+    
+    func spendBalance(userId: String, balance: Double) async throws {
+        try await createBalance(userId: userId, balance: (self.myBalance ?? 0) - balance)
+    }
+    
+    func createBalance(userId: String, balance: Double) async throws {
+        Task {
+            do {
+                let documentRef = db.document("users/\(userId)")
+                try await documentRef.updateData(["balance": balance])
+            } catch {
+                throw error
+            }
+        }
+    }
+    
     // MARK: CREAT DOCUMENT
     func createDocument(userId: String, myPorfolio: MyPortfolio) {
         Task {
