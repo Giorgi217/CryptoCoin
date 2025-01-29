@@ -9,50 +9,9 @@
 import SwiftUI
 
 struct GainerCoinsView: View {
+    @StateObject private var viewModel = GainerViewModel()
     @State private var currentIndex = 0
     @State private var dragOffset: CGFloat = 0
-    let topCoins: [CoinModel] = [
-        CoinModel(
-            id: "bitcoin",
-            symbol: "BTC",
-            name: "Bitcoin",
-            image: "https://coingecko.com/en/coins/bitcoin/small.png",
-            currentPrice: 45000.00,
-            priceChange24h: -1200.50,
-            priceChangePercentage24h: -2.6,
-            priceChange: "-$1200.50"
-        ),
-        CoinModel(
-            id: "ethereum",
-            symbol: "ETH",
-            name: "Ethereum",
-            image: "https://coingecko.com/en/coins/ethereum/small.png",
-            currentPrice: 3200.00,
-            priceChange24h: 50.30,
-            priceChangePercentage24h: 1.6,
-            priceChange: "+$50.30"
-        ),
-        CoinModel(
-            id: "dogecoin",
-            symbol: "DOGE",
-            name: "Dogecoin",
-            image: "https://coingecko.com/en/coins/dogecoin/small.png",
-            currentPrice: 0.25,
-            priceChange24h: -0.02,
-            priceChangePercentage24h: -7.4,
-            priceChange: "-$0.02"
-        ),
-        CoinModel(
-            id: "litecoin",
-            symbol: "LTC",
-            name: "Litecoin",
-            image: "https://coingecko.com/en/coins/litecoin/small.png",
-            currentPrice: 150.75,
-            priceChange24h: 5.10,
-            priceChangePercentage24h: 3.5,
-            priceChange: "+$5.10"
-        )
-    ]
     
     private let cardWidth: CGFloat = 300
     private let spacing: CGFloat = 20
@@ -62,8 +21,8 @@ struct GainerCoinsView: View {
             VStack {
                 Spacer()
                 HStack(spacing: spacing) {
-                    ForEach(topCoins.indices, id: \.self) { index in
-                        CoinCardView(coin: topCoins[index])
+                    ForEach(viewModel.gainerCoins.indices, id: \.self) { index in
+                        CoinCardView(coin: viewModel.gainerCoins[index])
                             .frame(width: cardWidth)
                             .scaleEffect(scale(for: index, in: geometry))
                             .rotation3DEffect(
@@ -73,7 +32,7 @@ struct GainerCoinsView: View {
                             .opacity(opacity(for: index, in: geometry))
                     }
                 }
-                .frame(width: (cardWidth + spacing) * CGFloat(topCoins.count))
+                .frame(width: (cardWidth + spacing) * CGFloat(viewModel.gainerCoins.count))
                 .offset(x: (geometry.size.width - cardWidth) / 2)
                 .offset(x: calculateOffset(for: geometry))
                 .animation(.interactiveSpring(response: 0.4, dampingFraction: 0.8), value: currentIndex)
@@ -89,7 +48,7 @@ struct GainerCoinsView: View {
                             
                             withAnimation {
                                 if dragDistance < -dragThreshold {
-                                    currentIndex = min(currentIndex + 1, topCoins.count - 1)
+                                    currentIndex = min(currentIndex + 1, viewModel.gainerCoins.count - 1)
                                 } else if dragDistance > dragThreshold {
                                     currentIndex = max(currentIndex - 1, 0)
                                 }
@@ -146,11 +105,13 @@ struct CoinCardView: View {
                 Text(coin.name ?? "")
                     .font(.title2)
                     .bold()
-                Image(systemName: "bitcoinsign.circle.fill")
-                    .resizable()
-                    .frame(width: 30, height: 30)
-                    .foregroundColor(.blue)
-                    .padding(.leading, 10)
+                AsyncImage(url: URL(string: coin.image ?? "")) { image in
+                    image.resizable()
+                } placeholder: {
+                    ProgressView()
+                }
+                .frame(width: 30, height: 30)
+                .clipShape(Circle())
                 Spacer()
                 
                 Text(coin.symbol?.uppercased() ?? "")
@@ -187,12 +148,9 @@ struct CoinCardView: View {
     }
 }
 
-
-
-
-#Preview{
-    GainerCoinsView()
-}
+//#Preview{
+//    GainerCoinsView()
+//}
 
 
 

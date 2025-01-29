@@ -21,7 +21,6 @@ class TrendingCollectionViewModel {
         do {
             let newCoins = try await coinUseCase.fetchCoins(page: page, perPage: perPage)
             coins.append(contentsOf: newCoins)
-            page += 1
         } catch {
             print("Error fetching coins: \(error.localizedDescription)")
         }

@@ -133,7 +133,6 @@ class PortfolioViewController: UIViewController {
             investmentView.sumChangePrecentage.text = (porfolio.totalChangedBalance * 100 / (porfolio.investedBalance ?? 0)).asPercentString()
             portfolioValue.text = investedBalance.asCurrencyWith2Decimals()
             investmentBalanceView.balanceValueLabel.text = investedBalance.asCurrencyWith2Decimals()
-            
             refreshControl.endRefreshing()
         }
     }
