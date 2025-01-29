@@ -50,17 +50,17 @@ extension AllCoinsView: UITableViewDataSource, UITableViewDelegate {
 //        print("Row selected at section: \(indexPath.section), row: \(indexPath.row)")
         
        
-        let currentCoin = viewModel.coins.allCoins[indexPath.row]
+        var currentCoin = viewModel.coins.allCoins[indexPath.row]
 //        print(currentCoin.id!)
         guard let coinId = currentCoin.id else { return}
-        
         NotificationCenter.default.post(
             name: Notification.Name("CoinSelected"),
             object: nil,
             userInfo: ["selectedCoin": currentCoin]
         )
+        let isHolding = FirestoreService.shared.myPortfolio?.portfolioCoin.firstIndex(where: { $0.coinId == coinId }) != nil
         
-        navigationController?.pushViewController(UIHostingController(rootView: CoinDetailsView(viewModel: CoinDetailsViewModel(coinId: coinId), chartViewModel: ChartViewModel(symbol: coinId))), animated: true)
+            navigationController?.pushViewController(UIHostingController(rootView: CoinDetailsView(viewModel: CoinDetailsViewModel(coinId: coinId, isHolding: true), chartViewModel: ChartViewModel(symbol: coinId))), animated: isHolding)
     }
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
