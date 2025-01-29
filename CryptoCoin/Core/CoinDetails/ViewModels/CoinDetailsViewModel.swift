@@ -11,14 +11,16 @@ class CoinDetailsViewModel: ObservableObject {
     
     let service: CoinUseCaseProtocol
     let coinId: String
+    var isHolding: Bool
    
     @Published var coin: CoinDetailsModel?
     @Published var summary: CoinSummaryModel = CoinSummaryModel(description: "Loading...", link: "", marketCap: "N/A", rank: 0)
     @Published var coinStatistics: CoinStatisticModel = CoinStatisticModel(hashingAlgorithm: "N/A", high24H: 0, low24H: 0, absolutePriceChange: 0, percentPriceChange: 0, absoluteMarketPriceChange: 0, percentMarketPriceChange: 0)
 
-    init(coinId: String, service: CoinUseCaseProtocol = CoinUseCase()) {
+    init(coinId: String, service: CoinUseCaseProtocol = CoinUseCase(), isHolding: Bool) {
         self.service = service
         self.coinId = coinId
+        self.isHolding = isHolding
         fetchData()
     }
     

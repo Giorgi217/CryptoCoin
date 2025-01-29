@@ -21,12 +21,17 @@ class TrendingCollectionView: ReusableCollectionView<CoinModel, CollectionViewCe
         }
         
         cellSelected = { [weak self] coin in
-           
+            
             guard let self = self else { return }
             guard let coinId = coin.id else { return }
-            let coinDetailsViewModel = CoinDetailsViewModel(coinId: coinId)
+            var coinDetailsViewModel = CoinDetailsViewModel(coinId: coinId, isHolding: false)
+            
+            if  ((FirestoreService.shared.myPortfolio?.portfolioCoin.firstIndex(where: {$0.coinId == coinId})) != nil) {
+                coinDetailsViewModel = CoinDetailsViewModel(coinId: coinId, isHolding: true)
+            }
+            
             let coinDetailsView = CoinDetailsView(viewModel: coinDetailsViewModel, chartViewModel: ChartViewModel(symbol: coinId))
-
+            
             self.viewController?.navigationController?.pushViewController(
                 UIHostingController(rootView: coinDetailsView),
                 animated: true)

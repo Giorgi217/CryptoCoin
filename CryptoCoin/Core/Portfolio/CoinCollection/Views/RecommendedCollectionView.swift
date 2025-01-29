@@ -24,9 +24,10 @@ class RecommendedCollectionView: ReusableCollectionView<CoinModel, CollectionVie
            
             guard let self = self else { return }
             guard let coinId = coin.id else { return }
-            let coinDetailsViewModel = CoinDetailsViewModel(coinId: coinId)
+            let isHolding = FirestoreService.shared.myPortfolio?.portfolioCoin.firstIndex(where: { $0.coinId == coinId }) != nil
+            let coinDetailsViewModel = CoinDetailsViewModel(coinId: coinId, isHolding: isHolding)
             let coinDetailsView = CoinDetailsView(viewModel: coinDetailsViewModel, chartViewModel: ChartViewModel(symbol: coinId))
-
+            
             self.viewController?.navigationController?.pushViewController(
                 UIHostingController(rootView: coinDetailsView),
                 animated: true)

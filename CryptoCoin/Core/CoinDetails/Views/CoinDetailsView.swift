@@ -48,7 +48,7 @@ struct CoinDetailsView: View {
                             )
                         }
                         
-                        if let isHolding = viewModel.coin?.isHolding, isHolding {
+                        if viewModel.isHolding {
                             Button(action: {
                                 isPresentingSellView = true
                             }) {

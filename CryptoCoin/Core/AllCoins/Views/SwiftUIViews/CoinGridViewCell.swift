@@ -11,19 +11,26 @@ import SwiftUICore
 struct CoinGridCell: View {
     var coins: [CoinModel]
 
-    // Define a flexible grid layout
     private let gridColumns = [
         GridItem(.flexible(), alignment: .leading),
         GridItem(.flexible(), alignment: .leading),
         GridItem(.flexible(), alignment: .leading),
-        
     ]
 
     var body: some View {
         LazyVGrid(columns: gridColumns, spacing: 10) {
             ForEach(coins.prefix(6), id: \.id) { coin in
+                
+                let isHolding = FirestoreService.shared.myPortfolio?.portfolioCoin.firstIndex(where: { $0.coinId == coin.id }) != nil
+
                 NavigationLink(
-                    destination: CoinDetailsView(viewModel: CoinDetailsViewModel(coinId: coin.id ?? ""), chartViewModel: ChartViewModel(symbol: coin.symbol ?? ""))
+                    destination: CoinDetailsView(
+                        viewModel: CoinDetailsViewModel(
+                            coinId: coin.id ?? "",
+                            isHolding: isHolding
+                        ),
+                        chartViewModel: ChartViewModel(symbol: coin.symbol ?? "")
+                    )
                 ) {
                     CoinGridComponent(coin: coin)
                 }
@@ -33,4 +40,5 @@ struct CoinGridCell: View {
         .padding()
     }
 }
+
 

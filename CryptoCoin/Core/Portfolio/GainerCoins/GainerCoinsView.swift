@@ -93,9 +93,6 @@ struct GainerCoinsView: View {
     }
 }
 
-
-
-
 struct CoinCardView: View {
     let coin: CoinModel
     
