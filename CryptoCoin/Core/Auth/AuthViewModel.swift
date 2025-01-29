@@ -27,8 +27,7 @@ class AuthViewModel {
     func signUp(email: String, password: String) async throws {
         do {
             let authResult = try await Auth.auth().createUser(withEmail: email, password: password)
-            let user = authResult.user
-            print("User created: \(user)")
+
         } catch let error as NSError {
             throw error
         }

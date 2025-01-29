@@ -21,10 +21,9 @@ class GainerViewModel: ObservableObject, GainerViewModelProtocol {
     
     init(coinUseCase: CoinUseCaseProtocol = CoinUseCase()) {
         self.coinUseCase = coinUseCase
-        Task {
-           try await fetchGainerCoins(amount: page)
-        }
-        
+//        Task {
+//           try await fetchGainerCoins(amount: page)
+//        }
     }
     
     @MainActor

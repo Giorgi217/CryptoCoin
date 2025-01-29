@@ -42,11 +42,11 @@ class CoinExchangeViewModel: ObservableObject {
         }
     }
     
-    func updateHoldingCoins(value: Double, quantity: Double, coinId: String) {
+    func buyCoin(value: Double, quantity: Double, coinId: String) {
          var myPortfolio = fireStore.myPortfolio
         
-        if let existingIndexInAll = myPortfolio?.portfolioCoin.firstIndex(where: { $0.coinId == coinId }) {
-            myPortfolio?.portfolioCoin[existingIndexInAll].quantity += quantity
+        if let existing = myPortfolio?.portfolioCoin.firstIndex(where: { $0.coinId == coinId }) {
+            myPortfolio?.portfolioCoin[existing].quantity += quantity
         } else {
             let portfolioCoin = PortfolioCoin(quantity: quantity, coinId: coinId, price: value)
             myPortfolio?.portfolioCoin.append(portfolioCoin)
@@ -57,4 +57,23 @@ class CoinExchangeViewModel: ObservableObject {
             myPorfolio: myPortfolio ?? MyPortfolio(userID: "", portfolioCoin: [])
         )
     }
+    
+    
+    func sellCoin(value: Double, quantity: Double, coinId: String) {
+        var myPortfolio = fireStore.myPortfolio
+        
+        guard let existing = myPortfolio?.portfolioCoin.firstIndex(where: { $0.coinId == coinId }) else { return }
+        
+        if myPortfolio?.portfolioCoin[existing].price ?? 0 >= value {
+            
+            myPortfolio?.portfolioCoin[existing].price -= value
+            myPortfolio?.portfolioCoin[existing].quantity -= quantity
+            guard let coin = myPortfolio?.portfolioCoin[existing] else { return }
+            let userID = UserSessionManager.shared.userId ?? ""
+            FirestoreService.shared.updatePortfolioCoin(userId: userID, updatedCoin: coin)
+        } else {
+            
+        }
+    }
+    
 }
