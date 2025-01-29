@@ -8,10 +8,6 @@
 import Foundation
 import UIKit
 
-protocol PostRequest {
-    
-}
-
 class CoinExchangeViewModel: ObservableObject {
     
     @Published var uiImage: UIImage?
@@ -48,16 +44,13 @@ class CoinExchangeViewModel: ObservableObject {
     
     func updateHoldingCoins(value: Double, quantity: Double, coinId: String) {
          var myPortfolio = fireStore.myPortfolio
-       
-
+        
         if let existingIndexInAll = myPortfolio?.portfolioCoin.firstIndex(where: { $0.coinId == coinId }) {
             myPortfolio?.portfolioCoin[existingIndexInAll].quantity += quantity
         } else {
             let portfolioCoin = PortfolioCoin(quantity: quantity, coinId: coinId, price: value)
             myPortfolio?.portfolioCoin.append(portfolioCoin)
         }
-        
- 
 
         FirestoreService.shared.createDocument(
             userId: UserSessionManager.shared.userId ?? "",

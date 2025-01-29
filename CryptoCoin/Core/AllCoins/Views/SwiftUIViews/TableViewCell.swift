@@ -46,7 +46,6 @@ struct TableViewCell: View {
                         
                         Text(viewModel.priceChangePercentage)
                             .foregroundStyle(viewModel.priceChangeColor)
-                        
                             .padding(.trailing, 10)
                         
                         Text(viewModel.priceChange ?? "")
@@ -69,6 +68,4 @@ struct TableViewCell: View {
     }
 }
 
-#Preview {
-    TableViewCell(viewModel: TableViewCellViewModel(coin: CoinModel(id: "Btc", symbol: "BTC", name: "bitcoin", image: "", currentPrice: 25000, priceChange24h: 1000, priceChangePercentage24h: 8.74, date: nil, purchasedQuantity: nil, purchasePrice: nil, quantity: nil, priceChange: "")))
-}
+

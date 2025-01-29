@@ -46,7 +46,7 @@ class PortfolioViewController: UIViewController {
         textColor: UIColor.themeKit.text)
     
     let portfolioValue = UILabel.createLabel(
-        text: "0000",
+        text: "",
         font: UIFont.boldSystemFont(ofSize: 25),
         textColor: UIColor.themeKit.text)
     
@@ -114,6 +114,9 @@ class PortfolioViewController: UIViewController {
             investmentView.dayCoins = dayCoins
             investmentView.allCoins = allCoins
             investmentView.configure(dayCoins: dayCoins, allCoins: allCoins, investedBalance: investedBalance)
+            investmentView.sumChange.text = porfolio.totalChangedBalance.asCurrencyWith2Decimals()
+            
+            investmentView.sumChangePrecentage.text = (porfolio.totalChangedBalance * 100 / (porfolio.investedBalance ?? 0)).asPercentString()
             portfolioValue.text = investedBalance.asCurrencyWith2Decimals()
             investmentBalanceView.balanceValueLabel.text = investedBalance.asCurrencyWith2Decimals()
             
