@@ -35,7 +35,6 @@ class ChartViewModel: ObservableObject {
         self.symbol = symbol
         self.service = service
         fetchData(for: .week)
-        
     }
     
      func fetchData(for filter: ChartFilter) {

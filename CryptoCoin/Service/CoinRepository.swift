@@ -12,6 +12,7 @@ protocol CoinRepositoryProtocol {
     func fetchRecommendedCoins(page: Int, perPage: Int) async throws -> [CoinModel]
     func fetchCoinDetails(Id: String) async throws -> CoinDetailsModel
     func fetchCoinChartStatistic(symbol: String, fromTimestamp: Int, toTimeStamp: Int) async throws -> ChartPricesModel
+    func fetchGainerCoins(amount: Int) async throws -> [CoinModel]
 }
 
 struct CoinRepository: CoinRepositoryProtocol {
@@ -41,6 +42,11 @@ struct CoinRepository: CoinRepositoryProtocol {
         return try await networkManager.fetch(request: request, responseType: ChartPricesModel.self)
     }
     
+    func fetchGainerCoins(amount: Int) async throws -> [CoinModel] {
+        let request = try await generateUrlGainerCoins(page: amount)
+        return try await networkManager.fetch(request: request, responseType: [CoinModel].self)
+    }
+
     private func generateUrlForCoins(page: Int, perPage: Int ) async throws -> URLRequest {
         let baseURL = baseURL + "markets"
         guard var components = URLComponents(string: baseURL) else {
@@ -120,7 +126,30 @@ struct CoinRepository: CoinRepositoryProtocol {
             throw NetworkError.invalidURL
         }
         
+
+        return URLRequest(url: url)
+    }
+    
+    private func generateUrlGainerCoins(page: Int) async throws -> URLRequest {
+        let baseURL = baseURL + "markets"
+        guard var components = URLComponents(string: baseURL) else {
+            throw NetworkError.invalidURL
+        }
+        
+        components.queryItems = [
+            URLQueryItem(name: "vs_currency", value: "usd"),
+            URLQueryItem(name: "order", value: "volume_desc"),
+            URLQueryItem(name: "per_page", value: "\(page)"),
+            URLQueryItem(name: "sparkline", value: "false"),
+            URLQueryItem(name: "locale", value: "en"),
+            URLQueryItem(name: "precision", value: "2"),
+        ]
+        
+        guard let url = components.url else {
+            throw NetworkError.invalidURL
+        }
         print("\(url)")
         return URLRequest(url: url)
     }
+
 }
