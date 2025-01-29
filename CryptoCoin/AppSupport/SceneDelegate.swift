@@ -16,7 +16,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let scene = (scene as? UIWindowScene) else { return }
         window = UIWindow(windowScene: scene)
-//        let viewController = UIHostingController(rootView:     CoinExchangeView(viewModel: CoinExchangeViewModel(coin: CoinModel(id: "Id", symbol: "BTC", name: "Bitcoin", image: "https://assets.coingecko.com/coins/images/1/large/bitcoin.png", currentPrice: 2000233401, priceChange24h: 13443232.87, priceChangePercentage24h: -12.33, priceChange: nil), exchangeType: .selling)))
+        let viewController = UIHostingController(rootView: GainerCoinsView())
 //        let navigator = AccountTransacionView(transactionType: .withdraw)
         let navigator = LogInView()
         let navigationController = UINavigationController(rootViewController: navigator)

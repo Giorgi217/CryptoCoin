@@ -26,11 +26,25 @@ class PortfolioViewController: UIViewController {
         return view
     }()
     
-    let chartView: UIView = {
-        let view = UIView()
-        view.backgroundColor = UIColor.themeKit.secondaryView
-        view.layer.cornerRadius = 15
+//    let chartView: UIView = {
+//        let view = UIView()
+//        view.backgroundColor = UIColor.themeKit.secondaryView
+//        view.layer.cornerRadius = 15
+//        view.translatesAutoresizingMaskIntoConstraints = false
+//        return view
+//    }()
+    let gainerLabel = UILabel.createLabel(
+        text: "Gainer Coins",
+        font: UIFont.boldSystemFont(ofSize: 18),
+        textColor: UIColor.themeKit.text)
+    
+    private lazy var gainerCoinsView: UIView = {
+        let hostingController = UIHostingController(rootView: GainerCoinsView())
+        addChild(hostingController)
+        let view = hostingController.view!
+        view.backgroundColor = UIColor.themeKit.background
         view.translatesAutoresizingMaskIntoConstraints = false
+        hostingController.didMove(toParent: self)
         return view
     }()
     
@@ -129,7 +143,9 @@ class PortfolioViewController: UIViewController {
         scrollView.addSubview(contentView)
         contentView.addSubview(walletLabel)
         contentView.addSubview(portfolioValue)
-        contentView.addSubview(chartView)
+//        contentView.addSubview(chartView)
+        contentView.addSubview(gainerLabel)
+        contentView.addSubview(gainerCoinsView)
         contentView.addSubview(buttonsView)
         contentView.addSubview(trendingLabel)
         contentView.addSubview(trendingCollection)
@@ -151,8 +167,8 @@ class PortfolioViewController: UIViewController {
             scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             
             contentView.topAnchor.constraint(equalTo: scrollView.topAnchor),
-            contentView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor, constant: 20),
-            contentView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor, constant: -20),
+            contentView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor, constant: 15),
+            contentView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor, constant: -15),
             contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
             contentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor, constant: -40),
             
@@ -164,22 +180,30 @@ class PortfolioViewController: UIViewController {
             portfolioValue.centerXAnchor.constraint(equalTo: walletLabel.centerXAnchor),
             portfolioValue.heightAnchor.constraint(equalToConstant: 25),
             
-            chartView.topAnchor.constraint(equalTo: portfolioValue.bottomAnchor, constant: 20),
-            chartView.widthAnchor.constraint(equalTo: contentView.widthAnchor),
-            chartView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-            chartView.heightAnchor.constraint(equalToConstant: 220),
+            gainerLabel.topAnchor.constraint(equalTo: portfolioValue.bottomAnchor, constant: 40),
+            gainerLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             
-            buttonsView.topAnchor.constraint(equalTo: chartView.bottomAnchor, constant: 20),
+//            chartView.topAnchor.constraint(equalTo: portfolioValue.bottomAnchor, constant: 20),
+//            chartView.widthAnchor.constraint(equalTo: contentView.widthAnchor),
+//            chartView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+//            chartView.heightAnchor.constraint(equalToConstant: 220),
+            
+            gainerCoinsView.topAnchor.constraint(equalTo: gainerLabel.bottomAnchor, constant: 15),
+            gainerCoinsView.widthAnchor.constraint(equalTo: contentView.widthAnchor),
+            gainerCoinsView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+            gainerCoinsView.heightAnchor.constraint(equalToConstant: 190),
+            
+            buttonsView.topAnchor.constraint(equalTo: gainerCoinsView.bottomAnchor, constant: 40),
             buttonsView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
             buttonsView.widthAnchor.constraint(equalTo: contentView.widthAnchor),
             buttonsView.heightAnchor.constraint(equalToConstant: 65),
             
-            trendingLabel.topAnchor.constraint(equalTo: buttonsView.bottomAnchor, constant: 25),
+            trendingLabel.topAnchor.constraint(equalTo: buttonsView.bottomAnchor, constant: 50),
             trendingLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             
             trendingCollection.topAnchor.constraint(equalTo: trendingLabel.bottomAnchor),
-            trendingCollection.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            trendingCollection.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            trendingCollection.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            trendingCollection.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             trendingCollection.heightAnchor.constraint(equalToConstant: 150),
             
             
@@ -187,8 +211,8 @@ class PortfolioViewController: UIViewController {
             recommendedLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             
             recommendedCollection.topAnchor.constraint(equalTo: recommendedLabel.bottomAnchor),
-            recommendedCollection.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            recommendedCollection.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            recommendedCollection.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            recommendedCollection.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             recommendedCollection.heightAnchor.constraint(equalToConstant: 150),
             
             investmentBalanceView.topAnchor.constraint(equalTo: recommendedCollection.bottomAnchor, constant: 15),
