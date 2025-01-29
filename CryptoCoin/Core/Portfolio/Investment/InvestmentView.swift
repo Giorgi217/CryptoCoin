@@ -59,7 +59,7 @@ class InvestmentView: UIView {
     }()
     
     let sumLabel = UILabel.createLabel(
-        text: "Daily Changes",
+        text: "Total Changes",
         font: UIFont.systemFont(ofSize: 12),
         textColor: UIColor.themeKit.secondaryText)
     
@@ -111,8 +111,8 @@ class InvestmentView: UIView {
         conteinerView.addSubview(segmentedControl)
         conteinerView.addSubview(sumLabel)
         conteinerView.addSubview(sumChange)
-        conteinerView.addSubview(triangleImageView)
         conteinerView.addSubview(sumChangePrecentage)
+        conteinerView.addSubview(triangleImageView)
         conteinerView.addSubview(investedTableView)
 
         conteinerView.translatesAutoresizingMaskIntoConstraints = false
@@ -156,13 +156,13 @@ class InvestmentView: UIView {
             sumChange.trailingAnchor.constraint(equalTo: conteinerView.trailingAnchor, constant: -15),
             sumChange.topAnchor.constraint(equalTo: sumLabel.bottomAnchor, constant: 5),
             
-            triangleImageView.leadingAnchor.constraint(equalTo: sumLabel.leadingAnchor, constant: -3),
+            sumChangePrecentage.trailingAnchor.constraint(equalTo: sumChange.leadingAnchor, constant: -5),
+            sumChangePrecentage.topAnchor.constraint(equalTo: sumLabel.bottomAnchor, constant: 5),
+            
+            triangleImageView.trailingAnchor.constraint(equalTo: sumChangePrecentage.leadingAnchor, constant: -3),
             triangleImageView.topAnchor.constraint(equalTo: sumLabel.bottomAnchor, constant: 5),
             triangleImageView.heightAnchor.constraint(equalToConstant: 16),
             triangleImageView.widthAnchor.constraint(equalToConstant: 11),
-            
-            sumChangePrecentage.leadingAnchor.constraint(equalTo: triangleImageView.trailingAnchor, constant: 3),
-            sumChangePrecentage.topAnchor.constraint(equalTo: sumLabel.bottomAnchor, constant: 5),
             
             investedTableView.topAnchor.constraint(equalTo: sumChangePrecentage.bottomAnchor, constant: 10),
             investedTableView.leadingAnchor.constraint(equalTo: conteinerView.leadingAnchor),
@@ -187,7 +187,7 @@ class InvestmentView: UIView {
     
     public func configure(dayCoins: [CoinModel], allCoins: [CoinModel], investedBalance: Double) {
         
-        investmentTotalValueLabel.text = investedBalance.asCurrencyWith6Decimals()
+        investmentTotalValueLabel.text = investedBalance.asCurrencyWith2Decimals()
 //        investmentTotalValueLabel.reloadInputViews()
             investedTableView.reloadData()
     }

@@ -19,8 +19,11 @@ class CoinDetailsViewModel: ObservableObject {
     init(coinId: String, service: CoinUseCaseProtocol = CoinUseCase()) {
         self.service = service
         self.coinId = coinId
-       
         fetchData()
+    }
+    
+    func checkingIsHolding() -> Bool{
+        return ((FirestoreService.shared.myPortfolio?.portfolioCoin.first(where: { $0.coinId == coinId })) != nil)
     }
     
     func fetchData() {

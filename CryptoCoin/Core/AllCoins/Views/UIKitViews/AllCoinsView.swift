@@ -28,6 +28,12 @@ class AllCoinsView: UIViewController {
         viewModel.onError = { [weak self] message in
             self?.viewModel.showAlert(message: message)
         }
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleCoinSelected(_:)),
+            name: Notification.Name("CoinSelected"),
+            object: nil
+        )
     }
     
     private func setupUI() {
@@ -85,5 +91,15 @@ class AllCoinsView: UIViewController {
     
     @objc private func cancelButtonTapped() {
         navigationController?.popViewController(animated: false)
+    }
+    
+    @objc func handleCoinSelected(_ notification: Notification) {
+        guard let searchedCoin = notification.userInfo?["selectedCoin"] as? CoinModel else { return }
+        if viewModel.coins.SearchedCoins.firstIndex(where: { $0.id == searchedCoin.id }) != nil {
+            
+        } else {
+            viewModel.coins.SearchedCoins.append(searchedCoin)
+            coinsTableView.reloadData()
+        }
     }
 }

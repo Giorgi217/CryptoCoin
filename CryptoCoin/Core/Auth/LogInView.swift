@@ -10,10 +10,8 @@ import UIKit
 class LogInView: UIViewController {
     
     private let viewModel = AuthViewModel()
-    
     private let emailTextField = ReusableTextField()
     private let passwordTextField = ReusableTextField()
-    
     private let signUpLabel = UILabel.createLabel(text: "Log In", font: UIFont.boldSystemFont(ofSize: 25), textColor: UIColor.themeKit.text)
     private let emailLabel = UILabel.createLabel(text: "Email", font: UIFont.systemFont(ofSize: 15), textColor: UIColor.themeKit.text)
     private let passwordLabel = UILabel.createLabel(text: "Password", font: UIFont.systemFont(ofSize: 15), textColor: UIColor.themeKit.text)

@@ -9,9 +9,7 @@ import UIKit
 
 class AllCoinViewModel {
     private let coinUseCase: CoinUseCaseProtocol
-    var coins: AllCoinModel = AllCoinModel(allCoins: [], SearchedCoins: [
-
-    ])
+    var coins: AllCoinModel = AllCoinModel(allCoins: [], SearchedCoins: [])
     var page: Int = 1
     
     var onAlertDismissed: (() -> Void)?
@@ -21,6 +19,7 @@ class AllCoinViewModel {
     init(coinUseCase: CoinUseCaseProtocol = CoinUseCase()) {
         self.coinUseCase = coinUseCase
     }
+    
     
     func loadCoins() async {
         do {

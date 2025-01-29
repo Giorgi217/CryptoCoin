@@ -47,18 +47,26 @@ extension AllCoinsView: UITableViewDataSource, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        print("Row selected at section: \(indexPath.section), row: \(indexPath.row)")
+//        print("Row selected at section: \(indexPath.section), row: \(indexPath.row)")
+        
        
         let currentCoin = viewModel.coins.allCoins[indexPath.row]
-        print(currentCoin.id!)
+//        print(currentCoin.id!)
         guard let coinId = currentCoin.id else { return}
+        
+        NotificationCenter.default.post(
+            name: Notification.Name("CoinSelected"),
+            object: nil,
+            userInfo: ["selectedCoin": currentCoin]
+        )
+        
         navigationController?.pushViewController(UIHostingController(rootView: CoinDetailsView(viewModel: CoinDetailsViewModel(coinId: coinId), chartViewModel: ChartViewModel(symbol: coinId))), animated: true)
     }
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         return viewModel.coins.SearchedCoins.isEmpty
         ? "All Coins"
-        : (section == 0 ? "Your Holdings" : "All Coins")
+        : (section == 0 ? "Searched Coins" : "All Coins")
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {

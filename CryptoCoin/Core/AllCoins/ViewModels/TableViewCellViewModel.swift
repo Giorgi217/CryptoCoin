@@ -23,7 +23,7 @@ class TableViewCellViewModel: ObservableObject {
 
     init(coin: CoinModel) {
         self.coin = coin
-        self.coinPrice = coin.currentPrice?.asCurrencyWith6Decimals() ?? "N/A"
+        self.coinPrice = coin.currentPrice?.asCurrencyWith2Decimals() ?? "N/A"
         self.priceChangePercentage = coin.priceChangePercentage24h?.asPercentString() ?? "N/A"
         self.priceChangeColor = coin.priceChangePercentage24h ?? 0 >= 0 ? .green : .red
         self.triangleRotation = coin.priceChangePercentage24h ?? 0 >= 0 ? 0 : 180
