@@ -9,6 +9,7 @@ import SwiftUI
 import Combine
 
 struct CoinExchangeView: View {
+    @Environment(\.dismiss) var dismiss
     
     @StateObject var viewModel: CoinExchangeViewModel
     @State private var purchaseValue: String = ""
@@ -17,7 +18,8 @@ struct CoinExchangeView: View {
     @State private var isUpdatingValue: Bool = false
     @State private var keyboardHeight: CGFloat = 0
     @State private var navigateToPortfolio = false
-    @State private var showAlert: Bool = false
+
+    
     
     @FocusState private var focus: Bool
     
@@ -118,15 +120,12 @@ struct CoinExchangeView: View {
             }
 //            Spacer()
         }
-        .alert("Coin Sold", isPresented: $showAlert) {
-            Button("Go to Portfolio", role: .none) {
-                navigateToPortfolio = true
+        .alert("Coin Sold", isPresented: $viewModel.showAlert) {
+            Button("Cancel", role: .cancel) {
+                dismiss()
             }
-            Button("Cancel", role: .cancel) { }
         }
         
-        // Navigation Link triggered by `navigateToPortfolio`
-
         .background(Color.theme.background)
         .onReceive(Publishers.keyboardHeight) { height in
             withAnimation {
@@ -135,6 +134,12 @@ struct CoinExchangeView: View {
         }
     }
 }
+
+
+
+
+
+
 
 struct CoinView: View {
     
@@ -201,9 +206,6 @@ extension Notification {
     }
 }
 
-#Preview{
-    CoinExchangeView(viewModel: CoinExchangeViewModel(exchangeType: .buying, exchangeCoin: Coin(id: "bitcoin", image: "", name: "bitcoin", symbol: "BTC", price: "200$", priceChangePercentage: 11.2)))
-}
 struct PortfolioViewWrapper: UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> PortfolioViewController {
         return PortfolioViewController()

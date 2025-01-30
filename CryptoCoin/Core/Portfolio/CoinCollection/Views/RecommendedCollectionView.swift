@@ -33,10 +33,10 @@ class RecommendedCollectionView: ReusableCollectionView<CoinModel, CollectionVie
                 animated: true)
         }
         
-//        Task {
-//            await viewModel.loadCoins()
-//            setItems(viewModel.coins)
-//        }
+        Task {
+            await viewModel.loadCoins()
+            setItems(viewModel.coins)
+        }
     }
     
     @MainActor required init?(coder: NSCoder) {

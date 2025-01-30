@@ -35,24 +35,30 @@ class PortfolioViewModel: PortfolioViewModelProtocol {
         var userBalance: Double?
         
         for coin in result.portfolioCoin {
-            let coinDetail = try await coinUseCase.fetchCoinDetails(Id: coin.coinId)
-
-            let currentToTalCoinPrice = (coinDetail.marketData?.currentPrice?.usd ?? 0) * coin.quantity
-            let totalPriceChangePercentage = 100 - (coin.price * 100 / currentToTalCoinPrice)
-            let totalpriceChange = (currentToTalCoinPrice * totalPriceChangePercentage / 100).asCurrencyWith2Decimals()
-            
-            
-            let dayPriceChangePercentage = coinDetail.marketData?.priceChangePercentage24H ?? 0
-            let changedPrice = (coinDetail.marketData?.currentPrice?.usd ?? 0) / 100 * dayPriceChangePercentage
-            let dayPriceChange = (currentToTalCoinPrice * changedPrice / 100).asPercentString()
-            
-            allCoinModel.append(CoinModel(id: coinDetail.id, symbol: coinDetail.symbol, name: coinDetail.name, image: coinDetail.image?.large, currentPrice: currentToTalCoinPrice, priceChange24h: coinDetail.marketData?.priceChange24H, priceChangePercentage24h: totalPriceChangePercentage, isHolding: true, priceChange: totalpriceChange))
-            
-            dayCoinModel.append(CoinModel(id: coinDetail.id, symbol: coinDetail.symbol, name: coinDetail.name, image: coinDetail.image?.large, currentPrice: currentToTalCoinPrice, priceChange24h: coinDetail.marketData?.priceChange24H, priceChangePercentage24h: dayPriceChangePercentage, isHolding: false, priceChange: dayPriceChange))
-            
-            investedBalance += currentToTalCoinPrice
-            totalChangedBalance += currentToTalCoinPrice - coin.price
+            do {
+                let coinDetail = try await coinUseCase.fetchCoinDetails(Id: coin.coinId)
+                
+                let currentToTalCoinPrice = (coinDetail.marketData?.currentPrice?.usd ?? 0) * coin.quantity
+                let totalPriceChangePercentage = 100 - (coin.price * 100 / currentToTalCoinPrice)
+                let totalpriceChange = (currentToTalCoinPrice * totalPriceChangePercentage / 100).asCurrencyWith2Decimals()
+                
+                
+                let dayPriceChangePercentage = coinDetail.marketData?.priceChangePercentage24H ?? 0
+                let changedPrice = (coinDetail.marketData?.currentPrice?.usd ?? 0) / 100 * dayPriceChangePercentage
+                let dayPriceChange = (currentToTalCoinPrice * changedPrice / 100).asPercentString()
+                
+                allCoinModel.append(CoinModel(id: coinDetail.id, symbol: coinDetail.symbol, name: coinDetail.name, image: coinDetail.image?.large, currentPrice: currentToTalCoinPrice, priceChange24h: coinDetail.marketData?.priceChange24H, priceChangePercentage24h: totalPriceChangePercentage, isHolding: true, priceChange: totalpriceChange))
+                
+                dayCoinModel.append(CoinModel(id: coinDetail.id, symbol: coinDetail.symbol, name: coinDetail.name, image: coinDetail.image?.large, currentPrice: currentToTalCoinPrice, priceChange24h: coinDetail.marketData?.priceChange24H, priceChangePercentage24h: dayPriceChangePercentage, isHolding: false, priceChange: dayPriceChange))
+                
+                investedBalance += currentToTalCoinPrice
+                totalChangedBalance += currentToTalCoinPrice - coin.price
+            }
+            catch {
+                return InvestmentModel(totalChangedBalance: 0)
+            }
         }
+       
         
         userBalance = try await portfolioUseCase.fetchMyBalance(userId: userId)
         
