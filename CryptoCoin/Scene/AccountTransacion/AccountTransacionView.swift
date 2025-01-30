@@ -43,7 +43,7 @@ class AccountTransacionView: UIViewController {
         view.backgroundColor = UIColor.backgroundcolor
         setupUI()
         
-        // Add observers for keyboard notifications
+        // MARK: create private funcs viewDidLoad shouldnot be that large
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(keyboardWillShow(_:)),
@@ -313,8 +313,6 @@ class AccountTransacionView: UIViewController {
         }
     }
     
-    
-    
     init(transactionType: TransactionType, viewModel: AccountTransacionViewModelProtocol = AccountTransacionViewModel()) {
         self.transactionType = transactionType
         self.viewModel = viewModel
@@ -338,30 +336,7 @@ class AccountTransacionView: UIViewController {
             self.present(alert, animated: true, completion: nil)
         }
     }
-    
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-enum TransactionType {
-    case deposit
-    case withdraw
-    
-}
-
 
 extension AccountTransacionView: UITextFieldDelegate {
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {

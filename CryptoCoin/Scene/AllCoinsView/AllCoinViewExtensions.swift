@@ -47,11 +47,7 @@ extension AllCoinsView: UITableViewDataSource, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-//        print("Row selected at section: \(indexPath.section), row: \(indexPath.row)")
-        
-       
         var currentCoin = viewModel.coins.allCoins[indexPath.row]
-//        print(currentCoin.id!)
         guard let coinId = currentCoin.id else { return}
         NotificationCenter.default.post(
             name: Notification.Name("CoinSelected"),

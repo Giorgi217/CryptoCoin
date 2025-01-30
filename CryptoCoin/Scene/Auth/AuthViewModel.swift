@@ -98,7 +98,7 @@ class AuthViewModel {
     }
 }
 
-extension String {
+fileprivate extension String {
     var isValidEmail: Bool {
         let emailRegEx = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}"
         let emailPredicate = NSPredicate(format: "SELF MATCHES %@", emailRegEx)
@@ -109,27 +109,3 @@ extension String {
         return self.count >= 8
     }
 }
-
-class UserSessionManager {
-    static let shared = UserSessionManager()
-    
-    private(set) var userId: String?
-    
-    private init() {}
-    
-    func setUserId(_ id: String) {
-        self.userId = id
-    }
-    
-    func clearSession() {
-        self.userId = nil
-    }
-}
-
-
-
-
-
-
-
-

@@ -12,7 +12,7 @@ protocol AccountTransacionViewModelProtocol {
     func withowMyCardBalance(userId: String, balance: Double) async throws
 }
 
-class AccountTransacionViewModel: AccountTransacionViewModelProtocol {
+struct AccountTransacionViewModel: AccountTransacionViewModelProtocol {
     
     let portfolioUseCase: PortfolioUseCaseProtocol
     let cardUseCase: CardUseCaseProtocol
