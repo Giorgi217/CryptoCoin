@@ -16,8 +16,11 @@ struct CoinExchangeView: View {
     @State private var isUpdatingQuantity: Bool = false
     @State private var isUpdatingValue: Bool = false
     @State private var keyboardHeight: CGFloat = 0
+    @State private var navigateToPortfolio = false
+    @State private var showAlert: Bool = false
     
     @FocusState private var focus: Bool
+    
 
     var body: some View {
         VStack {
@@ -52,6 +55,7 @@ struct CoinExchangeView: View {
                         .tint(Color.theme.text)
                         .keyboardType(.decimalPad)
                     Divider()
+
                 }
                 .padding(.leading, 15)
                 Divider()
@@ -85,18 +89,22 @@ struct CoinExchangeView: View {
                         .background(Color.theme.background)
                         .tint(Color.theme.text)
                         .keyboardType(.decimalPad)
-                        
                     Divider()
                 }
+               
             }
             .frame(height: 90)
+            Text(viewModel.incorrectAmount ? "Incorrect Amount. Check the balance." : "")
+                .foregroundStyle(Color.red)
+                .font(Font.system(size: 15))
             Spacer()
             Button(action: {
                 print("Go ahead \(Double(coinQuantity) ?? 0)")
                 if viewModel.exchachangeType == .buying {
                     viewModel.buyCoin(value: Double(purchaseValue) ?? 0, quantity: Double(coinQuantity) ?? 0, coinId: viewModel.exchangeCoin?.id ?? "")
                 } else {
-                    viewModel.sellCoin(value: Double(purchaseValue) ?? 0, quantity: Double(coinQuantity) ?? 0, coinId: viewModel.exchangeCoin?.id ?? "")
+                    
+                    viewModel.coinSell(value: Double(purchaseValue) ?? 0, quantity: Double(coinQuantity) ?? 0, coinId: viewModel.exchangeCoin?.id ?? "")
                 }
             }) {
                 Text(viewModel.exchachangeType == .buying ? "Buy" : "Sell")
@@ -110,7 +118,15 @@ struct CoinExchangeView: View {
             }
 //            Spacer()
         }
-       
+        .alert("Coin Sold", isPresented: $showAlert) {
+            Button("Go to Portfolio", role: .none) {
+                navigateToPortfolio = true
+            }
+            Button("Cancel", role: .cancel) { }
+        }
+        
+        // Navigation Link triggered by `navigateToPortfolio`
+
         .background(Color.theme.background)
         .onReceive(Publishers.keyboardHeight) { height in
             withAnimation {
@@ -182,5 +198,18 @@ extension Publishers {
 extension Notification {
     var keyboardHeight: CGFloat {
         (userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect)?.height ?? 0
+    }
+}
+
+#Preview{
+    CoinExchangeView(viewModel: CoinExchangeViewModel(exchangeType: .buying, exchangeCoin: Coin(id: "bitcoin", image: "", name: "bitcoin", symbol: "BTC", price: "200$", priceChangePercentage: 11.2)))
+}
+struct PortfolioViewWrapper: UIViewControllerRepresentable {
+    func makeUIViewController(context: Context) -> PortfolioViewController {
+        return PortfolioViewController()
+    }
+    
+    func updateUIViewController(_ uiViewController: PortfolioViewController, context: Context) {
+        // No update needed for now
     }
 }

@@ -68,7 +68,7 @@ class FirestoreService {
     func createDocument(userId: String, myPorfolio: MyPortfolio) {
         Task {
             do {
-                try db.document("users/\(userId)").setData(from: myPorfolio)
+                try db.document("users/\(userId)").setData(from: myPorfolio, merge: true)
                 print("მონაცემები შენახულია ბრაწიშკა")
             }
             catch {
@@ -89,7 +89,7 @@ class FirestoreService {
                     if let index = portfolio.portfolioCoin.firstIndex(where: { $0.coinId == updatedCoin.coinId }) {
                         portfolio.portfolioCoin[index] = updatedCoin
                         try userRef.setData(from: portfolio, merge: true)
-                        print("პორტფოლიო განახლებულია ბრაწიშკა")
+                        print("პორტფოლიო განახლებულია ")
                     } else {
                         print("Coin not found in portfolio")
                     }

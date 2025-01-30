@@ -37,17 +37,8 @@ class AccountTransacionView: UIViewController {
     
     let actionButton = UIButton()
     
-    @objc func tapped() {
-        print("Transaction Processed")
-    }
-    
-
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        actionButton.addTarget(self, action: #selector(tapped), for: .touchUpInside)
-        
-        
         
         view.backgroundColor = UIColor.backgroundcolor
         setupUI()
@@ -68,10 +59,14 @@ class AccountTransacionView: UIViewController {
         
         Task {
             let myBalance = try await viewModel?.fetchMyBalance(userId: UserSessionManager.shared.userId ?? "")
-            targetBalanceLabel.text = myBalance?.asNumberString()
-            
             let myCardBalance = try await viewModel?.fetchCardMyBalance(userId: UserSessionManager.shared.userId ?? "")
-            startingBalanceLabel.text = myCardBalance?.asNumberString()
+            if transactionType == .deposit {
+                startingBalanceLabel.text = myCardBalance?.asNumberString()
+                targetBalanceLabel.text = myBalance?.asNumberString()
+            } else {
+                targetBalanceLabel.text = myCardBalance?.asNumberString()
+                startingBalanceLabel.text = myBalance?.asNumberString()
+            }
         }
     }
 
@@ -279,28 +274,46 @@ class AccountTransacionView: UIViewController {
             actionButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -15),
             actionButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -25),
             actionButton.heightAnchor.constraint(equalToConstant: 40)
-            
-
-            
-            
         ])
-        
     }
 
     @objc func buttonTapped() {
-        let userID = UserSessionManager.shared.userId ?? ""
+        let userId = UserSessionManager.shared.userId ?? ""
         let amounttext = transactionTextField.text ?? ""
         let amount = Double(amounttext) ?? 0
+        let cardBalance = UserDefaults.standard.double(forKey: userId)
+    
         if  transactionType == .deposit {
             Task {
-                try await viewModel?.withowMyCardBalance(userId: userID, balance: amount)
+                if cardBalance > amount {
+                    try await viewModel?.withowMyCardBalance(userId: userId, balance: amount)
+                    print("Transaction Proccessed")
+                    showAlert(title: "Done", message: "Transaction Proccessed")
+                    
+                } else {
+                    transactionDivider.backgroundColor = UIColor.red
+                    transactionTextField.placeholder = "Fill valid Amount"
+                    transactionTextField.text = ""
+                    transactionTextField.tintColor = UIColor.red
+                }
             }
         } else {
             Task {
-                try await viewModel?.fillMyCardBalance(userId: userID, balance: amount)
+                let myBalance = try await viewModel?.fetchMyBalance(userId: UserSessionManager.shared.userId ?? "")
+                if myBalance ?? 0 > amount {
+                    try await viewModel?.fillMyCardBalance(userId: userId, balance: amount)
+                    showAlert(title: "Done", message: "Transaction Proccessed")
+                } else {
+                    transactionDivider.backgroundColor = UIColor.red
+                    transactionTextField.placeholder = "Fill valid Amount"
+                    transactionTextField.text = ""
+                    transactionTextField.tintColor = UIColor.red
+                }
             }
         }
     }
+    
+    
     
     init(transactionType: TransactionType, viewModel: AccountTransacionViewModelProtocol = AccountTransacionViewModel()) {
         self.transactionType = transactionType
@@ -312,37 +325,42 @@ class AccountTransacionView: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
+    func showAlert(title: String, message: String) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        
+        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { _ in
+            
+            let nextVC = PortfolioViewController()
+            self.navigationController?.pushViewController(nextVC, animated: true)
+        }))
+        
+        DispatchQueue.main.async {
+            self.present(alert, animated: true, completion: nil)
+        }
+    }
+    
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 enum TransactionType {
     case deposit
     case withdraw
     
 }
-    
-    
-    @available(iOS 13.0, *)
-    struct AccountTransactionViewPreview: PreviewProvider {
-        static var previews: some View {
-            UIViewControllerPreview {
-                AccountTransacionView(transactionType: .deposit)
-            }
-        }
-    }
-    
-    struct UIViewControllerPreview<ViewController: UIViewController>: UIViewControllerRepresentable {
-        let viewController: () -> ViewController
-        
-        init(_ builder: @escaping () -> ViewController) {
-            self.viewController = builder
-        }
-        
-        func makeUIViewController(context: Context) -> ViewController {
-            return viewController()
-        }
-        
-        func updateUIViewController(_ uiViewController: ViewController, context: Context) {}
-    }
 
 
 extension AccountTransacionView: UITextFieldDelegate {
