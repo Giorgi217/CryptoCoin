@@ -9,7 +9,8 @@ import UIKit
 
 class AllCoinViewModel {
     private let coinUseCase: CoinUseCaseProtocol
-    var coins: AllCoinModel = AllCoinModel(allCoins: [], SearchedCoins: [])
+    var coins: AllCoinModel = AllCoinModel(allCoins: [], searchedCoins: [])
+    var filteredCoins: [CoinModel] = []
     var page: Int = 1
     
     var onAlertDismissed: (() -> Void)?
@@ -19,7 +20,6 @@ class AllCoinViewModel {
     init(coinUseCase: CoinUseCaseProtocol = CoinUseCase()) {
         self.coinUseCase = coinUseCase
     }
-    
     
     func loadCoins() async {
         do {
@@ -49,17 +49,28 @@ class AllCoinViewModel {
         onError?(message)
     }
     
+    func filterCoins(searchText: String) {
+        if searchText.isEmpty {
+            filteredCoins = coins.allCoins
+        } else {
+            filteredCoins = coins.allCoins.filter { coin in
+                return coin.name?.lowercased().contains(searchText.lowercased()) == true ||
+                       coin.symbol?.lowercased().contains(searchText.lowercased()) == true
+            }
+        }
+    }
+    
     func showAlert(message: String) {
-       DispatchQueue.main.async {
-           if let viewController = UIApplication.shared.keyWindow?.rootViewController {
-               let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
-               let okAction = UIAlertAction(title: "OK", style: .default) { _ in
-                   print("OK button tapped")
-                   self.onAlertDismissed?()
-               }
-               alert.addAction(okAction)
-               viewController.present(alert, animated: true)
-           }
-       }
-   } 
+        DispatchQueue.main.async {
+            if let viewController = UIApplication.shared.keyWindow?.rootViewController {
+                let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
+                let okAction = UIAlertAction(title: "OK", style: .default) { _ in
+                    print("OK button tapped")
+                    self.onAlertDismissed?()
+                }
+                alert.addAction(okAction)
+                viewController.present(alert, animated: true)
+            }
+        }
+    }
 }

@@ -8,44 +8,30 @@
 import SwiftUI
 
 struct CoinGridComponent: View {
-    var coin: CoinModel
+    @ObservedObject var viewModel: CoinGridComponentViewModel
+    
+
     var body: some View {
         HStack {
-            AsyncImage(url: URL(string: coin.image ?? "N/A")) { phase in
-                switch phase {
-                case .empty:
-                    ProgressView()
-                        .frame(width: 25, height: 25)
-                case .success(let image):
-                    image
-                        .resizable()
-                        .scaledToFill()
-                        .frame(width: 25, height: 25)
-                        .clipShape(Circle())
-                case .failure:
-                    Image(systemName: "photo")
-                        .resizable()
-                        .scaledToFill()
-                        .frame(width: 25, height: 25)
-                        .clipShape(Circle())
-                @unknown default:
-                    EmptyView()
-                }
+            if let uiImage = viewModel.uiImage {
+                Image(uiImage: uiImage)
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: 25, height: 25)
+                    .clipShape(Circle())
+            } else {
+                ProgressView()
+                    .frame(width: 25, height: 25)
             }
-            
-            Text("\(coin.symbol ?? "N/A")")
+            Text("\(viewModel.coin?.symbol ?? "")")
                 .foregroundStyle(Color.theme.text)
         }
-        
         .padding(5)
         .padding([.trailing, .leading], 7)
         .background(
             RoundedRectangle(cornerRadius: 20)
                 .stroke(Color.theme.subtext, lineWidth: 1)
         )
-        
     }
 }
-#Preview {
-//    CoinGridComponent(coin: CoinModel(id: "1", symbol: "pepes", name: "bitcoin", image: "", currentPrice: 122, priceChange24h: 122, priceChangePercentage24h: 122, mock: "n"))
-}
+
