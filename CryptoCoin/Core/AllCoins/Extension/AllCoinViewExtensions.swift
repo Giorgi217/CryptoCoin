@@ -60,7 +60,7 @@ extension AllCoinsView: UITableViewDataSource, UITableViewDelegate {
         )
         let isHolding = FirestoreService.shared.myPortfolio?.portfolioCoin.firstIndex(where: { $0.coinId == coinId }) != nil
         
-            navigationController?.pushViewController(UIHostingController(rootView: CoinDetailsView(viewModel: CoinDetailsViewModel(coinId: coinId, isHolding: true), chartViewModel: ChartViewModel(symbol: coinId))), animated: isHolding)
+        navigationController?.pushViewController(UIHostingController(rootView: CoinDetailsView(viewModel: CoinDetailsViewModel(coinId: coinId, isHolding: isHolding), chartViewModel: ChartViewModel(symbol: coinId))), animated: true)
     }
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {

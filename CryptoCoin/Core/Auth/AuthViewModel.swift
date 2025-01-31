@@ -27,8 +27,25 @@ class AuthViewModel {
     func signUp(email: String, password: String) async throws {
         do {
             let authResult = try await Auth.auth().createUser(withEmail: email, password: password)
-            let user = authResult.user
-            print("User created: \(user)")
+            let userID = authResult.user.uid
+
+            
+            FirestoreService.shared.createDocument(
+                userId: userID,
+                myPorfolio: MyPortfolio(userID: userID, portfolioCoin: [])
+            )
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                Task {
+                    do {
+                        try await FirestoreService.shared.createBalance(userId: userID, balance: 0)
+                    } catch {
+                        print("Failed to create balance: \(error.localizedDescription)")
+                    }
+                }
+            }
+            
+            UserDefaults.standard.set(5000, forKey: userID)
         } catch let error as NSError {
             throw error
         }

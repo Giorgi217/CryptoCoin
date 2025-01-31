@@ -24,7 +24,6 @@ class GainerViewModel: ObservableObject, GainerViewModelProtocol {
         Task {
            try await fetchGainerCoins(amount: page)
         }
-        
     }
     
     @MainActor

@@ -11,6 +11,8 @@ import SwiftUI
 
 class AccountTransacionView: UIViewController {
 
+    let viewModel: AccountTransacionViewModelProtocol?
+    
     let transactionType: TransactionType
     
     let transactionLabel = UILabel()
@@ -35,17 +37,8 @@ class AccountTransacionView: UIViewController {
     
     let actionButton = UIButton()
     
-    @objc func tapped() {
-        print("Transaction Processed")
-    }
-    
-
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        actionButton.addTarget(self, action: #selector(tapped), for: .touchUpInside)
-        
-        
         
         view.backgroundColor = UIColor.backgroundcolor
         setupUI()
@@ -63,6 +56,18 @@ class AccountTransacionView: UIViewController {
             name: UIResponder.keyboardWillHideNotification,
             object: nil
         )
+        
+        Task {
+            let myBalance = try await viewModel?.fetchMyBalance(userId: UserSessionManager.shared.userId ?? "")
+            let myCardBalance = try await viewModel?.fetchCardMyBalance(userId: UserSessionManager.shared.userId ?? "")
+            if transactionType == .deposit {
+                startingBalanceLabel.text = myCardBalance?.asNumberString()
+                targetBalanceLabel.text = myBalance?.asNumberString()
+            } else {
+                targetBalanceLabel.text = myCardBalance?.asNumberString()
+                startingBalanceLabel.text = myBalance?.asNumberString()
+            }
+        }
     }
 
     deinit {
@@ -172,7 +177,9 @@ class AccountTransacionView: UIViewController {
         
         //MARK: TRANASCRION textfield
         transactionTextField.placeholder = "Amount"
+        transactionTextField.keyboardType = .numberPad
         transactionTextField.translatesAutoresizingMaskIntoConstraints = false
+        transactionTextField.delegate = self
         transactionView.addSubview(transactionTextField)
         
         
@@ -192,6 +199,7 @@ class AccountTransacionView: UIViewController {
         actionButton.backgroundColor = UIColor.themeKit.blue
         actionButton.layer.cornerRadius = 15
         actionButton.translatesAutoresizingMaskIntoConstraints = false
+        actionButton.addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)
         view.addSubview(actionButton)
         
         NSLayoutConstraint.activate([
@@ -266,18 +274,50 @@ class AccountTransacionView: UIViewController {
             actionButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -15),
             actionButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -25),
             actionButton.heightAnchor.constraint(equalToConstant: 40)
-            
-
-            
-            
         ])
-        
     }
 
-
+    @objc func buttonTapped() {
+        let userId = UserSessionManager.shared.userId ?? ""
+        let amounttext = transactionTextField.text ?? ""
+        let amount = Double(amounttext) ?? 0
+        let cardBalance = UserDefaults.standard.double(forKey: userId)
     
-    init(transactionType: TransactionType) {
+        if  transactionType == .deposit {
+            Task {
+                if cardBalance > amount {
+                    try await viewModel?.withowMyCardBalance(userId: userId, balance: amount)
+                    print("Transaction Proccessed")
+                    showAlert(title: "Done", message: "Transaction Proccessed")
+                    
+                } else {
+                    transactionDivider.backgroundColor = UIColor.red
+                    transactionTextField.placeholder = "Fill valid Amount"
+                    transactionTextField.text = ""
+                    transactionTextField.tintColor = UIColor.red
+                }
+            }
+        } else {
+            Task {
+                let myBalance = try await viewModel?.fetchMyBalance(userId: UserSessionManager.shared.userId ?? "")
+                if myBalance ?? 0 > amount {
+                    try await viewModel?.fillMyCardBalance(userId: userId, balance: amount)
+                    showAlert(title: "Done", message: "Transaction Proccessed")
+                } else {
+                    transactionDivider.backgroundColor = UIColor.red
+                    transactionTextField.placeholder = "Fill valid Amount"
+                    transactionTextField.text = ""
+                    transactionTextField.tintColor = UIColor.red
+                }
+            }
+        }
+    }
+    
+    
+    
+    init(transactionType: TransactionType, viewModel: AccountTransacionViewModelProtocol = AccountTransacionViewModel()) {
         self.transactionType = transactionType
+        self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -285,35 +325,46 @@ class AccountTransacionView: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
+    func showAlert(title: String, message: String) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        
+        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { _ in
+            
+            let nextVC = PortfolioViewController()
+            self.navigationController?.pushViewController(nextVC, animated: true)
+        }))
+        
+        DispatchQueue.main.async {
+            self.present(alert, animated: true, completion: nil)
+        }
+    }
+    
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 enum TransactionType {
     case deposit
     case withdraw
     
 }
-    
-    
-    @available(iOS 13.0, *)
-    struct AccountTransactionViewPreview: PreviewProvider {
-        static var previews: some View {
-            UIViewControllerPreview {
-                AccountTransacionView(transactionType: .deposit)
-            }
-        }
-    }
-    
-    struct UIViewControllerPreview<ViewController: UIViewController>: UIViewControllerRepresentable {
-        let viewController: () -> ViewController
-        
-        init(_ builder: @escaping () -> ViewController) {
-            self.viewController = builder
-        }
-        
-        func makeUIViewController(context: Context) -> ViewController {
-            return viewController()
-        }
-        
-        func updateUIViewController(_ uiViewController: ViewController, context: Context) {}
-    }
 
+
+extension AccountTransacionView: UITextFieldDelegate {
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        return CharacterSet.decimalDigits.isSuperset(of: CharacterSet(charactersIn: string))
+    }
+}

@@ -118,11 +118,11 @@ class PortfolioViewController: UIViewController {
     @objc func refreshData() {
         Task {
           let porfolio = try await viewModel.fetchMyPortfolio(userId: useId ?? "")
-            
+            refreshControl.endRefreshing()
             guard let dayCoins = porfolio.dayCoinModel,
                   let allCoins = porfolio.allCoinModel,
-                  let investedBalance = porfolio.investedBalance else {
-                refreshControl.endRefreshing()
+                  let investedBalance = porfolio.investedBalance,
+                  let userBalance = porfolio.userBalance else {
                 return
             }
             investmentView.dayCoins = dayCoins
@@ -132,7 +132,7 @@ class PortfolioViewController: UIViewController {
             
             investmentView.sumChangePrecentage.text = (porfolio.totalChangedBalance * 100 / (porfolio.investedBalance ?? 0)).asPercentString()
             portfolioValue.text = investedBalance.asCurrencyWith2Decimals()
-            investmentBalanceView.balanceValueLabel.text = investedBalance.asCurrencyWith2Decimals()
+            investmentBalanceView.balanceValueLabel.text = userBalance.asCurrencyWith2Decimals()
             refreshControl.endRefreshing()
         }
     }
@@ -259,7 +259,7 @@ extension PortfolioViewController: ButtonsViewDelegate {
         navigationController?.pushViewController(AccountTransacionView(transactionType: .withdraw), animated: true)
     }
     
-    func detailsButtonTapped() {
+    func detailsButtonTapped()  {
         print("SomeOne Tapped to Details Button")
     }
     

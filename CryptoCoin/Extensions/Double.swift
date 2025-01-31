@@ -34,6 +34,27 @@ extension Double {
         return currencyFormatter2.string(from: number) ?? "$0.00"
     }
     
+    func asCurrencyDoubleWith2Decimals() -> Double {
+        let number = NSNumber(value: self)
+        let formattedString = currencyFormatterDouble.string(from: number) ?? "$0.00"
+        
+        // Remove currency symbols and convert back to Double
+        let cleanString = formattedString.replacingOccurrences(of: ",", with: "")
+        
+        return Double(cleanString) ?? 0.00
+    }
+    
+    private var currencyFormatterDouble: NumberFormatter {
+        let formatter = NumberFormatter()
+        formatter.usesGroupingSeparator = true
+//        formatter.numberStyle = .currency
+//        formatter.currencyCode = "usd"
+//        formatter.currencySymbol = "$"
+//        formatter.minimumFractionDigits = 2
+        formatter.maximumFractionDigits = 2
+        return formatter
+    }
+    
     
     /// Converts a Double into a Currency with 2-6 decimal places
     /// ```

@@ -10,13 +10,17 @@ import UIKit
 
 class CoinExchangeViewModel: ObservableObject {
     
+    
     @Published var uiImage: UIImage?
     @Published var exchangeCoin: Coin?
+    @Published var incorrectAmount: Bool = false
     let exchachangeType: ExchangeType
     let fireStore = FirestoreService.shared
     private let fileManager = LocalFileManager.instance
     private let folderName = "CoinImages"
-    
+
+    @Published var shouldDismiss = false
+    @Published var showAlert = false
     init(exchangeType: ExchangeType, exchangeCoin: Coin) {
         self.exchangeCoin = exchangeCoin
         self.exchachangeType = exchangeType
@@ -42,19 +46,89 @@ class CoinExchangeViewModel: ObservableObject {
         }
     }
     
-    func updateHoldingCoins(value: Double, quantity: Double, coinId: String) {
-         var myPortfolio = fireStore.myPortfolio
+    func buyCoin(value: Double, quantity: Double, coinId: String) {
+        var myPortfolio = fireStore.myPortfolio ?? MyPortfolio(userID: "", portfolioCoin: [])
         
-        if let existingIndexInAll = myPortfolio?.portfolioCoin.firstIndex(where: { $0.coinId == coinId }) {
-            myPortfolio?.portfolioCoin[existingIndexInAll].quantity += quantity
-        } else {
-            let portfolioCoin = PortfolioCoin(quantity: quantity, coinId: coinId, price: value)
-            myPortfolio?.portfolioCoin.append(portfolioCoin)
-        }
+        Task {
+            let balance = try await FirestoreService.shared.fetchMyBalance(userId: UserSessionManager.shared.userId ?? "")
+            
+            if balance > value {
+                if let existing = myPortfolio.portfolioCoin.firstIndex(where: { $0.coinId == coinId }) {
+                    myPortfolio.portfolioCoin[existing].quantity += quantity
+                    myPortfolio.portfolioCoin[existing].price += value
+                } else {
+                    let portfolioCoin = PortfolioCoin(quantity: quantity, coinId: coinId, price: value)
+                    myPortfolio.portfolioCoin.append(portfolioCoin)
+                }
+                
+                try await FirestoreService.shared.spendBalance(userId: UserSessionManager.shared.userId ?? "", balance: value)
+                
+                FirestoreService.shared.createDocument(
+                    userId: UserSessionManager.shared.userId ?? "",
+                    myPorfolio: myPortfolio
+                )
+            } else {
+                print("per project")
 
-        FirestoreService.shared.createDocument(
-            userId: UserSessionManager.shared.userId ?? "",
-            myPorfolio: myPortfolio ?? MyPortfolio(userID: "", portfolioCoin: [])
-        )
+            }
+        }
     }
+    
+    /*
+    func sellCoin(value: Double, quantity: Double, coinId: String) {
+        var myPortfolio = fireStore.myPortfolio
+        
+        guard let existing = myPortfolio?.portfolioCoin.firstIndex(where: { $0.coinId == coinId }) else { return }
+        
+        Task {
+            try await FirestoreService.shared.fillBalance(userId: UserSessionManager.shared.userId ?? "", balance: value)
+        }
+        if myPortfolio?.portfolioCoin[existing].price ?? 0 >= value {
+            
+            myPortfolio?.portfolioCoin[existing].price -= value
+            myPortfolio?.portfolioCoin[existing].quantity -= quantity
+            guard let coin = myPortfolio?.portfolioCoin[existing] else { return }
+            let userID = UserSessionManager.shared.userId ?? ""
+            FirestoreService.shared.updatePortfolioCoin(userId: userID, updatedCoin: coin)
+        } else {
+            
+        }
+    }
+    */
+    func coinSell(value: Double, quantity: Double, coinId: String) {
+        var myPortfolio = fireStore.myPortfolio
+        guard let existing = myPortfolio?.portfolioCoin.firstIndex(where: { $0.coinId == coinId }) else { return }
+        
+        if (myPortfolio?.portfolioCoin[existing].price ?? 0).asCurrencyDoubleWith2Decimals() >= value {
+            Task {
+                print((myPortfolio?.portfolioCoin[existing].price ?? 0).asCurrencyDoubleWith2Decimals())
+                print(myPortfolio?.portfolioCoin[existing].price ?? 0)
+                try await FirestoreService.shared.fillBalance(userId: UserSessionManager.shared.userId ?? "", balance: value.asCurrencyDoubleWith2Decimals())
+                myPortfolio?.portfolioCoin[existing].price -= value
+                myPortfolio?.portfolioCoin[existing].quantity -= quantity
+                guard let coin = myPortfolio?.portfolioCoin[existing] else { return }
+                let userID = UserSessionManager.shared.userId ?? ""
+                FirestoreService.shared.updatePortfolioCoin(userId: userID, updatedCoin: coin)
+                await MainActor.run {
+                    self.showAlert = true
+                }
+                
+            }
+        } else if (myPortfolio?.portfolioCoin[existing].price ?? 0).asCurrencyDoubleWith2Decimals() == value.asCurrencyDoubleWith2Decimals() {
+            Task {
+                let userId = UserSessionManager.shared.userId ?? ""
+                FirestoreService.shared.deletePortfolioCoin(userId: userId, coinId: coinId)
+                myPortfolio?.portfolioCoin.remove(at: existing)
+                await MainActor.run {
+                    self.showAlert = true
+                }
+            }
+            
+        } else {
+            DispatchQueue.main.async{
+                self.incorrectAmount = true
+            }
+        }
+    }
+    
 }

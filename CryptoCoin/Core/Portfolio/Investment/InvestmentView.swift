@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SwiftUI
 
 class InvestmentView: UIView {
     var dayCoins: [CoinModel]?
@@ -209,5 +210,27 @@ extension InvestmentView: UITableViewDataSource, UITableViewDelegate {
         
         cell.configure(with: currentCoin)
         return cell
+    }
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        guard let selectedCoin = segmentedControl.selectedSegmentIndex == 0 ? dayCoins?[indexPath.row] : allCoins?[indexPath.row] else {
+            return
+        }
+        let detailsViewController = CoinDetailsView(viewModel: CoinDetailsViewModel(coinId: selectedCoin.id ?? "", isHolding: true), chartViewModel: ChartViewModel(symbol: selectedCoin.symbol ?? ""))
+        let detailsView = UIHostingController(rootView: detailsViewController)
+        
+        if let portfolioViewController = findViewController() as? PortfolioViewController {
+            portfolioViewController.navigationController?.pushViewController(detailsView, animated: true)
+        }
+    }
+    
+    private func findViewController() -> UIViewController? {
+        var responder: UIResponder? = self
+        while let nextResponder = responder?.next {
+            if let viewController = nextResponder as? UIViewController {
+                return viewController
+            }
+            responder = nextResponder
+        }
+        return nil
     }
 }
