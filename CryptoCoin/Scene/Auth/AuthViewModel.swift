@@ -39,6 +39,7 @@ class AuthViewModel {
                 Task {
                     do {
                         try await FirestoreService.shared.createBalance(userId: userID, balance: 0)
+                        try await FirestoreService.shared.createCardBalance(userId: userID, balance: 5000)
                     } catch {
                         print("Failed to create balance: \(error.localizedDescription)")
                     }
@@ -50,7 +51,6 @@ class AuthViewModel {
             throw error
         }
     }
-    
     
     func validateSignUpInput(email: String?, password: String?, confirmPassword: String?) -> String? {
         guard let email = email, !email.isEmpty else {

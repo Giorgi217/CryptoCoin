@@ -46,18 +46,36 @@ extension AllCoinsView: UITableViewDataSource, UITableViewDelegate {
         }
     }
     
+    
+    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        var currentCoin = viewModel.coins.allCoins[indexPath.row]
-        guard let coinId = currentCoin.id else { return}
-        NotificationCenter.default.post(
-            name: Notification.Name("CoinSelected"),
-            object: nil,
-            userInfo: ["selectedCoin": currentCoin]
-        )
-        let isHolding = FirestoreService.shared.myPortfolio?.portfolioCoin.firstIndex(where: { $0.coinId == coinId }) != nil
-        
-        navigationController?.pushViewController(UIHostingController(rootView: CoinDetailsView(viewModel: CoinDetailsViewModel(coinId: coinId, isHolding: isHolding), chartViewModel: ChartViewModel(symbol: coinId))), animated: true)
-    }
+            let hasTwoSections = !viewModel.coins.SearchedCoins.isEmpty
+
+            if hasTwoSections && indexPath.section == 0 {
+                return
+            }
+
+            let currentCoin = viewModel.coins.allCoins[indexPath.row]
+            print(currentCoin.id!)
+            guard let coinId = currentCoin.id else { return }
+            
+            NotificationCenter.default.post(
+                name: Notification.Name("CoinSelected"),
+                object: nil,
+                userInfo: ["selectedCoin": currentCoin]
+            )
+            let isHolding = FirestoreService.shared.myPortfolio?.portfolioCoin.firstIndex(where: { $0.coinId == coinId }) != nil          
+            navigationController?.pushViewController(
+                UIHostingController(rootView: CoinDetailsView(
+                    viewModel: CoinDetailsViewModel(coinId: coinId, isHolding: isHolding),
+                    chartViewModel: ChartViewModel(symbol: coinId)
+                )), animated: true
+            )
+        }
+
+
+    
+    
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         return viewModel.coins.SearchedCoins.isEmpty

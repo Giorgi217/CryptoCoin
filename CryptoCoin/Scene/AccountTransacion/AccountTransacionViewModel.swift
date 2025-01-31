@@ -15,18 +15,13 @@ protocol AccountTransacionViewModelProtocol {
 struct AccountTransacionViewModel: AccountTransacionViewModelProtocol {
     
     let portfolioUseCase: PortfolioUseCaseProtocol
-    let cardUseCase: CardUseCaseProtocol
     
-    init(portfolioUseCase: PortfolioUseCaseProtocol = PortfolioUseCase(),
-         cardUseCase: CardUseCaseProtocol = CardUseCase()
-         
-    ) {
+    init(portfolioUseCase: PortfolioUseCaseProtocol = PortfolioUseCase()) {
         self.portfolioUseCase = portfolioUseCase
-        self.cardUseCase = cardUseCase
     }
     
     func fetchCardMyBalance(userId: String) async throws -> Double {
-        try await cardUseCase.fetchMyCardBalance(userId: userId)
+        try await portfolioUseCase.fetchMyCardBalance(userId: userId)
     }
     
     func fetchMyBalance(userId: String) async throws -> Double {
@@ -34,12 +29,12 @@ struct AccountTransacionViewModel: AccountTransacionViewModelProtocol {
     }
     
     func fillMyCardBalance(userId: String, balance: Double) async throws {
-        try await cardUseCase.fillMyCardBalance(userId: userId, balance: balance)
-        try await FirestoreService.shared.spendBalance(userId: userId, balance: balance)
+        try await portfolioUseCase.fillMyCardBalance(userId: userId, balance: balance)
+        try await portfolioUseCase.spendBalance(userId: userId, balance: balance)
     }
     
     func withowMyCardBalance(userId: String, balance: Double) async throws {
-        try await cardUseCase.withowMyCardBalance(userId: userId, balance: balance)
-        try await FirestoreService.shared.fillBalance(userId: userId, balance: balance)
+        try await portfolioUseCase.withowMyCardBalance(userId: userId, balance: balance)
+        try await portfolioUseCase.fillBalance(userId: userId, balance: balance)
     }
 }

@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import SwiftUICore
 
 struct CoinGridCell: View {
     var coins: [CoinModel]
@@ -20,25 +19,14 @@ struct CoinGridCell: View {
     var body: some View {
         LazyVGrid(columns: gridColumns, spacing: 10) {
             ForEach(coins.prefix(6), id: \.id) { coin in
-                
-                let isHolding = FirestoreService.shared.myPortfolio?.portfolioCoin.firstIndex(where: { $0.coinId == coin.id }) != nil
-
-                NavigationLink(
-                    destination: CoinDetailsView(
-                        viewModel: CoinDetailsViewModel(
-                            coinId: coin.id ?? "",
-                            isHolding: isHolding
-                        ),
-                        chartViewModel: ChartViewModel(symbol: coin.symbol ?? "")
-                    )
-                ) {
-                    CoinGridComponent(coin: coin)
-                }
+                CoinGridComponent(coin: coin)
+                    .padding([.leading, .trailing], 10)
+                    .onTapGesture {
+                        print(" tapped: \(coin.name ?? "NONE")")
+                    }
             }
         }
         .background(Color.theme.background)
         .padding()
     }
 }
-
-

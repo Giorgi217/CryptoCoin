@@ -37,10 +37,10 @@ class TrendingCollectionView: ReusableCollectionView<CoinModel, CollectionViewCe
                 animated: true)
         }
         
-        Task {
-            await viewModel.loadCoins()
-            setItems(viewModel.coins)
-        }
+//        Task {
+//            await viewModel.loadCoins()
+//            setItems(viewModel.coins)
+//        }
     }
     
     @MainActor required init?(coder: NSCoder) {

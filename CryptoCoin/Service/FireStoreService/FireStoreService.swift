@@ -7,7 +7,21 @@
 import UIKit
 import FirebaseFirestore
 
-class FirestoreService {
+protocol FirestoreServiceProtocol {
+    func fetchMyPortfolio(userId: String) async throws -> MyPortfolio
+    func fetchMyBalance(userId: String) async throws -> Double
+    
+    func createCardBalance(userId: String, balance: Double) async throws
+    func fetchMyCardBalance(userId: String) async throws -> Double
+    func fillMyCardBalance(userId: String, balance: Double) async throws
+    func withowMyCardBalance(userId: String, balance: Double) async throws
+    
+    func spendBalance(userId: String, balance: Double) async throws
+    func fillBalance(userId: String, balance: Double) async throws 
+}
+
+class FirestoreService: FirestoreServiceProtocol {
+    
     private let db = Firestore.firestore()
     
     static let shared = FirestoreService()
@@ -16,8 +30,10 @@ class FirestoreService {
     
     var myPortfolio: MyPortfolio?
     var myBalance: Double?
+    var myCardBalance: Double?
     
-    func fetchData(userId: String) async throws -> MyPortfolio {
+    
+    func fetchMyPortfolio(userId: String) async throws -> MyPortfolio {
         do {
             let myPortfolioData = try await db.document("users/\(userId)").getDocument(as: MyPortfolio.self)
             self.myPortfolio = myPortfolioData
@@ -25,6 +41,43 @@ class FirestoreService {
         } catch {
             throw error
         }
+    }
+    
+    func createCardBalance(userId: String, balance: Double) async throws {
+        Task {
+            do {
+                let documentRef = db.document("users/\(userId)")
+                try await documentRef.updateData(["cardbalance": balance])
+            } catch {
+                throw error
+            }
+        }
+    }
+    
+    func fetchMyCardBalance(userId: String) async throws -> Double {
+        do {
+            let documentSnapshot = try await db.document("users/\(userId)").getDocument()
+            if let data = documentSnapshot.data() {
+                // Access the data from the document
+                if let balance = data["cardbalance"] as? Double {
+                    self.myCardBalance = balance
+                    return balance
+                }
+            } else {
+                print("Document does not exist")
+            }
+        } catch {
+            print("Error fetching document: \(error)")
+        }
+        return 0
+    }
+    
+    func fillMyCardBalance(userId: String, balance: Double) async throws {
+        try await createCardBalance(userId: userId, balance: (self.myCardBalance ?? 0) + balance)
+    }
+    
+    func withowMyCardBalance(userId: String, balance: Double) async throws {
+        try await createCardBalance(userId: userId, balance: (self.myCardBalance ?? 0) - balance)
     }
     
     func fetchMyBalance(userId: String) async throws -> Double {

@@ -10,9 +10,7 @@ class RequestStorage {
     
     var storage: [String: Any] = [:]
     
-    private init() {
-        
-    }
+    private init() { }
     
     func getCachedResponse<T: Decodable>(forKey key: String) -> T? {
         storage[key] as? T
