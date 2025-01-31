@@ -37,8 +37,8 @@ struct NetworkManager {
             }
         }
         catch let urlError as URLError {
-            if let cachedResponse: T = RequestStorage.shared.getResponse(forKey: storeKey) {
-                return cachedResponse
+            if let storedResponse: T = RequestStorage.shared.getResponse(forKey: storeKey) {
+                return storedResponse
             } else {
                 throw NetworkError.networkFailure(urlError)
             }

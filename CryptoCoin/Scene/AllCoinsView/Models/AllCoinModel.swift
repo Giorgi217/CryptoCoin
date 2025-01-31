@@ -9,5 +9,5 @@ import Foundation
 
 struct AllCoinModel {
     var allCoins: [CoinModel] 
-    var SearchedCoins: [CoinModel]
+    var searchedCoins: [CoinModel]
 }
