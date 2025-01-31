@@ -34,15 +34,15 @@ extension Double {
         return currencyFormatter2.string(from: number) ?? "$0.00"
     }
     
-    func asCurrencyDoubleWith2Decimals() -> Double {
-        let number = NSNumber(value: self)
-        let formattedString = currencyFormatterDouble.string(from: number) ?? "$0.00"
-        
-        // Remove currency symbols and convert back to Double
-        let cleanString = formattedString.replacingOccurrences(of: ",", with: "")
-        
-        return Double(cleanString) ?? 0.00
-    }
+//    func asCurrencyDoubleWith2Decimals() -> Double {
+//        let number = NSNumber(value: self)
+//        let formattedString = currencyFormatterDouble.string(from: number) ?? "$0.00"
+//        
+//        // Remove currency symbols and convert back to Double
+//        let cleanString = formattedString.replacingOccurrences(of: ",", with: "")
+//        
+//        return Double(cleanString) ?? 0.00
+//    }
     
     private var currencyFormatterDouble: NumberFormatter {
         let formatter = NumberFormatter()
@@ -138,6 +138,13 @@ extension Double {
         default:
             return "\(sign)\(self)"
         }
+    }
+}
+
+
+extension Double {
+    func roundedToTwoDecimals() -> Double {
+        return (self * 100).rounded() / 100
     }
 }
 

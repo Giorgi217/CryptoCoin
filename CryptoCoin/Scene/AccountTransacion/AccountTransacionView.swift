@@ -281,38 +281,39 @@ class AccountTransacionView: UIViewController {
         let userId = UserSessionManager.shared.userId ?? ""
         let amounttext = transactionTextField.text ?? ""
         let amount = Double(amounttext) ?? 0
-        let cardBalance = UserDefaults.standard.double(forKey: userId)
-    
-        if  transactionType == .deposit {
-            Task {
-                if cardBalance > amount {
-                    try await viewModel?.withowMyCardBalance(userId: userId, balance: amount)
-                    print("Transaction Proccessed")
-                    showAlert(title: "Done", message: "Transaction Proccessed")
-                    
-                } else {
-                    transactionDivider.backgroundColor = UIColor.red
-                    transactionTextField.placeholder = "Fill valid Amount"
-                    transactionTextField.text = ""
-                    transactionTextField.tintColor = UIColor.red
+        Task{
+            let cardBalance = try await viewModel?.fetchCardMyBalance(userId: userId) ?? 0
+            
+            if  transactionType == .deposit {
+                Task {
+                    if cardBalance > amount {
+                        try await viewModel?.withowMyCardBalance(userId: userId, balance: amount)
+                        print("Transaction Proccessed")
+                        showAlert(title: "Done", message: "Transaction Proccessed")
+                        
+                    } else {
+                        transactionDivider.backgroundColor = UIColor.red
+                        transactionTextField.placeholder = "Fill valid Amount"
+                        transactionTextField.text = ""
+                        transactionTextField.tintColor = UIColor.red
+                    }
                 }
-            }
-        } else {
-            Task {
-                let myBalance = try await viewModel?.fetchMyBalance(userId: UserSessionManager.shared.userId ?? "")
-                if myBalance ?? 0 > amount {
-                    try await viewModel?.fillMyCardBalance(userId: userId, balance: amount)
-                    showAlert(title: "Done", message: "Transaction Proccessed")
-                } else {
-                    transactionDivider.backgroundColor = UIColor.red
-                    transactionTextField.placeholder = "Fill valid Amount"
-                    transactionTextField.text = ""
-                    transactionTextField.tintColor = UIColor.red
+            } else {
+                Task {
+                    let myBalance = try await viewModel?.fetchMyBalance(userId: UserSessionManager.shared.userId ?? "")
+                    if myBalance ?? 0 > amount {
+                        try await viewModel?.fillMyCardBalance(userId: userId, balance: amount)
+                        showAlert(title: "Done", message: "Transaction Proccessed")
+                    } else {
+                        transactionDivider.backgroundColor = UIColor.red
+                        transactionTextField.placeholder = "Fill valid Amount"
+                        transactionTextField.text = ""
+                        transactionTextField.tintColor = UIColor.red
+                    }
                 }
             }
         }
     }
-    
     init(transactionType: TransactionType, viewModel: AccountTransacionViewModelProtocol = AccountTransacionViewModel()) {
         self.transactionType = transactionType
         self.viewModel = viewModel

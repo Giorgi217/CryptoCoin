@@ -16,7 +16,7 @@ struct NetworkManager {
         responseType: T.Type
     ) async throws -> T {
         
-        let cacheKey = "\(request.url?.absoluteString ?? "")-\(String(describing: T.self))"
+        let storeKey = "\(request.url?.absoluteString ?? "")-\(String(describing: T.self))"
         
         do {
             let (data, response) = try await URLSession.shared.data(for: request)
@@ -28,7 +28,7 @@ struct NetworkManager {
             }
             do {
                 let decodedData = try JSONDecoder().decode(T.self, from: data)
-                RequestStorage.shared.cacheResponse(decodedData, forKey: cacheKey)
+                RequestStorage.shared.storeResponse(decodedData, forKey: storeKey)
                 
                 return decodedData
             }
@@ -37,15 +37,15 @@ struct NetworkManager {
             }
         }
         catch let urlError as URLError {
-            if let cachedResponse: T = RequestStorage.shared.getCachedResponse(forKey: cacheKey) {
+            if let cachedResponse: T = RequestStorage.shared.getResponse(forKey: storeKey) {
                 return cachedResponse
             } else {
                 throw NetworkError.networkFailure(urlError)
             }
         }
         catch {
-            if let cachedResponse: T = RequestStorage.shared.getCachedResponse(forKey: cacheKey) {
-                return cachedResponse
+            if let storedResponse: T = RequestStorage.shared.getResponse(forKey: storeKey) {
+                return storedResponse
             } else {
                 throw NetworkError.unknownError
             }
