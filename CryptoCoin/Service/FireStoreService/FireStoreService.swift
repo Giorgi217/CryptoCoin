@@ -143,6 +143,9 @@ class FirestoreService: FirestoreServiceProtocol {
                         portfolio.portfolioCoin[index] = updatedCoin
                         try userRef.setData(from: portfolio, merge: true)
                         print("პორტფოლიო განახლებულია ")
+                        
+                        self.myPortfolio = portfolio
+                        
                     } else {
                         print("Coin not found in portfolio")
                     }
@@ -171,5 +174,6 @@ class FirestoreService: FirestoreServiceProtocol {
             }
         }
     }
+    
 
 }

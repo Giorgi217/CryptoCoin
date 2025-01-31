@@ -34,12 +34,18 @@ class PortfolioViewModel: PortfolioViewModelProtocol {
         var totalChangedBalance: Double = 0
         var userBalance: Double?
         
+        
         for coin in result.portfolioCoin {
             do {
                 let coinDetail = try await coinUseCase.fetchCoinDetails(Id: coin.coinId)
                 
                 let currentToTalCoinPrice = (coinDetail.marketData?.currentPrice?.usd ?? 0) * coin.quantity
-                let totalPriceChangePercentage = 100 - (coin.price * 100 / currentToTalCoinPrice)
+                let startingBalance = coin.startingBalance
+                if currentToTalCoinPrice != coin.price {
+                    FirestoreService.shared.updatePortfolioCoin(userId: userId, updatedCoin: PortfolioCoin(quantity: coin.quantity, coinId: coin.coinId, price: currentToTalCoinPrice.roundedToTwoDecimals(), startingBalance: startingBalance))
+                }
+
+                let totalPriceChangePercentage = 100 - ((coin.startingBalance ?? coin.price) * 100 / currentToTalCoinPrice)
                 let totalpriceChange = (currentToTalCoinPrice * totalPriceChangePercentage / 100).asCurrencyWith2Decimals()
                 
                 
@@ -52,7 +58,7 @@ class PortfolioViewModel: PortfolioViewModelProtocol {
                 dayCoinModel.append(CoinModel(id: coinDetail.id, symbol: coinDetail.symbol, name: coinDetail.name, image: coinDetail.image?.large, currentPrice: currentToTalCoinPrice, priceChange24h: coinDetail.marketData?.priceChange24H, priceChangePercentage24h: dayPriceChangePercentage, isHolding: false, priceChange: dayPriceChange))
                 
                 investedBalance += currentToTalCoinPrice
-                totalChangedBalance += currentToTalCoinPrice - coin.price
+                totalChangedBalance += currentToTalCoinPrice - (coin.startingBalance ?? coin.price)
             }
             catch {
                 return InvestmentModel(totalChangedBalance: 0)
@@ -89,11 +95,13 @@ struct PortfolioCoin: Codable {
     var quantity: Double
     var coinId: String
     var price: Double
+    var startingBalance: Double?
     
-    init(quantity: Double, coinId: String, price: Double) {
+    init(quantity: Double, coinId: String, price: Double, startingBalance: Double? = nil) {
         self.quantity = quantity
         self.coinId = coinId
         self.price = price
+        self.startingBalance = startingBalance
     }
 }
 

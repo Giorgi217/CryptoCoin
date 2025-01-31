@@ -40,13 +40,14 @@ class AuthViewModel {
                     do {
                         try await FirestoreService.shared.createBalance(userId: userID, balance: 0)
                         try await FirestoreService.shared.createCardBalance(userId: userID, balance: 5000)
+                        
                     } catch {
                         print("Failed to create balance: \(error.localizedDescription)")
                     }
                 }
             }
             
-            UserDefaults.standard.set(5000, forKey: userID)
+//            UserDefaults.standard.set(5000, forKey: userID)
         } catch let error as NSError {
             throw error
         }
