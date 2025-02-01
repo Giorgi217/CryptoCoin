@@ -20,25 +20,12 @@ class AllCoinsView: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        viewModel.loadSearchedCoinsFromUserDefaults()
         setupUI()
         setupNavigationBar()
-        fetchData()
-        loadSearchedCoinsFromUserDefaults()
-        viewModel.onAlertDismissed = { [weak self] in
-            self?.navigationController?.popViewController(animated: true)
-        }
-        viewModel.onError = { [weak self] message in
-            self?.viewModel.showAlert(message: message)
-        }
-        
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(handleCoinSelected(_:)),
-            name: .coinSelectedNotification,
-            object: nil
-        )
-        
-        NotificationCenter.default.addObserver(self, selector: #selector(coinTapped(_:)), name: .coinTapped, object: nil)
+        viewModel.fetchData()
+        setupViewModelBindings()
+        setupNotifications()
     }
     
     deinit {
@@ -58,7 +45,7 @@ class AllCoinsView: UIViewController {
         coinsTableView.translatesAutoresizingMaskIntoConstraints = false
         coinsTableView.register(AllCoinTableViewCell.self, forCellReuseIdentifier: "AllCoinTableViewCell")
         coinsTableView.register(HoldingCoinsTableViewCell.self, forCellReuseIdentifier: "HoldingCoinsTableViewCell")
-        coinsTableView.backgroundColor = .backgroundcolor
+        coinsTableView.backgroundColor = UIColor.themeKit.background
         self.navigationController?.setNavigationBarHidden(false, animated: false)
         NSLayoutConstraint.activate([
             coinsTableView.leftAnchor.constraint(equalTo: view.leftAnchor),
@@ -68,26 +55,11 @@ class AllCoinsView: UIViewController {
         ])
     }
     
-    func fetchData() {
-        guard !viewModel.isLoading else { return }
-        
-        viewModel.isLoading = true
-        Task {
-            await viewModel.loadCoins()
-            self.viewModel.isLoading = false
-            DispatchQueue.main.async {
-                self.viewModel.filteredCoins = self.viewModel.coins.allCoins
-                self.coinsTableView.reloadData()
-            }
-        }
-    }
-    
     private func setupSearchBarInNavigationBar() {
         searchBar.placeholder = "Search here..."
         searchBar.delegate = self
         searchBar.sizeToFit()
         searchBar.searchBarStyle = .minimal
- 
         navigationItem.titleView = searchBar
     }
     
@@ -98,6 +70,25 @@ class AllCoinsView: UIViewController {
         navigationItem.rightBarButtonItem = cancelButton
     }
     
+    private func setupViewModelBindings() {
+        viewModel.onDataUpdated = { [weak self] in
+            self?.coinsTableView.reloadData()
+        }
+        
+        viewModel.onAlertDismissed = { [weak self] in
+            self?.navigationController?.popViewController(animated: true)
+        }
+        
+        viewModel.onError = { [weak self] message in
+            self?.viewModel.showAlert(message: message)
+        }
+    }
+    
+    private func setupNotifications() {
+        NotificationCenter.default.addObserver(self, selector: #selector(handleCoinSelected(_:)), name: .coinSelectedNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(coinTapped(_:)), name: .coinTapped, object: nil)
+    }
+    
     @objc private func cancelButtonTapped() {
         navigationController?.popViewController(animated: false)
     }
@@ -105,35 +96,10 @@ class AllCoinsView: UIViewController {
     @objc func handleCoinSelected(_ notification: Notification) {
         guard let searchedCoin = notification.userInfo?[NotificationKeys.selectedCoin] as? CoinModel else { return }
         if viewModel.coins.searchedCoins.firstIndex(where: { $0.id == searchedCoin.id }) != nil {
-            
         } else {
             viewModel.coins.searchedCoins.insert(searchedCoin, at: 0)
-            saveSearchedCoinsToUserDefaults()
+            viewModel.saveSearchedCoinsToUserDefaults()
             coinsTableView.reloadData()
-        }
-    }
-    
-    private func saveSearchedCoinsToUserDefaults() {
-        let coinsTosave = Array(viewModel.coins.searchedCoins.prefix(6))
-        do {
-            let encoder = JSONEncoder()
-            let data = try encoder.encode(coinsTosave)
-            UserDefaults.standard.set(data, forKey: "searchedCoins")
-        } catch {
-            print("Failed to save searched coins to UserDefaults: \(error)")
-        }
-    }
-    
-    private func loadSearchedCoinsFromUserDefaults() {
-        if let data = UserDefaults.standard.data(forKey: "searchedCoins") {
-            do {
-                let decoder = JSONDecoder()
-                let savedCoins = try decoder.decode([CoinModel].self, from: data)
-                viewModel.coins.searchedCoins = savedCoins
-                coinsTableView.reloadData()
-            } catch {
-                print("Failed to load searched coins from UserDefaults: \(error)")
-            }
         }
     }
     
@@ -144,7 +110,6 @@ class AllCoinsView: UIViewController {
             viewModel: CoinDetailsViewModel(coinId: coin.id ?? "", isHolding: false),
             chartViewModel: ChartViewModel(symbol: coin.symbol ?? "")
         )
-
         let hostingController = UIHostingController(rootView: detailsView)
         hostingController.view.backgroundColor = UIColor.themeKit.background
         navigationController?.pushViewController(hostingController, animated: true)

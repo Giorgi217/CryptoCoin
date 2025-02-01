@@ -9,7 +9,7 @@ import SwiftUI
 
 struct TableViewCell: View {
     @ObservedObject var viewModel: TableViewCellViewModel
-
+    
     var body: some View {
         HStack {
             HStack {
@@ -23,7 +23,7 @@ struct TableViewCell: View {
                     ProgressView()
                         .frame(width: 50, height: 50)
                 }
-
+                
                 VStack(alignment: .leading) {
                     Text(viewModel.coin.name ?? "N/A")
                         .foregroundStyle(Color.theme.text).bold()
@@ -32,7 +32,7 @@ struct TableViewCell: View {
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-
+            
             VStack(alignment: .trailing) {
                 Text(viewModel.coinPrice).bold()
                     .foregroundStyle(Color.theme.text)
@@ -43,11 +43,9 @@ struct TableViewCell: View {
                             .font(Font.system(size: 10))
                             .foregroundStyle(viewModel.priceChangeColor)
                             .rotationEffect(Angle(degrees: viewModel.triangleRotation))
-                        
                         Text(viewModel.priceChangePercentage)
                             .foregroundStyle(viewModel.priceChangeColor)
                             .padding(.trailing, 10)
-                        
                         Text(viewModel.priceChange ?? "")
                             .foregroundStyle(Color.theme.subtext)
                     }
@@ -67,5 +65,3 @@ struct TableViewCell: View {
         .background(Color.theme.background)
     }
 }
-
-

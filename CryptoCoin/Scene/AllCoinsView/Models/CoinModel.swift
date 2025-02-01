@@ -49,38 +49,4 @@ struct CoinModel: Codable, Hashable {
         self.priceChange = priceChange
         self.timeStamp = timeStamp
     }
-    
 }
-
-//extension CoinModel {
-//      func toDictionary() -> [String: Any] {
-//        return [
-//            "id": id ?? "",
-//            "symbol": symbol ?? "",
-//            "name": name ?? "",
-//            "image": image ?? "",
-//            "currentPrice": currentPrice ?? 0,
-//            "priceChange24h": priceChange24h ?? 0,
-//            "priceChangePercentage24h": priceChangePercentage24h ?? 0,
-//            "date": date?.timeIntervalSince1970 ?? 0,
-//            "purchasedQuantity": purchasedQuantity ?? 0,
-//            "purchasePrice": purchasePrice ?? 0,
-//            "quantity": quantity ?? 0,
-//            "timeStamp": timeStamp ?? 0,
-//            "isHolding": isHolding ?? false,
-//            "priceChange": priceChange ?? ""
-//        ]
-//    }
-//    
-//}
-//extension CoinModel {
-//    static func fromDictionary(_ dictionary: [String: Any]) -> CoinModel? {
-//        // Map the dictionary keys to CoinModel properties
-//        guard let id = dictionary["id"] as? String,
-//              let name = dictionary["name"] as? String,
-//              let value = dictionary["value"] as? Double else {
-//            return nil
-//        }
-//        return CoinModel(id: id, name: name, value: value)
-//    }
-//}

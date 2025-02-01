@@ -1,5 +1,5 @@
 //
-//  CoinGridView.swift
+//  CoinGridViewComponent.swift
 //  CryptoCoin
 //
 //  Created by Giorgi Amiranashvili on 13.01.25.
@@ -9,7 +9,6 @@ import SwiftUI
 
 struct CoinGridComponent: View {
     @ObservedObject var viewModel: CoinGridComponentViewModel
-    
 
     var body: some View {
         HStack {

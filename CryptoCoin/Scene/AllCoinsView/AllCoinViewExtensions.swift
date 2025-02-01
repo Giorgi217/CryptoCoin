@@ -44,6 +44,7 @@ extension AllCoinsView: UITableViewDataSource, UITableViewDelegate {
             guard let cell = tableView.dequeueReusableCell(withIdentifier: "HoldingCoinsTableViewCell", for: indexPath) as? HoldingCoinsTableViewCell else {
                 return UITableViewCell()
             }
+            
             cell.configure(with: Array(viewModel.coins.searchedCoins.prefix(6)))
             return cell
             
@@ -91,7 +92,7 @@ extension AllCoinsView: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         if indexPath.row == viewModel.coins.allCoins.count - 1 {
-            fetchData()
+            viewModel.fetchData()
         }
     }
 }

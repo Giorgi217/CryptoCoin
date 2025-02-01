@@ -27,9 +27,9 @@ class HoldingCoinsTableViewCell: UITableViewCell {
             hostingView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor)
         ])
     }
+    
     override func prepareForReuse() {
         super.prepareForReuse()
-        // Remove the hosting controller's view from the content view
         hostingController?.view.removeFromSuperview()
         hostingController = nil
     }
