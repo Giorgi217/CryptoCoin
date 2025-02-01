@@ -7,7 +7,6 @@
 
 import Foundation
 
-
 struct ChartModel {
     let id = UUID()
     let price: Double

@@ -40,25 +40,20 @@ struct CoinDetailsModel: Decodable, Observable {
         case lastUpdated = "last_updated"
     }
 
-    // MARK: - Description
     struct Description: Decodable {
         let en: String?
     }
 
-    // MARK: - Links
     struct Links: Decodable {
         let homepage: [String]?
     }
 
-    // MARK: - Image
     struct Image: Decodable {
         let thumb: String?
         let small: String?
         let large: String?
     }
     
-
-    // MARK: - MarketData
     struct MarketData: Decodable {
         let currentPrice: CurrentPrice?
         let marketCap: MarketCap?
@@ -86,7 +81,6 @@ struct CoinDetailsModel: Decodable, Observable {
             case sparkline7D = "sparkline_7d"
         }
 
-        // MARK: - Sparkline7D
         struct Sparkline7D: Decodable {
             let price: [Double]?
         }

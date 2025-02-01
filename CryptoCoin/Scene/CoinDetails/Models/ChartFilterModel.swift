@@ -7,7 +7,6 @@
 
 import Foundation
 
-
 enum ChartFilter: String, CaseIterable {
     case day = "1D"
     case week = "1W"

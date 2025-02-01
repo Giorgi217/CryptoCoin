@@ -9,39 +9,33 @@ import Foundation
 import UIKit
 
 class CoinExchangeViewModel: ObservableObject {
-    
-    
     @Published var uiImage: UIImage?
     @Published var exchangeCoin: Coin?
     @Published var incorrectAmount: Bool = false
-    let exchachangeType: ExchangeType
-    let fireStore = FirestoreService.shared
-    private let fileManager = LocalFileManager.instance
-    private let folderName = "CoinImages"
-
     @Published var shouldDismiss = false
     @Published var showAlert = false
-    init(exchangeType: ExchangeType, exchangeCoin: Coin) {
+    
+    let exchachangeType: ExchangeType
+    let fireStore = FirestoreService.shared
+    private let fileManagerUseCase: FileManagerUseCaseProtocol
+    private let folderName = "CoinImages"
+    
+    init(exchangeType: ExchangeType, exchangeCoin: Coin, fileManagerUseCase: FileManagerUseCaseProtocol = FileManagerUsecase()) {
         self.exchangeCoin = exchangeCoin
         self.exchachangeType = exchangeType
+        self.fileManagerUseCase = fileManagerUseCase
         loadImage()
     }
     
     private func loadImage() {
-        guard let imageName = exchangeCoin?.id, !imageName.isEmpty else { return }
-       
-        if let cachedImage = fileManager.getImage(imageName: imageName, folderName: folderName) {
-            self.uiImage = cachedImage
-            print("saved Image Used")
-        } else {
-            guard let url = URL(string: exchangeCoin?.image ?? "N/A") else { return }
-            Task {
-                if let data = try? Data(contentsOf: url), let image = UIImage(data: data) {
-                    DispatchQueue.main.async {
-                        self.uiImage = image
-                    }
-                    fileManager.saveImage(image: image, imageName: imageName, folderName: folderName)
-                }
+        Task {
+            let image = await fileManagerUseCase.fetchOrDownloadImage(
+                from: exchangeCoin?.image,
+                imageName: exchangeCoin?.id ?? "",
+                folderName: folderName
+            )
+            DispatchQueue.main.async {
+                self.uiImage = image
             }
         }
     }
@@ -71,9 +65,14 @@ class CoinExchangeViewModel: ObservableObject {
                     userId: UserSessionManager.shared.userId ?? "",
                     myPorfolio: myPortfolio
                 )
+                await MainActor.run {
+                    self.showAlert = true
+                    NotificationCenter.default.post(name: .transactionCompleted, object: nil)
+                }
             } else {
-                print("per project")
-
+                DispatchQueue.main.async{
+                    self.incorrectAmount = true
+                }
             }
         }
     }
@@ -103,19 +102,20 @@ class CoinExchangeViewModel: ObservableObject {
             }
         } else if (myPortfolio?.portfolioCoin[existing].price ?? 0).roundedToTwoDecimals() == value.roundedToTwoDecimals() {
             Task {
-                
                 try await FirestoreService.shared.fillBalance(userId: userId, balance: value.roundedToTwoDecimals())
                 FirestoreService.shared.deletePortfolioCoin(userId: userId, coinId: coinId)
                 myPortfolio?.portfolioCoin.remove(at: existing)
                 await MainActor.run {
                     self.showAlert = true
+                    NotificationCenter.default.post(name: .transactionCompleted, object: nil)
                 }
             }
+            
         } else {
             DispatchQueue.main.async{
                 self.incorrectAmount = true
+                NotificationCenter.default.post(name: .transactionCompleted, object: nil)
             }
         }
     }
-    
 }

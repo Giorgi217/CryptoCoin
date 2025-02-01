@@ -17,8 +17,6 @@ class ButtonsView: UIView {
     
     weak var delegate: ButtonsViewDelegate?
     
-    // MARK: private properties
-    
     private let buttonStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .horizontal
@@ -51,9 +49,7 @@ class ButtonsView: UIView {
         text: "Other",
         font: UIFont.systemFont(ofSize: 15),
         textColor: UIColor.themeKit.text)
-    
-    // MARK: init
-    
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         configuraButtonsView()
@@ -63,14 +59,12 @@ class ButtonsView: UIView {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    
-    // MARK: private methods
-    
+
     private func configureButtonActions() {
         detailsButton.addTarget(self, action: #selector(detailsButtonTapped), for: .touchUpInside)
         depositButton.addTarget(self, action: #selector(depositButtonTapped), for: .touchUpInside)
         withdrawButton.addTarget(self, action: #selector(withdrawButtonTapped), for: .touchUpInside)
+        buyButton.addTarget(self, action: #selector(buyButtonTapped), for: .touchUpInside)
     }
     
     private func configuraButtonsView() {
@@ -82,7 +76,6 @@ class ButtonsView: UIView {
             let containerView = createButtonLabelContainer(button: button, label: label)
             buttonStackView.addArrangedSubview(containerView)
         }
-        
     }
     
     private func configuraStackView() {
@@ -114,8 +107,6 @@ class ButtonsView: UIView {
         return containerView
     }
     
-    // MARK: @objc private methods
-    
     @objc private func detailsButtonTapped() {
         delegate?.detailsButtonTapped()
     }
@@ -126,5 +117,8 @@ class ButtonsView: UIView {
     
     @objc private func withdrawButtonTapped() {
         delegate?.withdrawButtonTapped()
+    }
+    @objc private func buyButtonTapped() {
+        delegate?.buyButtonTapped()
     }
 }

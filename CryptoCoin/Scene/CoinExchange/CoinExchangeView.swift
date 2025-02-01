@@ -19,11 +19,6 @@ struct CoinExchangeView: View {
     @State private var keyboardHeight: CGFloat = 0
     @State private var navigateToPortfolio = false
 
-    
-    
-    @FocusState private var focus: Bool
-    
-
     var body: some View {
         VStack {
             CoinView(viewModel: viewModel)
@@ -57,7 +52,6 @@ struct CoinExchangeView: View {
                         .tint(Color.theme.text)
                         .keyboardType(.decimalPad)
                     Divider()
-
                 }
                 .padding(.leading, 15)
                 Divider()
@@ -93,7 +87,6 @@ struct CoinExchangeView: View {
                         .keyboardType(.decimalPad)
                     Divider()
                 }
-               
             }
             .frame(height: 90)
             Text(viewModel.incorrectAmount ? "Incorrect Amount. Check the balance." : "")
@@ -105,7 +98,6 @@ struct CoinExchangeView: View {
                 if viewModel.exchachangeType == .buying {
                     viewModel.buyCoin(value: Double(purchaseValue) ?? 0, quantity: Double(coinQuantity) ?? 0, coinId: viewModel.exchangeCoin?.id ?? "")
                 } else {
-                    
                     viewModel.coinSell(value: Double(purchaseValue) ?? 0, quantity: Double(coinQuantity) ?? 0, coinId: viewModel.exchangeCoin?.id ?? "")
                 }
             }) {
@@ -116,102 +108,18 @@ struct CoinExchangeView: View {
                     .background(Color.theme.blue)
                     .cornerRadius(20)
                     .padding(.bottom, 100)
-//                    .padding(.bottom, keyboardHeight - 300)
             }
-//            Spacer()
         }
-        .alert("Coin Sold", isPresented: $viewModel.showAlert) {
+        .alert("Transaction Complete", isPresented: $viewModel.showAlert) {
             Button("Cancel", role: .cancel) {
                 dismiss()
             }
         }
-        
         .background(Color.theme.background)
         .onReceive(Publishers.keyboardHeight) { height in
             withAnimation {
                 self.keyboardHeight = height
             }
         }
-    }
-}
-
-
-
-
-
-
-
-struct CoinView: View {
-    
-    @StateObject var viewModel: CoinExchangeViewModel
-    var body: some View {
-        HStack {
-            if let uiImage = viewModel.uiImage {
-                Image(uiImage: uiImage)
-                    .resizable()
-                    .scaledToFill()
-                    .frame(width: 60, height: 60)
-                    .clipShape(Circle())
-                    .padding()
-            } else {
-                ProgressView()
-                    .frame(width: 50, height: 50)
-            }
-                
-            VStack (alignment: .leading, spacing: 10){
-                Text(viewModel.exchangeCoin?.name ?? "")
-                    .font(Font.system(size: 21)).bold()
-                    .foregroundStyle(Color.theme.secondary)
-                Text(viewModel.exchangeCoin?.symbol ?? "")
-            }
-            Spacer()
-            VStack(alignment: .trailing, spacing: 11) {
-                Text(viewModel.exchangeCoin?.price ?? "").bold()
-                    
-                HStack {
-                    Image(systemName: "triangle.fill")
-                        .font(Font.system(size: 10))
-                        .foregroundStyle(viewModel.exchangeCoin?.priceChangePercentage ?? 0 > 0 ? .green : .red)
-                    Text(viewModel.exchangeCoin?.priceChangePercentage?.asPercentString() ?? "")
-                        .foregroundStyle(viewModel.exchangeCoin?.priceChangePercentage ?? 0 > 0 ? .green : .red)
-                }
-            }
-            .padding(.trailing, 10)
-        }
-        .background(Color.theme.background)
-    }
-}
-
-enum ExchangeType {
-    case buying
-    case selling
-}
-
-extension Publishers {
-    static var keyboardHeight: AnyPublisher<CGFloat, Never> {
-        let willShow = NotificationCenter.default.publisher(for: UIResponder.keyboardWillShowNotification)
-            .map { $0.keyboardHeight }
-        
-        let willHide = NotificationCenter.default.publisher(for: UIResponder.keyboardWillHideNotification)
-            .map { _ in CGFloat(0) }
-        
-        return MergeMany(willShow, willHide)
-            .eraseToAnyPublisher()
-    }
-}
-
-extension Notification {
-    var keyboardHeight: CGFloat {
-        (userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect)?.height ?? 0
-    }
-}
-
-struct PortfolioViewWrapper: UIViewControllerRepresentable {
-    func makeUIViewController(context: Context) -> PortfolioViewController {
-        return PortfolioViewController()
-    }
-    
-    func updateUIViewController(_ uiViewController: PortfolioViewController, context: Context) {
-        // No update needed for now
     }
 }

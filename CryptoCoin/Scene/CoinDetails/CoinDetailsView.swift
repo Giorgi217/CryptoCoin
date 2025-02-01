@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct CoinDetailsView: View {
-    
     @StateObject var viewModel: CoinDetailsViewModel
     @StateObject var chartViewModel: ChartViewModel
     @State var transactionButtonTapped = false
@@ -101,11 +100,4 @@ struct CoinDetailsView: View {
     }
 }
 
-
-//
-//#Preview {
-//    NavigationView {
-//        CoinDetailsView(viewModel: CoinDetailsViewModel(coinId: ""), chartViewModel: ChartView(viewModel: ChartViewModel(symbol: "")))
-//    }
-//}
 

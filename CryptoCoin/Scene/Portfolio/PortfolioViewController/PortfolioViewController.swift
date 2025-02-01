@@ -108,11 +108,14 @@ class PortfolioViewController: UIViewController {
         recommendedCollection.viewController = self
         self.navigationController?.setNavigationBarHidden(false, animated: false)
         
-        // Configure the refresh control
         refreshControl.addTarget(self, action: #selector(refreshData), for: .valueChanged)
         scrollView.refreshControl = refreshControl
-        
+        NotificationCenter.default.addObserver(self, selector: #selector(refreshContent), name: .transactionCompleted, object: nil)
         refreshData()
+    }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self, name: .transactionCompleted, object: nil)
     }
 
     @objc func refreshData() {
@@ -135,6 +138,10 @@ class PortfolioViewController: UIViewController {
             investmentBalanceView.balanceValueLabel.text = userBalance.asCurrencyWith2Decimals()
             refreshControl.endRefreshing()
         }
+    }
+    
+    @objc func refreshContent() {
+        refreshData()
     }
 
     func setupUI() {
@@ -181,11 +188,6 @@ class PortfolioViewController: UIViewController {
             
             gainerLabel.topAnchor.constraint(equalTo: portfolioValue.bottomAnchor, constant: 40),
             gainerLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            
-//            chartView.topAnchor.constraint(equalTo: portfolioValue.bottomAnchor, constant: 20),
-//            chartView.widthAnchor.constraint(equalTo: contentView.widthAnchor),
-//            chartView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-//            chartView.heightAnchor.constraint(equalToConstant: 220),
             
             gainerCoinsView.topAnchor.constraint(equalTo: gainerLabel.bottomAnchor, constant: 15),
             gainerCoinsView.widthAnchor.constraint(equalTo: contentView.widthAnchor),
@@ -247,8 +249,6 @@ class PortfolioViewController: UIViewController {
         navigationController?.pushViewController(AllCoinsView(), animated: true)
     }
 }
-
-// MARK: ButtonsViewDelegate
 
 extension PortfolioViewController: ButtonsViewDelegate {
     func depositButtonTapped() {
