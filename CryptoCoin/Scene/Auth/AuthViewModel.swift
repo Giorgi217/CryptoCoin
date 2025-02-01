@@ -31,7 +31,6 @@ class AuthViewModel: AuthViewModelProtocol {
     func logIn(email: String, password: String) async throws {
         do {
             let user = try await authUseCase.logIn(email: email, password: password)
-            print("User is Signed In")
             UserSessionManager.shared.setUserId(user.uid)
         }
         catch let error as NSError {
@@ -66,10 +65,8 @@ class AuthViewModel: AuthViewModelProtocol {
     func sendPasswordReset(email: String) async throws {
         do {
             try await authUseCase.sendPasswordReset(email: email)
-            print("Password reset email sent.")
         }
         catch let error as NSError {
-            print("Error sending password reset email: \(error.localizedDescription)")
             throw error
         }
     }

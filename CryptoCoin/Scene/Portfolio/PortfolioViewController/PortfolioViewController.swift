@@ -253,7 +253,7 @@ extension PortfolioViewController: ButtonsViewDelegate {
     }
     
     func detailsButtonTapped()  {
-        print("SomeOne Tapped to Details Button")
+        
     }
     
     func buyButtonTapped() {
