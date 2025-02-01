@@ -253,7 +253,7 @@ extension PortfolioViewController: ButtonsViewDelegate {
     }
     
     func detailsButtonTapped()  {
-        
+        navigationController?.pushViewController(AppDetailsView(), animated: true)
     }
     
     func buyButtonTapped() {
