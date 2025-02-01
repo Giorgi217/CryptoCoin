@@ -10,9 +10,7 @@ import SwiftUI
 
 
 class AccountTransacionView: UIViewController {
-
     let viewModel: AccountTransacionViewModelProtocol?
-    
     let transactionType: TransactionType
     
     let transactionLabel = UILabel()
@@ -37,13 +35,7 @@ class AccountTransacionView: UIViewController {
     
     let actionButton = UIButton()
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        view.backgroundColor = UIColor.backgroundcolor
-        setupUI()
-        
-        // MARK: create private funcs viewDidLoad shouldnot be that large
+    func observers() {
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(keyboardWillShow(_:)),
@@ -56,7 +48,8 @@ class AccountTransacionView: UIViewController {
             name: UIResponder.keyboardWillHideNotification,
             object: nil
         )
-        
+    }
+    func fetchData() {
         Task {
             let myBalance = try await viewModel?.fetchMyBalance(userId: UserSessionManager.shared.userId ?? "")
             let myCardBalance = try await viewModel?.fetchCardMyBalance(userId: UserSessionManager.shared.userId ?? "")
@@ -69,22 +62,37 @@ class AccountTransacionView: UIViewController {
             }
         }
     }
-
+    
+    init(transactionType: TransactionType, viewModel: AccountTransacionViewModelProtocol = AccountTransacionViewModel()) {
+        self.transactionType = transactionType
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        view.backgroundColor = UIColor.backgroundcolor
+        setupUI()
+        observers()
+        fetchData()
+    }
+    
     deinit {
         NotificationCenter.default.removeObserver(self)
     }
-
-    // MARK: Keyboard Handling
     
     @objc private func keyboardWillShow(_ notification: Notification) {
         adjustForKeyboard(notification: notification, isShowing: true)
     }
     
-
     @objc private func keyboardWillHide(_ notification: Notification) {
         adjustForKeyboard(notification: notification, isShowing: false)
     }
-
+    
     private func adjustForKeyboard(notification: Notification, isShowing: Bool) {
         guard let userInfo = notification.userInfo,
               let keyboardFrame = userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect,
@@ -98,103 +106,137 @@ class AccountTransacionView: UIViewController {
         }
     }
     
+    @objc func buttonTapped() {
+        let userId = UserSessionManager.shared.userId ?? ""
+        let amounttext = transactionTextField.text ?? ""
+        let amount = Double(amounttext) ?? 0
+        Task{
+            let cardBalance = try await viewModel?.fetchCardMyBalance(userId: userId) ?? 0
+            if  transactionType == .deposit {
+                Task {
+                    if cardBalance >= amount {
+                        try await viewModel?.withowMyCardBalance(userId: userId, balance: amount)
+                        print("Transaction Proccessed")
+                        showAlert(title: "Done", message: "Transaction Proccessed")
+                    } else {
+                        transactionDivider.backgroundColor = UIColor.red
+                        transactionTextField.placeholder = "Fill valid Amount"
+                        transactionTextField.text = ""
+                        transactionTextField.tintColor = UIColor.red
+                    }
+                }
+            } else {
+                Task {
+                    let myBalance = try await viewModel?.fetchMyBalance(userId: UserSessionManager.shared.userId ?? "")
+                    if myBalance ?? 0 >= amount {
+                        try await viewModel?.fillMyCardBalance(userId: userId, balance: amount)
+                        showAlert(title: "Done", message: "Transaction Proccessed")
+                    } else {
+                        transactionDivider.backgroundColor = UIColor.red
+                        transactionTextField.placeholder = "Fill valid Amount"
+                        transactionTextField.text = ""
+                        transactionTextField.tintColor = UIColor.red
+                    }
+                }
+            }
+        }
+    }
+
+    func showAlert(title: String, message: String) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { _ in
+            
+            let nextVC = PortfolioViewController()
+            self.navigationController?.pushViewController(nextVC, animated: true)
+        }))
+        DispatchQueue.main.async {
+            self.present(alert, animated: true, completion: nil)
+        }
+    }
+    
     private func setupUI() {
         self.navigationController?.setNavigationBarHidden(false, animated: false)
-        // MARK: sd
+        
         transactionLabel.text = transactionType == .deposit ? "Deposit" : "WithDraw"
         transactionLabel.font = UIFont.boldSystemFont(ofSize: 25)
         transactionLabel.textColor = UIColor.themeKit.text
         transactionLabel.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(transactionLabel)
-    // MARK: sd
+        
         sourceAccountLabel.text = "From"
         sourceAccountLabel.font = UIFont.systemFont(ofSize: 13)
         sourceAccountLabel.textColor = UIColor.themeKit.secondaryText
         sourceAccountLabel.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(sourceAccountLabel)
-    // MARK: ბარათის ვიუ
+        
         sourceView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(sourceView)
-    // MARK: Card Imige
+        
         sourceImageView.image = UIImage(systemName: transactionType == .deposit ? "creditcard.fill" : "dollarsign.square.fill")
         sourceImageView.tintColor = UIColor.themeKit.text
         sourceImageView.translatesAutoresizingMaskIntoConstraints = false
         sourceView.addSubview(sourceImageView)
-    // MARK: Card label
+        
         sourceLabel.text = transactionType == .deposit ? "GE92***0187" : "TBYJOO167"
         sourceLabel.font = UIFont.systemFont(ofSize: 13)
         sourceLabel.textColor = UIColor.themeKit.secondaryText
         sourceLabel.translatesAutoresizingMaskIntoConstraints = false
         sourceView.addSubview(sourceLabel)
-    // MARK: startingBalanceLabel
+        
         startingBalanceLabel.text = "0.00"
         startingBalanceLabel.font = UIFont.systemFont(ofSize: 14)
         startingBalanceLabel.textColor = UIColor.themeKit.secondaryText
         startingBalanceLabel.translatesAutoresizingMaskIntoConstraints = false
         sourceView.addSubview(startingBalanceLabel)
-        //MARK: DIVIDER
         
         divider.backgroundColor = UIColor.separator
         divider.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(divider)
-      //
-    // MARK: DestinationLabel
+        
         targetAccountLabel.text = "To:"
         targetAccountLabel.font = UIFont.systemFont(ofSize: 13)
         targetAccountLabel.textColor = UIColor.themeKit.secondaryText
         targetAccountLabel.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(targetAccountLabel)
         
-        // MARK: ბარათის ვიუ
-        
-//        targetView.backgroundColor = .secondaryblue
         targetView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(targetView)
         
-        // MARK: targetImageView
         targetImageView.image = UIImage(systemName: transactionType == .deposit ? "dollarsign.square.fill" : "creditcard.fill")
         targetImageView.tintColor = UIColor.themeKit.text
         targetImageView.translatesAutoresizingMaskIntoConstraints = false
         targetView.addSubview(targetImageView)
-        // MARK: targetLabel
         
         targetLabel.text = transactionType == .deposit ? "TBYJOO167" : "GE92***0187"
         targetLabel.font = UIFont.systemFont(ofSize: 13)
         targetLabel.textColor = UIColor.themeKit.secondaryText
         targetLabel.translatesAutoresizingMaskIntoConstraints = false
         targetImageView.addSubview(targetLabel)
-        // MARK: TARGET BALANCE
+        
         targetBalanceLabel.text = "0.00"
         targetBalanceLabel.font = UIFont.systemFont(ofSize: 14)
         targetBalanceLabel.textColor = UIColor.themeKit.secondaryText
         targetBalanceLabel.translatesAutoresizingMaskIntoConstraints = false
         targetView.addSubview(targetBalanceLabel)
         
-        //MARK: TRANASCRION VIEW
-        
         transactionView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(transactionView)
         
-        //MARK: TRANASCRION textfield
         transactionTextField.placeholder = "Amount"
         transactionTextField.keyboardType = .numberPad
         transactionTextField.translatesAutoresizingMaskIntoConstraints = false
         transactionTextField.delegate = self
         transactionView.addSubview(transactionTextField)
         
-        
-        //MARK: TRANASCRION imageView
         transactionImageView.image = UIImage(systemName: "dollarsign")
         transactionView.addSubview(transactionImageView)
         transactionImageView.tintColor = UIColor.themeKit.secondaryText
         transactionImageView.translatesAutoresizingMaskIntoConstraints = false
         
-        //MARK: DIVIDER
         transactionDivider.backgroundColor = UIColor.separator
         transactionDivider.translatesAutoresizingMaskIntoConstraints = false
         transactionView.addSubview(transactionDivider)
         
-        //MARK: ACTIONBUTTON
         actionButton.setTitle(transactionType == .deposit ? "Deposit" : "Withdraw", for: .normal)
         actionButton.backgroundColor = UIColor.themeKit.blue
         actionButton.layer.cornerRadius = 15
@@ -275,67 +317,6 @@ class AccountTransacionView: UIViewController {
             actionButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -25),
             actionButton.heightAnchor.constraint(equalToConstant: 40)
         ])
-    }
-
-    @objc func buttonTapped() {
-        let userId = UserSessionManager.shared.userId ?? ""
-        let amounttext = transactionTextField.text ?? ""
-        let amount = Double(amounttext) ?? 0
-        Task{
-            let cardBalance = try await viewModel?.fetchCardMyBalance(userId: userId) ?? 0
-            
-            if  transactionType == .deposit {
-                Task {
-                    if cardBalance > amount {
-                        try await viewModel?.withowMyCardBalance(userId: userId, balance: amount)
-                        print("Transaction Proccessed")
-                        showAlert(title: "Done", message: "Transaction Proccessed")
-                        
-                    } else {
-                        transactionDivider.backgroundColor = UIColor.red
-                        transactionTextField.placeholder = "Fill valid Amount"
-                        transactionTextField.text = ""
-                        transactionTextField.tintColor = UIColor.red
-                    }
-                }
-            } else {
-                Task {
-                    let myBalance = try await viewModel?.fetchMyBalance(userId: UserSessionManager.shared.userId ?? "")
-                    if myBalance ?? 0 > amount {
-                        try await viewModel?.fillMyCardBalance(userId: userId, balance: amount)
-                        showAlert(title: "Done", message: "Transaction Proccessed")
-                    } else {
-                        transactionDivider.backgroundColor = UIColor.red
-                        transactionTextField.placeholder = "Fill valid Amount"
-                        transactionTextField.text = ""
-                        transactionTextField.tintColor = UIColor.red
-                    }
-                }
-            }
-        }
-    }
-    init(transactionType: TransactionType, viewModel: AccountTransacionViewModelProtocol = AccountTransacionViewModel()) {
-        self.transactionType = transactionType
-        self.viewModel = viewModel
-        super.init(nibName: nil, bundle: nil)
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    func showAlert(title: String, message: String) {
-        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        
-        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { _ in
-            
-            let nextVC = PortfolioViewController()
-            self.navigationController?.pushViewController(nextVC, animated: true)
-        }))
-        
-        DispatchQueue.main.async {
-            self.present(alert, animated: true, completion: nil)
-        }
     }
 }
 
