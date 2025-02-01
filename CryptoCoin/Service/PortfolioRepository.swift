@@ -14,17 +14,20 @@ protocol PortfolioRepositoryProtocol {
     func fetchMyBalance(userId: String) async throws -> Double
     
     func createCardBalance(userId: String, balance: Double) async throws
+    func createBalance(userId: String, balance: Double) async throws
     func fetchMyCardBalance(userId: String) async throws -> Double
     func fillMyCardBalance(userId: String, balance: Double) async throws
     func withowMyCardBalance(userId: String, balance: Double) async throws
     
     func spendBalance(userId: String, balance: Double) async throws
-    func fillBalance(userId: String, balance: Double) async throws 
+    func fillBalance(userId: String, balance: Double) async throws
+    
+    func createDocument(userId: String, myPorfolio: MyPortfolio)
+    
 }
 
 
 struct PortfolioRepository: PortfolioRepositoryProtocol {
-
     let fireStoreService: FirestoreServiceProtocol
     
     init(fireStoreService: FirestoreServiceProtocol = FirestoreService.shared) {
@@ -55,11 +58,19 @@ struct PortfolioRepository: PortfolioRepositoryProtocol {
         return try await fireStoreService.createCardBalance(userId: userId, balance: balance)
     }
     
+    func createBalance(userId: String, balance: Double) async throws {
+        return try await fireStoreService.createBalance(userId: userId, balance: balance)
+    }
+    
     func spendBalance(userId: String, balance: Double) async throws {
         return try await fireStoreService.spendBalance(userId: userId, balance: balance)
     }
     
     func fillBalance(userId: String, balance: Double) async throws {
         return try await fireStoreService.fillBalance(userId: userId, balance: balance)
+    }
+    
+    func createDocument(userId: String, myPorfolio: MyPortfolio) {
+        fireStoreService.createDocument(userId: userId, myPorfolio: myPorfolio)
     }
 }

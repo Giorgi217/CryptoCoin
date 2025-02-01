@@ -12,17 +12,19 @@ protocol PortfolioUseCaseProtocol {
     func fetchMyBalance(userId: String) async throws -> Double
     
     func createCardBalance(userId: String, balance: Double) async throws
+    func createBalance(userId: String, balance: Double) async throws
     func fetchMyCardBalance(userId: String) async throws -> Double
     func fillMyCardBalance(userId: String, balance: Double) async throws
     func withowMyCardBalance(userId: String, balance: Double) async throws
     
     func spendBalance(userId: String, balance: Double) async throws
-    func fillBalance(userId: String, balance: Double) async throws 
+    func fillBalance(userId: String, balance: Double) async throws
+    
+    func createDocument(userId: String, myPorfolio: MyPortfolio)
 
 }
 
 class PortfolioUseCase: PortfolioUseCaseProtocol {
-    
     private let repo: PortfolioRepositoryProtocol
     
     init(repo: PortfolioRepositoryProtocol = PortfolioRepository()) {
@@ -39,6 +41,10 @@ class PortfolioUseCase: PortfolioUseCaseProtocol {
     
     func createCardBalance(userId: String, balance: Double) async throws {
         try await repo.createCardBalance(userId: userId, balance: balance)
+    }
+    
+    func createBalance(userId: String, balance: Double) async throws {
+        try await repo.createBalance(userId: userId, balance: balance)
     }
     
     func fetchMyCardBalance(userId: String) async throws -> Double {
@@ -61,4 +67,7 @@ class PortfolioUseCase: PortfolioUseCaseProtocol {
         try await repo.fillBalance(userId: userId, balance: balance)
     }
     
+    func createDocument(userId: String, myPorfolio: MyPortfolio) {
+        repo.createDocument(userId: userId, myPorfolio: myPorfolio)
+    }
 }
