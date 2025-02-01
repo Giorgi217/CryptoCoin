@@ -16,4 +16,8 @@ struct Coin {
     let priceChangePercentage: Double?
 }
 
+enum ExchangeType {
+    case buying
+    case selling
+}
 

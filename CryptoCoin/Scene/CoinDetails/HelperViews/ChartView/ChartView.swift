@@ -11,8 +11,6 @@ import Charts
 struct ChartView: View {
     @ObservedObject var viewModel: ChartViewModel
     
-    //MARK: MODIFIERIA მოსაშთობი
-
     var body: some View {
         VStack {
             VStack(spacing: 0) {
@@ -45,7 +43,7 @@ struct ChartView: View {
             }
             ChartFilterView(selectedFilter: $viewModel.selectedFilter)
                 .onChange(of: viewModel.selectedFilter) { newFilter in
-                    viewModel.fetchData(for: newFilter) 
+                    viewModel.fetchData(for: newFilter)
                 }
         }
         .background(Color.theme.background)
@@ -57,12 +55,6 @@ extension View {
         self.modifier(CustomXAxisModifier(data: data, selectedFilter: selectedFilter))
     }
 }
-
-//
-//#Preview {
-//    ChartView()
-//}
-
 
 
 
