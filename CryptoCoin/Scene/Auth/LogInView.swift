@@ -16,7 +16,6 @@ class LogInView: UIViewController {
     private let emailLabel = UILabel.createLabel(text: "Email", font: UIFont.systemFont(ofSize: 15), textColor: UIColor.themeKit.text)
     private let passwordLabel = UILabel.createLabel(text: "Password", font: UIFont.systemFont(ofSize: 15), textColor: UIColor.themeKit.text)
     
-    
     private let SignInButton: UIButton = {
         let button = UIButton()
         button.setTitle("Log In", for: .normal)
@@ -48,7 +47,6 @@ class LogInView: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = UIColor.themeKit.background
         setupTextFields()
         configureUI()
         setupButtons()
@@ -66,6 +64,8 @@ class LogInView: UIViewController {
     }
     
     private func configureUI() {
+        view.backgroundColor = UIColor.themeKit.background
+        
         view.addSubview(signUpLabel)
         view.addSubview(emailLabel)
         view.addSubview(emailTextField)
@@ -116,7 +116,6 @@ class LogInView: UIViewController {
             SignInButton.widthAnchor.constraint(equalToConstant: 150)
         ])
     }
-    
     
     @objc private func signUpTapped() {
         navigationController?.pushViewController(signUpView(), animated: true)

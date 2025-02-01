@@ -4,6 +4,7 @@
 //
 //  Created by Giorgi Amiranashvili on 28.01.25.
 //
+
 import UIKit
 import FirebaseFirestore
 
@@ -12,12 +13,15 @@ protocol FirestoreServiceProtocol {
     func fetchMyBalance(userId: String) async throws -> Double
     
     func createCardBalance(userId: String, balance: Double) async throws
+    func createBalance(userId: String, balance: Double) async throws
     func fetchMyCardBalance(userId: String) async throws -> Double
     func fillMyCardBalance(userId: String, balance: Double) async throws
     func withowMyCardBalance(userId: String, balance: Double) async throws
     
     func spendBalance(userId: String, balance: Double) async throws
-    func fillBalance(userId: String, balance: Double) async throws 
+    func fillBalance(userId: String, balance: Double) async throws
+    
+    func createDocument(userId: String, myPorfolio: MyPortfolio)
 }
 
 class FirestoreService: FirestoreServiceProtocol {

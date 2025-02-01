@@ -33,7 +33,7 @@ class signUpView: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = UIColor.themeKit.background
         setupTextFields()
-        setupLabel()
+        setupUI()
         SignUpButton.addTarget(self, action: #selector(signUpTapped), for: .touchUpInside)
         self.navigationController?.setNavigationBarHidden(false, animated: false)
     }
@@ -52,7 +52,7 @@ class signUpView: UIViewController {
         confirmPasswordTextField.translatesAutoresizingMaskIntoConstraints = false
     }
     
-    func setupLabel() {
+    func setupUI() {
         view.addSubview(signUpLabel)
         view.addSubview(emailLabel)
         view.addSubview(emailTextField)
@@ -132,7 +132,6 @@ class signUpView: UIViewController {
             }
         }
     }
-    
     
     private func showAlert(message: String, completion: (() -> Void)? = nil) {
         let alert = UIAlertController(title: "Notice", message: message, preferredStyle: .alert)
