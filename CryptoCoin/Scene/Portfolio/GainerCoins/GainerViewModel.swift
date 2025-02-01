@@ -5,7 +5,7 @@
 //  Created by Giorgi Amiranashvili on 29.01.25.
 //
 
-import Foundation
+import SwiftUI
 import UIKit
 
 protocol GainerViewModelProtocol {
@@ -13,7 +13,6 @@ protocol GainerViewModelProtocol {
 }
 
 class GainerViewModel: ObservableObject, GainerViewModelProtocol {
-
     @Published var gainerCoins: [CoinModel] = []
     
     let coinUseCase: CoinUseCaseProtocol
@@ -22,7 +21,7 @@ class GainerViewModel: ObservableObject, GainerViewModelProtocol {
     init(coinUseCase: CoinUseCaseProtocol = CoinUseCase()) {
         self.coinUseCase = coinUseCase
         Task {
-           try await fetchGainerCoins(amount: page)
+            try await fetchGainerCoins(amount: page)
         }
     }
     
@@ -36,5 +35,4 @@ class GainerViewModel: ObservableObject, GainerViewModelProtocol {
             print("Error fetching gainer coins: \(error)")
         }
     }
-    
 }

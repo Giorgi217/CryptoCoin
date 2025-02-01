@@ -21,7 +21,6 @@ class TrendingCollectionView: ReusableCollectionView<CoinModel, CollectionViewCe
         }
         
         cellSelected = { [weak self] coin in
-            
             guard let self = self else { return }
             guard let coinId = coin.id else { return }
             var coinDetailsViewModel = CoinDetailsViewModel(coinId: coinId, isHolding: false)
@@ -31,7 +30,6 @@ class TrendingCollectionView: ReusableCollectionView<CoinModel, CollectionViewCe
             }
             
             let coinDetailsView = CoinDetailsView(viewModel: coinDetailsViewModel, chartViewModel: ChartViewModel(symbol: coinId))
-            
             self.viewController?.navigationController?.pushViewController(
                 UIHostingController(rootView: coinDetailsView),
                 animated: true)

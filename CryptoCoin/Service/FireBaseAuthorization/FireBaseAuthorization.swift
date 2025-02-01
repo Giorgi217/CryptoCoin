@@ -10,7 +10,7 @@ import FirebaseAuth
 import FirebaseFirestore
 
 protocol FireBaseAuthorizationProtocol {
-   func logIn(email: String, password: String) async throws -> AuthDataResult
+    func logIn(email: String, password: String) async throws -> AuthDataResult
     func signUp(email: String, password: String) async throws -> AuthDataResult
     func sendPasswordReset(email: String) async throws
 }

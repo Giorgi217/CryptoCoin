@@ -50,13 +50,11 @@ class CoinExchangeViewModel: ObservableObject {
                 if let existing = myPortfolio.portfolioCoin.firstIndex(where: { $0.coinId == coinId }) {
                     myPortfolio.portfolioCoin[existing].quantity += quantity
                     myPortfolio.portfolioCoin[existing].price += value
-                    
                     myPortfolio.portfolioCoin[existing].startingBalance = (myPortfolio.portfolioCoin[existing].startingBalance ?? 0) + value
                     
                 } else {
                     let portfolioCoin = PortfolioCoin(quantity: quantity, coinId: coinId, price: value, startingBalance: value)
                     myPortfolio.portfolioCoin.append(portfolioCoin)
-                   
                 }
                 
                 try await FirestoreService.shared.spendBalance(userId: UserSessionManager.shared.userId ?? "", balance: value)
@@ -69,6 +67,7 @@ class CoinExchangeViewModel: ObservableObject {
                     self.showAlert = true
                     NotificationCenter.default.post(name: .transactionCompleted, object: nil)
                 }
+                
             } else {
                 DispatchQueue.main.async{
                     self.incorrectAmount = true
@@ -76,12 +75,11 @@ class CoinExchangeViewModel: ObservableObject {
             }
         }
     }
-
+    
     func coinSell(value: Double, quantity: Double, coinId: String) {
         var myPortfolio = fireStore.myPortfolio
         guard let existing = myPortfolio?.portfolioCoin.firstIndex(where: { $0.coinId == coinId }) else { return }
         let userId = UserSessionManager.shared.userId ?? ""
-        
         
         if (myPortfolio?.portfolioCoin[existing].price ?? 0).roundedToTwoDecimals() > value.roundedToTwoDecimals() {
             Task {
@@ -100,6 +98,7 @@ class CoinExchangeViewModel: ObservableObject {
                     self.showAlert = true
                 }
             }
+            
         } else if (myPortfolio?.portfolioCoin[existing].price ?? 0).roundedToTwoDecimals() == value.roundedToTwoDecimals() {
             Task {
                 try await FirestoreService.shared.fillBalance(userId: userId, balance: value.roundedToTwoDecimals())

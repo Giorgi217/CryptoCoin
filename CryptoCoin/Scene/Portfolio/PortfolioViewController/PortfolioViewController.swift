@@ -9,31 +9,24 @@ import UIKit
 import SwiftUI
 import FirebaseFirestore
 
-
 class PortfolioViewController: UIViewController {
     var viewModel: PortfolioViewModelProtocol
-    let useId = UserSessionManager.shared.userId
+    private let useId = UserSessionManager.shared.userId
     
-    let scrollView: UIScrollView = {
+    private let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
+        
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         return scrollView
     }()
     
-    let contentView: UIView = {
-       let view = UIView()
+    private let contentView: UIView = {
+        let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
     
-//    let chartView: UIView = {
-//        let view = UIView()
-//        view.backgroundColor = UIColor.themeKit.secondaryView
-//        view.layer.cornerRadius = 15
-//        view.translatesAutoresizingMaskIntoConstraints = false
-//        return view
-//    }()
-    let gainerLabel = UILabel.createLabel(
+    private let gainerLabel = UILabel.createLabel(
         text: "Gainer Coins",
         font: UIFont.boldSystemFont(ofSize: 18),
         textColor: UIColor.themeKit.text)
@@ -48,45 +41,42 @@ class PortfolioViewController: UIViewController {
         return view
     }()
     
-    let buttonsView: ButtonsView = {
-       let buttonsView = ButtonsView()
+    private let buttonsView: ButtonsView = {
+        let buttonsView = ButtonsView()
         buttonsView.translatesAutoresizingMaskIntoConstraints = false
         return buttonsView
     }()
     
-    let walletLabel = UILabel.createLabel(
+    private let walletLabel = UILabel.createLabel(
         text: "Total portfolio value",
         font: UIFont.boldSystemFont(ofSize: 14),
         textColor: UIColor.themeKit.text)
     
-    let portfolioValue = UILabel.createLabel(
+    private let portfolioValue = UILabel.createLabel(
         text: "",
         font: UIFont.boldSystemFont(ofSize: 25),
         textColor: UIColor.themeKit.text)
     
-    let trendingLabel = UILabel.createLabel(
+    private let trendingLabel = UILabel.createLabel(
         text: "TrendingNow",
         font: UIFont.boldSystemFont(ofSize: 17),
         textColor: UIColor.themeKit.text)
     
-    let recommendedLabel = UILabel.createLabel(
+    private let recommendedLabel = UILabel.createLabel(
         text: "Experts Recommendetion",
         font: UIFont.boldSystemFont(ofSize: 17),
         textColor: UIColor.themeKit.text)
     
-    let holdingLabel = UILabel.createLabel(
+    private let holdingLabel = UILabel.createLabel(
         text: "Holdings",
         font: UIFont.boldSystemFont(ofSize: 17),
         textColor: UIColor.themeKit.text)
     
-    let trendingCollection = TrendingCollectionView()
-    let recommendedCollection = RecommendedCollectionView()
-    let investmentView = InvestmentView()
-    let investmentBalanceView = InvestmentBalanceView()
-    
-    let refreshControl = UIRefreshControl()
-    
-    //MARK: INIT
+    private let trendingCollection = TrendingCollectionView()
+    private let recommendedCollection = RecommendedCollectionView()
+    private let investmentView = InvestmentView()
+    private let investmentBalanceView = InvestmentBalanceView()
+    private let refreshControl = UIRefreshControl()
     
     init(viewModel: PortfolioViewModelProtocol = PortfolioViewModel()) {
         self.viewModel = viewModel
@@ -100,27 +90,32 @@ class PortfolioViewController: UIViewController {
     override func viewDidLoad()  {
         super.viewDidLoad()
         setupUI()
-        
         view.backgroundColor = UIColor.themeKit.background
-        
+        setupDelegate()
+        setupNavigationAndRefreshHandling()
+        refreshData()
+    }
+    
+    private func setupNavigationAndRefreshHandling() {
+        self.navigationController?.setNavigationBarHidden(false, animated: false)
+        scrollView.refreshControl = refreshControl
+        refreshControl.addTarget(self, action: #selector(refreshData), for: .valueChanged)
+        NotificationCenter.default.addObserver(self, selector: #selector(refreshContent), name: .transactionCompleted, object: nil)
+    }
+    
+    private func setupDelegate() {
         buttonsView.delegate = self
         trendingCollection.viewController = self
         recommendedCollection.viewController = self
-        self.navigationController?.setNavigationBarHidden(false, animated: false)
-        
-        refreshControl.addTarget(self, action: #selector(refreshData), for: .valueChanged)
-        scrollView.refreshControl = refreshControl
-        NotificationCenter.default.addObserver(self, selector: #selector(refreshContent), name: .transactionCompleted, object: nil)
-        refreshData()
     }
     
     deinit {
         NotificationCenter.default.removeObserver(self, name: .transactionCompleted, object: nil)
     }
-
+    
     @objc func refreshData() {
         Task {
-          let porfolio = try await viewModel.fetchMyPortfolio(userId: useId ?? "")
+            let porfolio = try await viewModel.fetchMyPortfolio(userId: useId ?? "")
             refreshControl.endRefreshing()
             guard let dayCoins = porfolio.dayCoinModel,
                   let allCoins = porfolio.allCoinModel,
@@ -131,10 +126,9 @@ class PortfolioViewController: UIViewController {
             investmentView.dayCoins = dayCoins
             investmentView.allCoins = allCoins
             investmentView.configure(dayCoins: dayCoins, allCoins: allCoins, investedBalance: investedBalance)
-            investmentView.sumChange.text = porfolio.totalChangedBalance.asCurrencyWith2Decimals()
-            
-            investmentView.sumChangePrecentage.text = (porfolio.totalChangedBalance * 100 / (porfolio.investedBalance ?? 0)).asPercentString()
-            portfolioValue.text = investedBalance.asCurrencyWith2Decimals()
+            let sumPercentage = porfolio.totalChangedBalance * 100 / (porfolio.investedBalance ?? 0)
+            investmentView.configureSum(sum: porfolio.totalChangedBalance, sumPercent: sumPercentage)
+            portfolioValue.text = (investedBalance + userBalance).asCurrencyWith2Decimals()
             investmentBalanceView.balanceValueLabel.text = userBalance.asCurrencyWith2Decimals()
             refreshControl.endRefreshing()
         }
@@ -143,13 +137,12 @@ class PortfolioViewController: UIViewController {
     @objc func refreshContent() {
         refreshData()
     }
-
-    func setupUI() {
+    
+    private func setupUI() {
         view.addSubview(scrollView)
         scrollView.addSubview(contentView)
         contentView.addSubview(walletLabel)
         contentView.addSubview(portfolioValue)
-//        contentView.addSubview(chartView)
         contentView.addSubview(gainerLabel)
         contentView.addSubview(gainerCoinsView)
         contentView.addSubview(buttonsView)
@@ -165,7 +158,7 @@ class PortfolioViewController: UIViewController {
         setupConstraints()
     }
     
-    func setupConstraints() {
+    private func setupConstraints() {
         NSLayoutConstraint.activate([
             scrollView.topAnchor.constraint(equalTo: view.topAnchor),
             scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),

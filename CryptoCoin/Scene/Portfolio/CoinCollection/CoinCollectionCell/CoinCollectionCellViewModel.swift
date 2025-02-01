@@ -8,7 +8,6 @@
 import Foundation
 import SwiftUI
 
-
 class CoinCollectionCellViewModel {
     var coin: CoinModel
     @Published var uiImage: UIImage?
@@ -31,7 +30,7 @@ class CoinCollectionCellViewModel {
     
     private func loadImage() {
         guard let imageName = coin.id, !imageName.isEmpty else { return }
-       
+        
         if let cachedImage = fileManager.getImage(imageName: imageName, folderName: folderName) {
             self.uiImage = cachedImage
             print("saved Image Used")

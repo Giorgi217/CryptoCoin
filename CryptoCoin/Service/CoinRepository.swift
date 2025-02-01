@@ -91,7 +91,6 @@ struct CoinRepository: CoinRepositoryProtocol {
         return URLRequest(url: url)
     }
 
-    
     private func generateUrlForCoinDetails(Id: String) async throws -> URLRequest {
         let baseURL = baseURL + "\(Id)"
         guard var components = URLComponents(string: baseURL) else { throw NetworkError.invalidURL }
@@ -151,5 +150,4 @@ struct CoinRepository: CoinRepositoryProtocol {
         print("\(url)")
         return URLRequest(url: url)
     }
-
 }
