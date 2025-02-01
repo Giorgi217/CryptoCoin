@@ -182,8 +182,8 @@ class InvestmentView: UIView {
     
     func configureSum(sum: Double, sumPercent: Double) {
         sumChangePrecentage.textColor = sumPercent >= 0 ? UIColor.green : UIColor.red
-        sumChangePrecentage.text = sum.asPercentString()
-        sumChange.text = sumPercent.asCurrencyWith2Decimals()
+        sumChange.text = sum.asCurrencyWith2Decimals()
+        sumChangePrecentage.text = sumPercent.asPercentString()
         
         triangleImageView.image = UIImage(systemName: sumPercent >= 0 ? "arrowtriangle.up.fill" : "arrowtriangle.down.fill")
         triangleImageView.tintColor = sumPercent >= 0 ? UIColor.secondarycolor : UIColor.systemPink

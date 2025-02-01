@@ -22,5 +22,15 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window?.rootViewController = navigationController
         window?.makeKeyAndVisible()
     }
+    
+    func clearUserDefaults() {
+        let defaults = UserDefaults.standard
+        defaults.removeObject(forKey: "searchedCoins")
+        defaults.synchronize()
+    }
+    
+    func sceneDidDisconnect(_ scene: UIScene) {
+        clearUserDefaults()
+    }
 }
 

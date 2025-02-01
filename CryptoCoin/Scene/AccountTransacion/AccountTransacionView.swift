@@ -311,8 +311,8 @@ class AccountTransacionView: UIViewController {
             transactionDivider.heightAnchor.constraint(equalToConstant: 1),
             
             actionButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            actionButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 15),
-            actionButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -15),
+            actionButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 50),
+            actionButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -50),
             actionButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -25),
             actionButton.heightAnchor.constraint(equalToConstant: 40)
         ])
