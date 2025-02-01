@@ -30,7 +30,6 @@ class GainerViewModel: ObservableObject, GainerViewModelProtocol {
         do {
             let data = try await coinUseCase.fetchGainerCoins(amount: amount)
             self.gainerCoins = data
-            print("Fetched \(self.gainerCoins.count) gainer coins")
         } catch {
             print("Error fetching gainer coins: \(error)")
         }

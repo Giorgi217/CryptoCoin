@@ -116,7 +116,6 @@ class AccountTransacionView: UIViewController {
                 Task {
                     if cardBalance >= amount {
                         try await viewModel?.withowMyCardBalance(userId: userId, balance: amount)
-                        print("Transaction Proccessed")
                         showAlert(title: "Done", message: "Transaction Proccessed")
                     } else {
                         transactionDivider.backgroundColor = UIColor.red

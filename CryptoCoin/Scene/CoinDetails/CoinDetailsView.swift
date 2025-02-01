@@ -89,7 +89,6 @@ struct CoinDetailsView: View {
                     .padding(.trailing, 120)
                     
                     Button(action: {
-                        print("Star button tapped")
                     }) {
                         Image(systemName: "star")
                             .foregroundStyle(Color.theme.blue)

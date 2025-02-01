@@ -29,7 +29,7 @@ extension InvestmentView: UITableViewDataSource, UITableViewDelegate {
         guard let selectedCoin = segmentedControl.selectedSegmentIndex == 0 ? dayCoins?[indexPath.row] : allCoins?[indexPath.row] else {
             return
         }
-        let detailsViewController = CoinDetailsView(viewModel: CoinDetailsViewModel(coinId: selectedCoin.id ?? "", isHolding: true), chartViewModel: ChartViewModel(symbol: selectedCoin.symbol ?? ""))
+        let detailsViewController = CoinDetailsView(viewModel: CoinDetailsViewModel(coinId: selectedCoin.id ?? "", isHolding: true), chartViewModel: ChartViewModel(symbol: selectedCoin.id ?? ""))
         let detailsView = UIHostingController(rootView: detailsViewController)
         
         if let portfolioViewController = findViewController() as? PortfolioViewController {

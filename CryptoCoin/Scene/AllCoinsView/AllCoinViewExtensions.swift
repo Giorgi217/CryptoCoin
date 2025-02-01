@@ -67,7 +67,7 @@ extension AllCoinsView: UITableViewDataSource, UITableViewDelegate {
         }
 
         let currentCoin = viewModel.filteredCoins.isEmpty ? viewModel.coins.allCoins[indexPath.row] : viewModel.filteredCoins[indexPath.row]
-        print(currentCoin.id!)
+
         guard let coinId = currentCoin.id else { return }
         
         NotificationCenter.default.post(

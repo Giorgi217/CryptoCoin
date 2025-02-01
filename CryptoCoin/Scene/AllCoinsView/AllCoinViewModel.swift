@@ -40,7 +40,6 @@ class AllCoinViewModel {
     func loadCoins() async {
         do {
             let newCoins = try await coinUseCase.fetchCoins(page: page, perPage: perPage)
-            print("fetched data \(newCoins.count)")
             coins.allCoins.append(contentsOf: newCoins)
             page += 1
         }
@@ -81,7 +80,6 @@ class AllCoinViewModel {
             if let viewController = UIApplication.shared.keyWindow?.rootViewController {
                 let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
                 let okAction = UIAlertAction(title: "OK", style: .default) { _ in
-                    print("OK button tapped")
                     self.onAlertDismissed?()
                 }
                 alert.addAction(okAction)

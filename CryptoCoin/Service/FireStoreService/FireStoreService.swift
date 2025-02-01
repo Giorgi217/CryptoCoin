@@ -67,7 +67,7 @@ class FirestoreService: FirestoreServiceProtocol {
                     return balance
                 }
             } else {
-                print("Document does not exist")
+                
             }
         } catch {
             print("Error fetching document: \(error)")
@@ -92,7 +92,7 @@ class FirestoreService: FirestoreServiceProtocol {
                     return balance
                 }
             } else {
-                print("Document does not exist")
+                
             }
         } catch {
             print("Error fetching document: \(error)")
@@ -143,8 +143,6 @@ class FirestoreService: FirestoreServiceProtocol {
                         try userRef.setData(from: portfolio, merge: true)
                         self.myPortfolio = portfolio
                         
-                    } else {
-                        print("Coin not found in portfolio")
                     }
                 }
             } catch {

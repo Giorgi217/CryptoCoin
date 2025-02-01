@@ -108,7 +108,7 @@ class AllCoinsView: UIViewController {
         
         let detailsView = CoinDetailsView(
             viewModel: CoinDetailsViewModel(coinId: coin.id ?? "", isHolding: false),
-            chartViewModel: ChartViewModel(symbol: coin.symbol ?? "")
+            chartViewModel: ChartViewModel(symbol: coin.id ?? "")
         )
         let hostingController = UIHostingController(rootView: detailsView)
         hostingController.view.backgroundColor = UIColor.themeKit.background

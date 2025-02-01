@@ -33,7 +33,6 @@ class CoinCollectionCellViewModel {
         
         if let cachedImage = fileManager.getImage(imageName: imageName, folderName: folderName) {
             self.uiImage = cachedImage
-            print("saved Image Used")
         } else {
             guard let url = URL(string: coin.image ?? "N/A") else { return }
             Task {
