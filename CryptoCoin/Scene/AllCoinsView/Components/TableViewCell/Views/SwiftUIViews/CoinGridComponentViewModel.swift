@@ -13,31 +13,24 @@ class CoinGridComponentViewModel: ObservableObject {
     @Published var coin: CoinModel?
     @Published var uiImage: UIImage?
     
-    private let fileManager = LocalFileManager.instance
+    private let fileManagerUseCase: FileManagerUseCaseProtocol
     private let folderName = "CoinImages"
     
-    init(coin: CoinModel) {
+    init(coin: CoinModel, fileManagerUseCase: FileManagerUseCaseProtocol = FileManagerUsecase()) {
         self.coin = coin
+        self.fileManagerUseCase = fileManagerUseCase
         loadImage()
     }
     
-    
-    
     private func loadImage() {
-        guard let imageName = coin?.id, !imageName.isEmpty else { return }
-       
-        if let cachedImage = fileManager.getImage(imageName: imageName, folderName: folderName) {
-            self.uiImage = cachedImage
-            print("saved Image Used")
-        } else {
-            guard let url = URL(string: coin?.image ?? "N/A") else { return }
-            Task {
-                if let data = try? Data(contentsOf: url), let image = UIImage(data: data) {
-                    DispatchQueue.main.async {
-                        self.uiImage = image
-                    }
-                    fileManager.saveImage(image: image, imageName: imageName, folderName: folderName)
-                }
+        Task {
+            let image = await fileManagerUseCase.fetchOrDownloadImage(
+                from: coin?.image,
+                imageName: coin?.id ?? "",
+                folderName: folderName
+            )
+            DispatchQueue.main.async {
+                self.uiImage = image
             }
         }
     }

@@ -12,18 +12,34 @@ class AllCoinViewModel {
     var coins: AllCoinModel = AllCoinModel(allCoins: [], searchedCoins: [])
     var filteredCoins: [CoinModel] = []
     var page: Int = 1
+    let perPage = 25
     
     var onAlertDismissed: (() -> Void)?
     var onError: ((String) -> Void)?
+    var onDataUpdated: (() -> Void)?
     var isLoading: Bool = false
     
     init(coinUseCase: CoinUseCaseProtocol = CoinUseCase()) {
         self.coinUseCase = coinUseCase
     }
     
+    func fetchData() {
+        guard !isLoading else { return }
+        isLoading = true
+        
+        Task {
+            await loadCoins()
+            isLoading = false
+            DispatchQueue.main.async {
+                self.filteredCoins = self.coins.allCoins
+                self.onDataUpdated?()
+            }
+        }
+    }
+    
     func loadCoins() async {
         do {
-            let newCoins = try await coinUseCase.fetchCoins(page: page, perPage: 25)
+            let newCoins = try await coinUseCase.fetchCoins(page: page, perPage: perPage)
             print("fetched data \(newCoins.count)")
             coins.allCoins.append(contentsOf: newCoins)
             page += 1
@@ -70,6 +86,29 @@ class AllCoinViewModel {
                 }
                 alert.addAction(okAction)
                 viewController.present(alert, animated: true)
+            }
+        }
+    }
+    
+     func saveSearchedCoinsToUserDefaults() {
+        let coinsTosave = Array(coins.searchedCoins.prefix(6))
+        do {
+            let encoder = JSONEncoder()
+            let data = try encoder.encode(coinsTosave)
+            UserDefaults.standard.set(data, forKey: "searchedCoins")
+        } catch {
+            print("Failed to save searched coins to UserDefaults: \(error)")
+        }
+    }
+    
+     func loadSearchedCoinsFromUserDefaults() {
+        if let data = UserDefaults.standard.data(forKey: "searchedCoins") {
+            do {
+                let decoder = JSONDecoder()
+                let savedCoins = try decoder.decode([CoinModel].self, from: data)
+                coins.searchedCoins = savedCoins
+            } catch {
+
             }
         }
     }

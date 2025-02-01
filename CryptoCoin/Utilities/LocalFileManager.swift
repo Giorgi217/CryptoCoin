@@ -8,10 +8,40 @@
 import Foundation
 import SwiftUI
 
-class LocalFileManager {
+protocol LocalFileManagerProtocol {
+    func saveImage(image: UIImage, imageName: String, folderName: String)
+    func getImage(imageName: String, folderName: String) -> UIImage?
+    func fetchOrDownloadImage(from urlString: String?, imageName: String, folderName: String) async -> UIImage?
+}
+
+class LocalFileManager: LocalFileManagerProtocol {
     
     static let instance = LocalFileManager()
     private init() { }
+    
+    
+    func fetchOrDownloadImage(from urlString: String?, imageName: String, folderName: String) async -> UIImage? {
+        guard let imageName = imageName.isEmpty ? nil : imageName else { return nil }
+        
+        if let cachedImage = getImage(imageName: imageName, folderName: folderName) {
+            print("Saved Image Used")
+            return cachedImage
+        }
+        
+        guard let urlString = urlString, let url = URL(string: urlString) else { return nil }
+        
+        do {
+            let (data, _) = try await URLSession.shared.data(from: url)
+            if let image = UIImage(data: data) {
+                saveImage(image: image, imageName: imageName, folderName: folderName)
+                return image
+            }
+        } catch {
+            print("Failed to download image: \(error)")
+        }
+        return nil
+    }
+    
     
     func saveImage(image: UIImage, imageName: String, folderName: String) {
         
@@ -47,7 +77,6 @@ class LocalFileManager {
         }
     }
     
-    
     private func getURLForFolder(folderName: String) -> URL? {
         guard let url = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first else {
             return nil
@@ -61,5 +90,4 @@ class LocalFileManager {
         }
         return folderURL.appendingPathComponent(imageName + ".png")
     }
-    
 }

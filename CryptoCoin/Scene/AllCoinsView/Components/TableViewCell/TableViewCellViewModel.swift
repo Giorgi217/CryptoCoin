@@ -13,15 +13,14 @@ class TableViewCellViewModel: ObservableObject {
     @Published var priceChangePercentage: String
     @Published var priceChangeColor: Color
     @Published var triangleRotation: Double
-    @Published var mock: String?
     @Published var isHolding: Bool?
     @Published var priceChange: String?
     
-    private let fileManager = LocalFileManager.instance
+    private let fileManagerUseCase: FileManagerUseCaseProtocol
     private let folderName = "CoinImages"
     var coin: CoinModel
-
-    init(coin: CoinModel) {
+    
+    init(coin: CoinModel, fileManagerUseCase: FileManagerUseCaseProtocol = FileManagerUsecase()) {
         self.coin = coin
         self.coinPrice = coin.currentPrice?.asCurrencyWith2Decimals() ?? "N/A"
         self.priceChangePercentage = coin.priceChangePercentage24h?.asPercentString() ?? "N/A"
@@ -29,26 +28,20 @@ class TableViewCellViewModel: ObservableObject {
         self.triangleRotation = coin.priceChangePercentage24h ?? 0 >= 0 ? 0 : 180
         self.isHolding = coin.isHolding
         self.priceChange = coin.priceChange
+        self.fileManagerUseCase = fileManagerUseCase
         loadImage()
     }
-
+    
     private func loadImage() {
-        guard let imageName = coin.id, !imageName.isEmpty else { return }
-       
-        if let cachedImage = fileManager.getImage(imageName: imageName, folderName: folderName) {
-            self.uiImage = cachedImage
-            print("saved Image Used")
-        } else {
-            guard let url = URL(string: coin.image ?? "N/A") else { return }
-            Task {
-                if let data = try? Data(contentsOf: url), let image = UIImage(data: data) {
-                    DispatchQueue.main.async {
-                        self.uiImage = image
-                    }
-                    fileManager.saveImage(image: image, imageName: imageName, folderName: folderName)
-                }
+        Task {
+            let image = await fileManagerUseCase.fetchOrDownloadImage(
+                from: coin.image,
+                imageName: coin.id ?? "",
+                folderName: folderName
+            )
+            DispatchQueue.main.async {
+                self.uiImage = image
             }
         }
     }
 }
-
