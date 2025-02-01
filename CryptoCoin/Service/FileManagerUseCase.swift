@@ -5,11 +5,7 @@
 //  Created by Giorgi Amiranashvili on 01.02.25.
 //
 
-import Foundation
-
-
 import UIKit
-
 
 protocol FileManagerUseCaseProtocol {
     func saveImage(image: UIImage, imageName: String, folderName: String)
@@ -18,7 +14,6 @@ protocol FileManagerUseCaseProtocol {
 }
 
 struct FileManagerUsecase: FileManagerUseCaseProtocol {
-
     private let repo: FileManagerRepositoryProtocol
     
     init(repo: FileManagerRepositoryProtocol = FileManagerRepository()) {

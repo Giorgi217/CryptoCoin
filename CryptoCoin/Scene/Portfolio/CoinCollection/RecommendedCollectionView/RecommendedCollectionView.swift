@@ -21,7 +21,6 @@ class RecommendedCollectionView: ReusableCollectionView<CoinModel, CollectionVie
         }
         
         cellSelected = { [weak self] coin in
-           
             guard let self = self else { return }
             guard let coinId = coin.id else { return }
             let isHolding = FirestoreService.shared.myPortfolio?.portfolioCoin.firstIndex(where: { $0.coinId == coinId }) != nil
@@ -33,10 +32,10 @@ class RecommendedCollectionView: ReusableCollectionView<CoinModel, CollectionVie
                 animated: true)
         }
         
-//        Task {
-//            await viewModel.loadCoins()
-//            setItems(viewModel.coins)
-//        }
+        Task {
+            await viewModel.loadCoins()
+            setItems(viewModel.coins)
+        }
     }
     
     @MainActor required init?(coder: NSCoder) {

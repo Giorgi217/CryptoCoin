@@ -7,7 +7,6 @@
 
 import UIKit
 
-
 protocol FileManagerRepositoryProtocol {
     func saveImage(image: UIImage, imageName: String, folderName: String)
     func getImage(imageName: String, folderName: String) -> UIImage?

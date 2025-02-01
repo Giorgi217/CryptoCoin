@@ -15,7 +15,6 @@ protocol LocalFileManagerProtocol {
 }
 
 class LocalFileManager: LocalFileManagerProtocol {
-    
     static let instance = LocalFileManager()
     private init() { }
     
@@ -24,7 +23,6 @@ class LocalFileManager: LocalFileManagerProtocol {
         guard let imageName = imageName.isEmpty ? nil : imageName else { return nil }
         
         if let cachedImage = getImage(imageName: imageName, folderName: folderName) {
-            print("Saved Image Used")
             return cachedImage
         }
         

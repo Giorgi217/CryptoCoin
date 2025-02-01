@@ -73,9 +73,5 @@ class InvestmentBalanceView: UIView {
             balanceValueLabel.topAnchor.constraint(equalTo: balanceLabel.bottomAnchor, constant: 3)
         ])
     }
-    
-    func configure(with balance: String) {
-        balanceValueLabel.text = balance
-    }
 }
 

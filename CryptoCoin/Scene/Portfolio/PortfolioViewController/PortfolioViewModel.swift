@@ -14,7 +14,6 @@ protocol PortfolioViewModelProtocol {
 }
 
 class PortfolioViewModel: PortfolioViewModelProtocol {
-
     let portfolioUseCase: PortfolioUseCaseProtocol
     let coinUseCase: CoinUseCaseProtocol
     
@@ -33,7 +32,6 @@ class PortfolioViewModel: PortfolioViewModelProtocol {
         var investedBalance: Double = 0
         var totalChangedBalance: Double = 0
         var userBalance: Double?
-        
         
         for coin in result.portfolioCoin {
             do {
@@ -64,7 +62,6 @@ class PortfolioViewModel: PortfolioViewModelProtocol {
                 return InvestmentModel(totalChangedBalance: 0)
             }
         }
-       
         
         userBalance = try await portfolioUseCase.fetchMyBalance(userId: userId)
         
@@ -72,40 +69,8 @@ class PortfolioViewModel: PortfolioViewModelProtocol {
     }
 }
 
-struct InvestmentModel {
-    var dayCoinModel: [CoinModel]?
-    var allCoinModel: [CoinModel]?
-    var investedBalance: Double?
-    var userBalance: Double?
-    var totalChangedBalance: Double
-}
 
 
-struct MyPortfolio: Codable {
-    @DocumentID var userID: String?
-    var portfolioCoin: [PortfolioCoin]
-}
-
-struct Balance: Codable {
-    @DocumentID var userID: String?
-    var balance: Double?
-}
-
-struct PortfolioCoin: Codable {
-    var quantity: Double
-    var coinId: String
-    var price: Double
-    var startingBalance: Double?
-    
-    init(quantity: Double, coinId: String, price: Double, startingBalance: Double? = nil) {
-        self.quantity = quantity
-        self.coinId = coinId
-        self.price = price
-        self.startingBalance = startingBalance
-    }
-}
 
 
- /*
-let coinUseCase: CoinUseCaseProtocol
-*/
+

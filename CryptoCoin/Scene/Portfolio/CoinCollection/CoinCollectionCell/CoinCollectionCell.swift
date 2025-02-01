@@ -9,6 +9,7 @@ import SwiftUI
 
 struct CoinCollectionCell: View {
     let viewModel: CoinCollectionCellViewModel
+    
     var body: some View {
         VStack(alignment: .leading) {
             VStack(alignment: .leading) {
@@ -56,5 +57,4 @@ struct CoinCollectionCell: View {
         }
         .cornerRadius(15)
     }
-        
 }

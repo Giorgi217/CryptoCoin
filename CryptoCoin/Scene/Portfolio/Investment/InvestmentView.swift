@@ -11,9 +11,7 @@ import SwiftUI
 class InvestmentView: UIView {
     var dayCoins: [CoinModel]?
     var allCoins: [CoinModel]?
-    
-    // MARK: Init
-    
+ 
     init() {
         super.init(frame: .zero)
         self.setUp()
@@ -82,21 +80,17 @@ class InvestmentView: UIView {
 
     let investedTableView: UITableView = {
         let tableView = UITableView()
-        tableView.backgroundColor = UIColor.gray
+        tableView.backgroundColor = UIColor.themeKit.background
         return tableView
     }()
     
     func configureInvestedTableView() {
-        
         investedTableView.dataSource = self
         investedTableView.delegate = self
-        
         investedTableView.register(AllCoinTableViewCell.self, forCellReuseIdentifier: "AllCoinTableViewCell")
     }
     
-
     private func setUp() {
-//        viewModel.fetchCoins()
         self.translatesAutoresizingMaskIntoConstraints = false
         self.backgroundColor = UIColor.themeKit.background
         setupUI()
@@ -126,8 +120,6 @@ class InvestmentView: UIView {
         triangleImageView.translatesAutoresizingMaskIntoConstraints = false
         sumChangePrecentage.translatesAutoresizingMaskIntoConstraints = false
         investedTableView.translatesAutoresizingMaskIntoConstraints = false
-        
-        
         
         NSLayoutConstraint.activate([
             conteinerView.heightAnchor.constraint(equalToConstant: 350),
@@ -178,59 +170,22 @@ class InvestmentView: UIView {
     
     @objc func segmentChanged() {
         if segmentedControl.selectedSegmentIndex == 0 {
-            print("Day selected")            
         } else {
-            print("All selected")
         }
         investedTableView.reloadData()
-        
     }
-    
+
     public func configure(dayCoins: [CoinModel], allCoins: [CoinModel], investedBalance: Double) {
-        
         investmentTotalValueLabel.text = investedBalance.asCurrencyWith2Decimals()
-//        investmentTotalValueLabel.reloadInputViews()
             investedTableView.reloadData()
     }
-}
-
-extension InvestmentView: UITableViewDataSource, UITableViewDelegate {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        segmentedControl.selectedSegmentIndex == 0 ? dayCoins?.count ?? 0 : allCoins?.count ?? 0
-    }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = investedTableView.dequeueReusableCell(withIdentifier: "AllCoinTableViewCell") as? AllCoinTableViewCell,
-              
-              let currentCoin = segmentedControl.selectedSegmentIndex == 0 ? dayCoins?[indexPath.row]: allCoins?[indexPath.row]
-                
-        else {
-            return UITableViewCell()
-        }
+    func configureSum(sum: Double, sumPercent: Double) {
+        sumChangePrecentage.textColor = sumPercent >= 0 ? UIColor.green : UIColor.red
+        sumChangePrecentage.text = sum.asPercentString()
+        sumChange.text = sumPercent.asCurrencyWith2Decimals()
         
-        cell.configure(with: currentCoin)
-        return cell
-    }
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        guard let selectedCoin = segmentedControl.selectedSegmentIndex == 0 ? dayCoins?[indexPath.row] : allCoins?[indexPath.row] else {
-            return
-        }
-        let detailsViewController = CoinDetailsView(viewModel: CoinDetailsViewModel(coinId: selectedCoin.id ?? "", isHolding: true), chartViewModel: ChartViewModel(symbol: selectedCoin.symbol ?? ""))
-        let detailsView = UIHostingController(rootView: detailsViewController)
-        
-        if let portfolioViewController = findViewController() as? PortfolioViewController {
-            portfolioViewController.navigationController?.pushViewController(detailsView, animated: true)
-        }
-    }
-    
-    private func findViewController() -> UIViewController? {
-        var responder: UIResponder? = self
-        while let nextResponder = responder?.next {
-            if let viewController = nextResponder as? UIViewController {
-                return viewController
-            }
-            responder = nextResponder
-        }
-        return nil
+        triangleImageView.image = UIImage(systemName: sumPercent >= 0 ? "arrowtriangle.up.fill" : "arrowtriangle.down.fill")
+        triangleImageView.tintColor = sumPercent >= 0 ? UIColor.secondarycolor : UIColor.systemPink
     }
 }

@@ -14,7 +14,6 @@ protocol ButtonsViewDelegate: AnyObject {
 }
 
 class ButtonsView: UIView {
-    
     weak var delegate: ButtonsViewDelegate?
     
     private let buttonStackView: UIStackView = {
