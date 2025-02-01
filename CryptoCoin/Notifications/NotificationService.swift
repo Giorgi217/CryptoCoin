@@ -7,15 +7,10 @@
 
 import Foundation
 
-
 extension Notification.Name {
     static let coinSelectedNotification = Notification.Name("CoinSelected")
     static let coinTapped = Notification.Name("coinTapped")
     static let transactionCompleted = Notification.Name("transactionCompleted")
-    
-//    static let portfolioNotification = Notification.Name("portfolioChanged")
-//    static let holdingCoinsNotification = Notification.Name("holdingCoinsChanged")
-//    static let searchedCoinsNotifiacation = Notification.Name("coinSearched")
 }
 
 struct NotificationKeys {
