@@ -27,7 +27,6 @@ struct CoinRepository: CoinRepositoryProtocol {
     
     func fetchRecommendedCoins(page: Int, perPage: Int) async throws -> [CoinModel] {
         let request = try await generateUrlForRecommendedCoins(page: page, perPage: perPage)
-        print("Recommendation Requested")
         return try await networkManager.fetch(request: request, responseType: [CoinModel].self)
     }
     

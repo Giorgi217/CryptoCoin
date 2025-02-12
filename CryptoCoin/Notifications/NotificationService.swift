@@ -8,7 +8,6 @@
 import Foundation
 
 extension Notification.Name {
-    static let coinSelectedNotification = Notification.Name("CoinSelected")
     static let coinTapped = Notification.Name("coinTapped")
     static let transactionCompleted = Notification.Name("transactionCompleted")
 }

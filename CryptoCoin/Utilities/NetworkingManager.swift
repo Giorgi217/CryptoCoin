@@ -27,7 +27,6 @@ struct NetworkManager {
             do {
                 let decodedData = try JSONDecoder().decode(T.self, from: data)
                 RequestStorage.shared.storeResponse(decodedData, forKey: storeKey)
-                
                 return decodedData
             }
             catch {

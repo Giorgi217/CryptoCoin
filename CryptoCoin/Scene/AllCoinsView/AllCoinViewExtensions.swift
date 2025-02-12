@@ -70,11 +70,6 @@ extension AllCoinsView: UITableViewDataSource, UITableViewDelegate {
 
         guard let coinId = currentCoin.id else { return }
         
-        NotificationCenter.default.post(
-            name: .coinSelectedNotification,
-            object: nil,
-            userInfo: [NotificationKeys.selectedCoin: currentCoin]
-        )
         let isHolding = FirestoreService.shared.myPortfolio?.portfolioCoin.firstIndex(where: { $0.coinId == coinId }) != nil
         navigationController?.pushViewController(
             UIHostingController(rootView: CoinDetailsView(
