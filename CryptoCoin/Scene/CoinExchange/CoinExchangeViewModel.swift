@@ -96,6 +96,9 @@ class CoinExchangeViewModel: ObservableObject {
                 FirestoreService.shared.updatePortfolioCoin(userId: userID, updatedCoin: coin)
                 await MainActor.run {
                     self.showAlert = true
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+                        NotificationCenter.default.post(name: .transactionCompleted, object: nil)
+                    }
                 }
             }
             
@@ -113,7 +116,6 @@ class CoinExchangeViewModel: ObservableObject {
         } else {
             DispatchQueue.main.async{
                 self.incorrectAmount = true
-                NotificationCenter.default.post(name: .transactionCompleted, object: nil)
             }
         }
     }

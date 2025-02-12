@@ -11,7 +11,7 @@ import FirebaseFirestore
 
 class PortfolioViewController: UIViewController {
     var viewModel: PortfolioViewModelProtocol
-    private let useId = UserSessionManager.shared.userId
+    private let userId = UserSessionManager.shared.userId
     
     private let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
@@ -115,7 +115,7 @@ class PortfolioViewController: UIViewController {
     
     @objc func refreshData() {
         Task {
-            let porfolio = try await viewModel.fetchMyPortfolio(userId: useId ?? "")
+            let porfolio = try await viewModel.fetchMyPortfolio(userId: userId ?? "")
             refreshControl.endRefreshing()
             guard let dayCoins = porfolio.dayCoinModel,
                   let allCoins = porfolio.allCoinModel,

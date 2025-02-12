@@ -85,22 +85,11 @@ class AllCoinsView: UIViewController {
     }
     
     private func setupNotifications() {
-        NotificationCenter.default.addObserver(self, selector: #selector(handleCoinSelected(_:)), name: .coinSelectedNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(coinTapped(_:)), name: .coinTapped, object: nil)
     }
     
     @objc private func cancelButtonTapped() {
         navigationController?.popViewController(animated: false)
-    }
-    
-    @objc func handleCoinSelected(_ notification: Notification) {
-        guard let searchedCoin = notification.userInfo?[NotificationKeys.selectedCoin] as? CoinModel else { return }
-        if viewModel.coins.searchedCoins.firstIndex(where: { $0.id == searchedCoin.id }) != nil {
-        } else {
-            viewModel.coins.searchedCoins.insert(searchedCoin, at: 0)
-            viewModel.saveSearchedCoinsToUserDefaults()
-            coinsTableView.reloadData()
-        }
     }
     
     @objc private func coinTapped(_ notification: Notification) {
